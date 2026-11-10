@@ -1,0 +1,17 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="app.gongxingji.training" android:versionCode="108" android:versionName="0.4.2">
+  <uses-sdk android:minSdkVersion="26" android:targetSdkVersion="35" />
+  <uses-permission android:name="android.permission.INTERNET" />
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+  <uses-permission android:name="android.permission.CAMERA" />
+  <uses-feature android:name="android.hardware.camera" android:required="false" />
+  <queries>
+    <intent><action android:name="android.intent.action.TTS_SERVICE" /></intent>
+  </queries>
+  <application android:label="弓行记" android:icon="@drawable/ic_launcher" android:roundIcon="@drawable/ic_launcher" android:theme="@style/AppTheme" android:allowBackup="false" android:debuggable="false" android:usesCleartextTraffic="false" android:supportsRtl="true">
+    <activity android:name="app.gongxingji.training.debug.MainActivity" android:exported="true" android:enableOnBackInvokedCallback="false" android:screenOrientation="portrait" android:configChanges="orientation|screenSize|keyboardHidden" android:windowSoftInputMode="adjustResize">
+      <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
+    </activity>
+    <provider android:name="app.gongxingji.training.debug.ReportProvider" android:authorities="app.gongxingji.training.reports" android:exported="false" android:grantUriPermissions="true" />
+    <provider android:name="app.gongxingji.training.debug.CaptureProvider" android:authorities="app.gongxingji.training.capture" android:exported="false" android:grantUriPermissions="true" />
+  </application>
+</manifest>

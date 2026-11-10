@@ -1,0 +1,11 @@
+.brand-loading{box-sizing:border-box;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;max-width:none;min-height:100vh;min-height:100dvh;margin:0;padding:24px 16px;background:#f6f9fd;color:#20364c;text-align:center}
+.brand-loading-center{display:flex;flex-direction:column;align-items:center;gap:22px}
+.brand-loading-logo{display:block;object-fit:contain;animation:brand-breathe 2.4s ease-in-out infinite}
+.brand-loading-slogan{margin:0;font-size:16px;line-height:1.7;letter-spacing:.06em}
+.brand-loading-recovery{max-width:360px;margin-top:28px;font-size:14px;line-height:1.6;color:#52667e}
+.brand-loading-recovery button{min-height:48px;padding:10px 24px;border:1px solid #bbccdf;border-radius:12px;background:#fff;color:#144b83;font:inherit;cursor:pointer}
+.brand-loading-recovery button:focus-visible{outline:3px solid #2867ab;outline-offset:3px}
+.brand-loading-stalled .brand-loading-logo{animation:none}
+@keyframes brand-breathe{0%,100%{opacity:.78;transform:scale(.98)}50%{opacity:1;transform:scale(1.025)}}
+@media(prefers-reduced-motion:reduce){.brand-loading-logo{animation:none;transform:none}}
+@media(max-height:420px){.brand-loading{padding:16px}.brand-loading-logo{width:76px;height:76px}.brand-loading-center{gap:12px}.brand-loading-recovery{margin-top:12px}}

@@ -1,0 +1,9 @@
+import type {NewsArticle} from './news-feed';
+export type ReviewedNewsImage={articleUrl:string;doi:string;src:string;alt:string;caption:string;credit:string;licenseUrl:string};
+// Reviewed originals only. Remote feed fields cannot introduce arbitrary image URLs.
+export const reviewedImages:Record<string,ReviewedNewsImage>={
+ 'aiming-rhythm-2025':{articleUrl:'https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2025.1650300/full',doi:'10.3389/fspor.2025.1650300',src:'https://www.frontiersin.org/files/Articles/1650300/xml-images/fspor-07-1650300-g001.webp',alt:'原论文图1，射手身上的传感器位置示意',caption:'原论文图1：传感器布置。用于说明研究方法，不是标准射姿教学。',credit:'Jacquot 等，2025 · Frontiers · CC BY · 原图完整显示',licenseUrl:'https://creativecommons.org/licenses/by/4.0/'},
+ 'hand-dexterity-2026':{articleUrl:'https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2026.1880932/full',doi:'10.3389/fphys.2026.1880932',src:'https://www.frontiersin.org/files/Articles/1880932/xml-images/fphys-17-1880932-g001.webp',alt:'原论文图1，三组受试者的手部操作和握力比较图',caption:'原论文图1：三组比较。研究为横断面设计，图中差异不能解释为训练因果。',credit:'Gao 等，2026 · Frontiers · CC BY · 原图完整显示',licenseUrl:'https://creativecommons.org/licenses/by/4.0/'},
+ 'stability-study-2023':{articleUrl:'https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0285223',doi:'10.1371/journal.pone.0285223',src:'https://journals.plos.org/plosone/article/figure/image?id=10.1371%2Fjournal.pone.0285223.g001&size=inline',alt:'原论文图1，实验中射箭任务的姿势示意与角度标注',caption:'原论文图1：实验任务姿势。图示用于说明实验条件，不是通用训练处方。',credit:'Shinohara 等，2023 · PLOS ONE · CC BY · 原图完整显示',licenseUrl:'https://creativecommons.org/licenses/by/4.0/'},
+};
+export function imageForArticle(article:NewsArticle){const image=Object.prototype.hasOwnProperty.call(reviewedImages,article.id)?reviewedImages[article.id]:undefined;return image&&article.url===image.articleUrl&&article.doi?.toLowerCase()===image.doi?image:undefined;}

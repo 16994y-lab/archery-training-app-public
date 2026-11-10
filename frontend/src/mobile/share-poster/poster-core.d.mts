@@ -1,0 +1,25 @@
+export type PosterVariant = 'score' | 'target';
+export type PosterPoint = { x: number; y: number; code?: string; estimated?: boolean; source?: 'target'|'photo-manual'|'photo-mapped' };
+export type PosterData = {
+  demo: boolean;
+  title: string;
+  nickname: string;
+  date: string;
+  arrows: number;
+  total: number;
+  x: number;
+  ten: number;
+  miss: number;
+  highlight: string;
+  points: PosterPoint[];
+  pointCount?: number;
+  coordinateNote?: string;
+  coordinateShortNote?: string;
+  target?: { name: string; rings: { code: string; color: string; radius: number }[] };
+};
+export type PosterAssets = { logo: string; qr?: string; promoUrl?: string; promoVerified?: boolean };
+export const POSTER_SIZE: Readonly<{ width: 760; height: 1120 }>;
+export const PROMO_PAGE_URL: string;
+export function renderSharePosterSvg(data: PosterData, assets: PosterAssets, variant?: PosterVariant): string;
+export function imageUrlToDataUrl(url: string): Promise<string>;
+export function rasterizeSharePoster(svg: string): Promise<string>;

@@ -1,0 +1,50 @@
+.score-workbench{max-width:640px;margin:0 auto}
+.score-workbench .score-heading{padding:12px 0 0;align-items:center;gap:8px;border-top:3px solid transparent;border-image:linear-gradient(90deg,#b7d1fc,#ef9e66,#f4f8fd) 1}
+.score-workbench .score-heading h1{font-size:20px;line-height:1.3;margin:0;flex:1;min-width:0}
+.score-heading-actions{display:flex;gap:6px;flex-shrink:0}
+.score-workbench .score-heading-actions .button{font-size:13px;padding:9px 10px;min-height:44px;background:transparent}
+.score-workbench .conditions-summary{margin:4px 0 10px;font-size:12px}
+.score-workbench .group-bar{margin:0 0 7px}
+.score-workbench .group-bar h2{font-size:16px}
+.score-workbench .recorded{min-height:56px;max-height:168px;padding:6px;gap:5px;grid-template-columns:repeat(auto-fill,minmax(44px,1fr))}
+.score-workbench .recorded .arrow{min-height:44px;min-width:44px;justify-content:center;padding:5px 2px}
+.score-workbench .recorded .arrow b{font-size:23px}
+.score-workbench .recorded .arrow small{font-size:11px}
+.score-empty-hint{grid-column:1/-1;align-self:center;justify-self:center;margin:0;padding:0 8px;color:#60778b;font-size:12px;line-height:1.45;text-align:center}
+.score-results-footer{display:flex;align-items:center;justify-content:space-between;gap:6px;min-height:24px}
+.score-results-footer>span{font-size:12px;color:#52697e}
+.score-results-footer .button{padding:8px 6px;min-height:44px;font-size:12px;background:transparent;border:0}
+.score-entry-modes{display:flex;gap:6px;padding:6px;background:#e5edf8;border:1px solid var(--surface-stroke,#dce7f3);border-radius:var(--card-radius,18px);margin:2px 0 6px}
+.score-entry-modes .button{flex:1;min-width:0;flex-shrink:1;padding:9px 3px;min-height:46px;font-size:14px;background:transparent;border:1px solid transparent}
+.score-entry-modes .button.selected{background:#fff;border-color:#94b0d0;box-shadow:0 2px 5px #18324f0b;color:#12366c}
+.score-beta{display:inline-block;margin-left:4px;font-size:9px;line-height:1.2;color:#667789;font-weight:400}
+.score-entry-photo{margin-top:0}
+.score-entry-hint{font-size:12px;color:#52697e;margin:5px 0;min-height:20px}
+.score-workbench .numeric-pad{grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:12px 0 18px}
+.score-workbench .numeric-pad button{min-height:64px;font-size:25px}
+.score-target-grid{display:grid;grid-template-columns:minmax(70px,1fr) auto auto;gap:0 7px;align-items:center}
+.score-target-grid>.score-spread{grid-column:1;grid-row:1;font-size:12px;gap:5px;margin:0}
+.score-target-grid>.score-fullscreen{grid-column:3;grid-row:1;font-size:12px;padding:8px;min-height:44px}
+.score-target-grid>.target-workspace{display:contents}
+.score-target-grid .target-zoom-tools{grid-column:2;grid-row:1;gap:5px;flex-wrap:wrap;font-size:11px}
+.score-target-grid .target-zoom-tools>span{display:none}
+.score-target-grid .target-zoom-tools button{font-size:12px;min-height:44px;padding:8px}
+.score-target-grid .target-zoom-tools output{min-width:33px}
+.score-target-grid .target{grid-column:1/-1;grid-row:2;margin:5px auto 0;width:100%;max-width:510px}
+.score-primary-actions{display:grid;grid-template-columns:auto minmax(0,1fr);gap:9px;align-items:center;margin:12px 0 4px}
+.score-primary-actions .button{min-width:0;flex-shrink:1}
+.score-primary-actions .score-undo{font-size:13px;padding:10px;background:transparent}
+.score-help{margin:0;font-size:12px;color:#52697e}
+.score-help summary{display:flex;align-items:center;min-height:44px}
+.score-help summary:before{content:'›';margin-right:6px;font-size:18px}
+.score-help[open] summary:before{transform:rotate(90deg)}
+.score-workbench .edit-banner{margin:5px 0}
+.score-target-fullscreen{position:fixed;inset:0;z-index:30;background:#f4f8fd;padding:16px 12px;overflow:auto;overscroll-behavior:contain}
+.score-target-fullscreen h2{font-size:18px;margin:0 auto 8px;max-width:760px}
+.score-target-fullscreen .score-target-grid{max-width:760px;margin:0 auto}
+.score-target-fullscreen .target{max-width:min(100%,calc(100vh - 155px));max-width:min(100%,calc(100dvh - 155px));justify-self:center}
+.score-target-fullscreen>.caption{max-width:760px;margin:8px auto}
+.appbar.scoring-appbar{height:46px}.scoring-appbar .brand-mark{width:24px;height:24px}.scoring-appbar b{font-size:14px}
+main.scoring-main{padding-top:10px}
+@media(min-width:760px){main.scoring-main{padding-top:14px}.score-workbench .score-heading h1{font-size:23px}}
+@media(max-width:350px){.score-entry-modes{gap:3px;padding:4px}.score-entry-modes .button{font-size:13px}.score-target-grid{gap:0 4px}.score-primary-actions{gap:5px}.score-primary-actions .button{padding-left:8px;padding-right:8px;font-size:13px}}

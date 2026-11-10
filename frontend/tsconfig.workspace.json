@@ -1,0 +1,5 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": { "composite": false, "allowJs": true, "checkJs": false },
+  "include": ["src/workspace", "src/mobile/team-api.ts"]
+}

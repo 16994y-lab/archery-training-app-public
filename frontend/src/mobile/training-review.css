@@ -1,0 +1,31 @@
+.training-batch-heading{grid-column:1/-1;min-width:0}
+.training-batch-heading .batch-header{margin:0 0 14px}
+.training-batch-heading+.current-training{margin-top:0}
+.training-disclosure{margin:12px 0;padding:0 18px;border:1px solid #dce6eb;border-radius:17px;background:var(--surface,#fff);color:var(--ui-ink,#253950);min-width:0}
+.training-disclosure>summary{display:list-item;cursor:pointer;min-height:44px;padding:13px 0;line-height:1.5;font-size:15px;font-weight:650}
+.training-disclosure>summary span{float:right;padding:2px 0 2px 10px;font-size:12px;font-weight:500;color:#526a7b}
+.training-disclosure>summary:focus-visible{outline:2px solid #3e71ae;outline-offset:2px;border-radius:5px}
+.training-disclosure[open]{padding-bottom:12px}
+.training-calendar-grid{display:grid;gap:18px}
+.training-calendar-grid>section{min-width:0}
+.training-calendar-grid .calendar{margin-inline:0}
+.training-day-agenda{border-top:1px solid #d9e5ec;padding:18px 0 0}
+.training-section-caption,.training-day-agenda>small{font-size:12px;color:#4d6681;font-weight:650}
+.training-day-agenda>h2{margin:4px 0 12px;font-variant-numeric:tabular-nums}
+.training-session-summary{border:1px solid #dee5f1;border-radius:16px;padding:14px 16px;background:linear-gradient(115deg,#f0f8f7,#f3f1fa)}
+.training-session-summary h2{font-size:clamp(20px,3vw,26px);line-height:1.35;letter-spacing:-.025em;margin:5px 0;overflow-wrap:anywhere}
+.score-workbench .score-session-facts{display:flex;align-items:center;flex-wrap:wrap;column-gap:12px;row-gap:4px;margin:0 0 8px;color:#4f6679;font-size:13px;line-height:1.45}
+.score-session-facts>span:first-child{font-weight:650;color:#2e536d}
+.score-session-facts time{color:#596e7c}
+.photo-clean-workspace .photo-upload-formats{font-size:12px;color:#536879;margin:2px 0 12px}
+@media(min-width:790px){
+ .training-calendar-grid{grid-template-columns:minmax(270px,1.05fr) minmax(220px,1fr);gap:22px;align-items:start}
+ .training-day-agenda{border-top:0;border-left:1px solid #d9e5ec;padding:10px 0 8px 22px}
+}
+@media(max-width:600px){
+ .training-batch-heading .batch-header{min-height:0;padding:15px 17px}
+ .training-batch-heading .batch-header-copy h1{font-size:24px;margin:6px 0}
+ .training-batch-heading .batch-header-copy p{font-size:13px;line-height:1.45}
+ .training-batch-heading .batch-header-meta{margin-top:8px}
+ .score-workbench .score-session-facts{font-size:12px;column-gap:9px}
+}

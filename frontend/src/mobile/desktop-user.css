@@ -1,0 +1,101 @@
+/* Desktop presentation of the existing App. Every rule is scoped and gated. */
+@media (min-width: 1000px) {
+  .desk-user { display:grid; grid-template-columns:220px minmax(0,1fr); min-height:100dvh; color:var(--ui-ink,#20364c); background:#f7f9fc; }
+  .desk-user .desk-user-sidebar { position:sticky; top:0; align-self:start; display:flex; flex-direction:column; height:100dvh; overflow-y:auto; padding:24px 16px 18px; background:var(--surface,#fff); border-right:1px solid var(--surface-stroke,#e3e9f1); }
+  .desk-user .desk-user-sidebar[hidden], .desk-user .desk-user-topbar[hidden] { display:none; }
+  .desk-user .desk-user-brand { display:flex; align-items:center; gap:12px; min-height:48px; margin:0 8px 24px; padding:0; text-align:left; border:0; background:transparent; color:var(--ui-ink,#20364c); }
+  .desk-user .desk-user-brand img { flex:none; object-fit:contain; }
+  .desk-user .desk-user-brand span { display:grid; gap:1px; }
+  .desk-user .desk-user-brand strong { font-size:21px; line-height:1.35; letter-spacing:.02em; }
+  .desk-user .desk-user-brand small { font-size:12px; color:var(--ui-muted,#66758b); }
+  .desk-user .desk-user-nav { display:grid; gap:20px; }
+  .desk-user .desk-user-nav-group { display:grid; gap:4px; }
+  .desk-user .desk-user-nav-group h2, .desk-user .desk-user-roles h2 { margin:0 12px 5px; color:var(--ui-muted,#66758b); font-size:12px; font-weight:500; letter-spacing:.05em; }
+  .desk-user .desk-user-nav-item { display:flex; align-items:center; gap:12px; width:100%; min-height:44px; padding:10px 12px; border:0; border-radius:13px; text-align:left; background:transparent; color:var(--ui-muted,#66758b); font:inherit; font-size:14px; line-height:1.5; }
+  .desk-user .desk-user-nav-item:hover { background:var(--surface-soft,#f5f7fb); color:var(--ui-ink,#20364c); }
+  .desk-user .desk-user-nav-item[aria-current="page"] { background:var(--brand-tint,#edf3ff); color:var(--brand,#2464d9); font-weight:650; }
+  .desk-user .desk-user-icon { display:block; flex:none; width:22px; height:22px; }
+  .desk-user .desk-user-personal-nav { padding-top:16px; border-top:1px solid var(--surface-stroke,#e3e9f1); }
+  .desk-user .desk-user-roles { display:grid; gap:4px; margin-top:auto; padding-top:24px; }
+  .desk-user .desk-user-roles .desk-user-nav-item { font-size:13px; }
+  .desk-user .desk-user-entry-arrow { margin-left:auto; color:var(--ui-muted,#66758b); }
+  .desk-user .desk-user-frame { min-width:0; }
+  .desk-user .desk-user-topbar { position:sticky; top:0; z-index:8; background:#f7f9fc; border-bottom:1px solid var(--surface-stroke,#e3e9f1); }
+  .desk-user .desk-user-topbar-inner { display:flex; align-items:center; justify-content:space-between; gap:20px; max-width:1200px; min-height:88px; margin:0 auto; padding:18px 32px; }
+  .desk-user .desk-user-location { display:flex; align-items:center; gap:14px; min-width:0; font-size:14px; color:var(--ui-muted,#66758b); }
+  .desk-user .desk-user-location strong { color:var(--ui-ink,#20364c); font-weight:550; }
+  .desk-user .desk-user-score { display:flex; align-items:center; justify-content:center; gap:9px; flex:none; min-height:46px; padding:11px 20px; border:1px solid transparent; border-radius:13px; background:var(--brand-gradient,linear-gradient(115deg,#2464d9,#326fe2)); color:#fff; font:inherit; font-size:14px; font-weight:600; }
+  .desk-user .desk-user-score:hover { background:var(--brand-pressed-gradient,linear-gradient(115deg,#205ac5,#2d65cf)); }
+  .desk-user .desk-user-brand:focus-visible, .desk-user .desk-user-nav-item:focus-visible, .desk-user .desk-user-score:focus-visible { outline:3px solid var(--brand,#2464d9); outline-offset:3px; }
+  .desk-user .desk-user-frame > main { width:100%; max-width:1200px; min-height:calc(100dvh - 88px); margin:0 auto; padding:28px 32px 48px; }
+  .desk-user .app-tabbar { display:none; }
+  .desk-user .desk-user-frame > main > .page-title:first-child { padding-top:0; }
+  .desk-user .desk-user-frame > main > .subhead:first-child { margin-top:0; }
+
+  /* The calendar stays in the first content row; the mobile DOM order is kept. */
+  .desk-user .training-home { display:grid; grid-template-columns:minmax(0,1.15fr) minmax(280px,.9fr); gap:0 24px; align-items:start; }
+  .desk-user .training-home > .training-home-heading { grid-column:1/-1; grid-row:1; padding:0; margin-bottom:24px; }
+  .desk-user .training-home-heading h1 { font-size:28px; }
+  .desk-user .training-home > .current-training { grid-column:1; grid-row:2; padding:24px; margin:0 0 16px; border-radius:22px; }
+  .desk-user .current-training h2 { margin:12px 0 8px; font-size:24px; }
+  .desk-user .current-training .training-summary { margin:0 0 20px; font-size:14px; }
+  .desk-user .training-home > .training-shortcuts { grid-column:1; grid-row:3; gap:16px; margin:0 0 20px; }
+  .desk-user .training-shortcuts > button { min-height:76px; }
+  .desk-user .training-home > .training-goal, .desk-user .training-home > .training-goal-empty { grid-column:1; grid-row:4; margin:0 0 20px; }
+  .desk-user .training-goal-card { padding:18px; }
+  .desk-user .training-goal h2 { font-size:18px; }
+  .desk-user .training-goal-empty { padding:16px; }
+  .desk-user .training-home > .training-week { grid-column:2; grid-row:2/5; padding:20px; margin:0; border:1px solid var(--surface-stroke,#e3e9f1); border-radius:20px; background:var(--surface,#fff); box-shadow:var(--card-shadow,0 3px 16px #20364c05); }
+  .desk-user .training-week .section-heading { flex-wrap:wrap; gap:4px 10px; }
+  .desk-user .training-week .section-heading h2 { font-size:18px; }
+  .desk-user .training-week .caption { display:block; margin:0 0 14px; }
+  .desk-user .training-week .week-day { min-height:70px; background:var(--surface-soft,#f5f7fb); }
+  .desk-user .training-week .week-day.selected { background:var(--brand,#2464d9); color:#fff; }
+  .desk-user .training-week .week-agenda { margin-top:18px; padding-top:16px; }
+  .desk-user .training-week .week-agenda h3 { font-size:14px; }
+  .desk-user .training-week .week-agenda.is-empty { display:block; padding-top:16px; border-top:1px solid var(--surface-stroke,#e3e9f1); }
+  .desk-user .training-week .week-agenda.is-empty > p { margin-top:8px; font-size:13px; }
+  .desk-user .training-home > .panel:not(.current-training):not(.training-week) { grid-column:1; }
+
+  /* Target the existing review sections; dialogs and unrelated panels stay intact. */
+  .desk-user .vx-page { gap:20px; }
+  .desk-user .vx-page .vx-title h1 { font-size:28px; }
+  .desk-user .vx-review-home { grid-template-columns:repeat(2,minmax(0,1fr)); align-items:start; }
+  .desk-user .vx-review-home > .vx-overview-group { grid-column:1/-1; padding:20px; }
+  .desk-user .vx-review-home > .vx-title, .desk-user .vx-review-home > .vx-toolbar, .desk-user .vx-review-home > .vx-filter-summary, .desk-user .vx-review-home > .vx-state, .desk-user .vx-review-home > .vx-overview, .desk-user .vx-review-home > .vx-analysis-entries, .desk-user .vx-review-home > .training-activity, .desk-user .vx-review-home > .vx-empty { grid-column:1/-1; }
+  .desk-user .vx-review-home > .vx-card { align-self:stretch; }
+  .desk-user .vx-review-home > .training-activity { margin:0; }
+  .desk-user .vx-overview { padding-top:0; border-top:0; }
+  .desk-user .vx-card { padding:22px; }
+  .desk-user .vx-card[id] { scroll-margin-top:104px; }
+  .desk-user .vx-comparison-flow > section[id], .desk-user .vx-advanced-analysis > h2[id] { scroll-margin-top:104px; }
+  .desk-user .vx-analysis-grid { gap:20px; }
+  .desk-user .vx-session-context { grid-template-columns:minmax(0,1fr) minmax(260px,.65fr); align-items:end; }
+  .desk-user .vx-session-context > .subhead, .desk-user .vx-session-context > .vx-session-nav { grid-column:1/-1; }
+  .desk-user .vx-session-nav { max-width:680px; }
+  .desk-user .vx-spatial .target { max-width:420px; }
+  .desk-user .vx-has-positions > .vx-spatial { max-width:none; }
+  .desk-user .vx-spatial-body { gap:24px; }
+  .desk-user .vx-record { padding:16px 0; }
+  .desk-user .vx-pair-inputs { gap:24px; }
+  .desk-user .vx-page[data-page="compare"] { max-width:1040px; margin-inline:auto; }
+
+  /* Profile lists remain lists. Give forms a readable measure on wide screens. */
+  .desk-user[data-route="profile"] .desk-user-frame > main { max-width:1000px; }
+  .desk-user .profile-next-heading { padding:28px; margin:12px 0 24px; border-radius:22px; background:var(--brand-tint,#edf3ff); }
+  .desk-user .profile-section-title { margin-top:28px; }
+  .desk-user .profile-menu .adm-list-item-content { min-height:72px; }
+  .desk-user[data-route="personal"] .desk-user-frame > main, .desk-user[data-route="settings"] .desk-user-frame > main, .desk-user[data-route="account"] .desk-user-frame > main, .desk-user[data-route="plan"] .desk-user-frame > main, .desk-user[data-route="equipment"] .desk-user-frame > main, .desk-user[data-route="accessory"] .desk-user-frame > main, .desk-user[data-route="goal"] .desk-user-frame > main, .desk-user[data-route="target"] .desk-user-frame > main { max-width:960px; }
+
+  /* A dedicated scoring work area keeps the target and entry controls together. */
+  .desk-user .desk-user-frame > main.scoring-main { max-width:1120px; padding:24px 32px 40px; }
+  .desk-user .score-workbench { max-width:1000px; padding:24px; border:1px solid var(--surface-stroke,#e3e9f1); border-radius:22px; background:var(--surface,#fff); }
+  .desk-user .score-workbench .score-heading { padding-top:0; }
+  .desk-user .score-workbench .score-heading h1 { font-size:24px; }
+  .desk-user .score-workbench .recorded { grid-template-columns:repeat(auto-fill,minmax(52px,1fr)); padding:10px; }
+  .desk-user .score-workbench .numeric-pad { max-width:720px; margin-inline:auto; gap:12px; }
+  .desk-user .score-workbench .score-target-grid { max-width:760px; margin-inline:auto; }
+  .desk-user .score-target-grid .target { max-width:560px; }
+  .desk-user .score-primary-actions { margin-top:16px; }
+  .desk-user .start-configuration-fields { max-width:920px; margin-inline:auto; }
+}

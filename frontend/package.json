@@ -1,0 +1,38 @@
+{
+  "name": "archery-training-frontend",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  },
+  "overrides": {
+    "source-map-js": "1.2.2"
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "npm run build:legacy && npm run build:workspace",
+    "preview": "vite preview",
+    "check:mobile": "tsc -p tsconfig.mobile.json --noEmit",
+    "build:legacy": "tsc -b && vite build",
+    "check:workspace": "tsc -p tsconfig.workspace.json --noEmit",
+    "build:workspace": "npm run check:workspace && vite build --config vite.workspace.config.ts"
+  },
+  "dependencies": {
+    "antd-mobile": "5.42.3",
+    "echarts": "6.1.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "7.18.3",
+    "@use-gesture/react": "10.3.0",
+    "fflate": "0.8.3"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.3",
+    "@types/react-dom": "^18.3.0",
+    "@vitejs/plugin-react": "6.1.1",
+    "esbuild": "^0.28.2",
+    "typescript": "5.9.3",
+    "vite": "8.3.0"
+  }
+}

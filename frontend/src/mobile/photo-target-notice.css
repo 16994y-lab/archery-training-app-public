@@ -1,0 +1,18 @@
+.photo-target-notice{margin:12px 0;padding:14px;border:1px solid #bed4e7;border-radius:14px;background:#f3f8fc;color:#18364d}
+.photo-target-notice h4{font-size:15px;margin:0 0 8px}
+.photo-target-notice p{margin:6px 0;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.photo-target-notice-warning{background:#fff8ea;border-color:#e5cb8d}
+.photo-target-current{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}
+.photo-target-current span,.photo-target-limit{color:#4d6375}
+.photo-target-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.photo-target-actions .button{min-height:44px;white-space:normal}
+.photo-target-gallery{color:#18364d;line-height:1.6}
+.photo-target-gallery label{display:block;font-weight:600;margin-bottom:6px}
+.photo-target-gallery select{box-sizing:border-box;width:100%;min-height:44px;border:1px solid #adc5d9;border-radius:10px;background:#fff;color:inherit;padding:8px;font:inherit}
+.photo-target-preview{display:grid;justify-items:center;gap:8px;margin:14px 0;padding:12px;border:1px solid #d9e5ef;border-radius:12px;background:#f7fafc}
+.photo-target-preview .target-preview{display:block;width:100%;max-width:260px;height:230px;object-fit:contain}
+.photo-target-preview-note{padding:10px;border-radius:10px;background:#edf4fa}
+.photo-target-gallery details{padding:10px 0;border-block:1px solid #d9e5ef}
+.photo-target-gallery summary{cursor:pointer;min-height:32px}
+.photo-target-gallery ul{padding-left:22px}
+@media(max-width:360px){.photo-target-notice{padding:12px}.photo-target-actions{flex-direction:column}.photo-target-actions .button{width:100%}}

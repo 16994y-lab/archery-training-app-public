@@ -1,0 +1,7 @@
+import { useState } from "react";
+
+export function CommunityPage() {
+  const [slide, setSlide] = useState(0);
+  const headlines = ["训练之外，也有同好", "把每次进步留下来", "从器材聊到手感"];
+  return <main className="community-page"><header className="training-heading figma-page-heading"><div className="heading-lockup"><span className="page-logo"><img src="/ui/logo-mark.png" alt="" /></span><div><p className="eyebrow">同好 · 交流空间</p><h1>社区</h1></div></div><small>预览 · 尚未开放</small></header><section className="community-hero"><div><p>COMMUNITY PREVIEW</p><h2>{headlines[slide]}</h2><small>内容仅用于结构预览，不代表真实帖子。</small></div><div className="community-carousel"><button aria-label="上一张" onClick={() => setSlide((slide + 2) % 3)}>‹</button><span aria-live="polite">0{slide + 1} / 03</span><button aria-label="下一张" onClick={() => setSlide((slide + 1) % 3)}>›</button></div></section><label className="community-search">搜索社区<input type="search" disabled placeholder="训练、器材与话题 · 尚未开放" /></label><div className="community-topics" aria-label="社区分类"><button disabled>推荐</button><button disabled>训练日常</button><button disabled>器材交流</button></div>{["训练心得", "器材交流"].map((title, index) => <article className="community-card" key={title}><div className={`community-image community-image-${index + 1}`}><img src="/ui/logo-mark.png" alt="" /><span>弓行记 · 社区预览</span></div><div className="community-copy"><span className="eyebrow">{index ? "GEAR" : "TRAINING"}</span><h2>{title}</h2><p>功能尚未开放，本卡片仅展示未来内容层级。</p></div><span className="community-arrow" aria-hidden="true">›</span></article>)}</main>;
+}

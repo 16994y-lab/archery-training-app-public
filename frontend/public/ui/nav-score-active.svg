@@ -1,0 +1,12 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="23" height="23" viewBox="0 0 23 23" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="icon" clip-path="url(#clip0_0_9)">
+<path id="Vector" d="M11.5 18.2083C15.2049 18.2083 18.2083 15.2049 18.2083 11.5C18.2083 7.79509 15.2049 4.79167 11.5 4.79167C7.79509 4.79167 4.79167 7.79509 4.79167 11.5C4.79167 15.2049 7.79509 18.2083 11.5 18.2083Z" stroke="white" stroke-width="2"/>
+<path id="Vector_2" d="M11.5 13.4167C12.5585 13.4167 13.4167 12.5585 13.4167 11.5C13.4167 10.4415 12.5585 9.58333 11.5 9.58333C10.4415 9.58333 9.58333 10.4415 9.58333 11.5C9.58333 12.5585 10.4415 13.4167 11.5 13.4167Z" fill="white"/>
+<path id="Vector_3" d="M11.5 1.91667V4.79167M11.5 18.2083V21.0833M1.91667 11.5H4.79167M18.2083 11.5H21.0833" stroke="white" stroke-width="2" stroke-linecap="round"/>
+</g>
+<defs>
+<clipPath id="clip0_0_9">
+<rect width="23" height="23" fill="white"/>
+</clipPath>
+</defs>
+</svg>

@@ -1,0 +1,102 @@
+/* Role workspaces share the user app's light surfaces, target accent and control rhythm. */
+/* Keep the native form value, type-ahead, arrow keys and device picker.
+   Browsers with a stylable picker also render the expanded menu in the shared palette. */
+@supports (appearance:base-select) {
+  .ws-app select:not([multiple],[size]),
+  .ws-app select:not([multiple],[size])::picker(select) {appearance:base-select}
+  .ws-app select:not([multiple],[size]) {display:flex;align-items:center;justify-content:space-between;gap:10px}
+  .ws-app select::picker(select) {
+    padding:5px;border:1px solid #c4d4e4;border-radius:12px;background:white;color:#203c51;
+    box-shadow:0 8px 30px #233b531c;max-height:min(48dvh,360px);overflow:auto;
+  }
+  .ws-app select option {min-height:42px;padding:9px 12px;border-radius:8px;overflow-wrap:anywhere}
+  .ws-app select option:checked {color:#264c86;background:linear-gradient(105deg,#e1f3fc,#e8eafd);font-weight:650}
+  .ws-app select option:disabled {color:#687987}
+  .ws-app select::picker-icon {color:#587494}
+}
+.ws-app {
+  --brand:#23568a; --brand-tint:#edf4fa; --ink:#203c51; --muted:#536c7b;
+  --stroke:#d4e2e9; --brand-gradient:linear-gradient(112deg,#204c79,#2a637c);
+  --shadow:0 4px 20px #1d465907;
+  background:radial-gradient(ellipse at 91% 0,#e5e2fa 0,transparent 33rem),radial-gradient(ellipse at 33% 0,#dcf3ea 0,transparent 32rem),#f2f6f9;
+}
+.ws-app .ws-page,.ws-app .ws-main { min-width:0; }
+.ws-app .ws-sidebar { background:linear-gradient(165deg,#fcfefe 20%,#edf6f5 73%,#edecf7); }
+.ws-app .ws-main-nav a.active { color:#174562; background:linear-gradient(115deg,#cceae6,#dbe7fc 65%,#e7ddf4); }
+.ws-app .ws-main-nav a { min-height:44px; }
+.ws-app .ws-topbar { border-color:var(--stroke); background:#f8fcfbe8; }
+.ws-app .ws-team-bar,.ws-app .ws-toolbar { display:flex; flex-wrap:wrap; align-items:end; justify-content:flex-start; gap:12px; margin-bottom:16px; }
+.ws-app .ws-team-bar label { min-width:min(15rem,100%); max-width:100%; }
+.ws-app .batch-header { margin-bottom:18px; }
+.ws-app .batch-header h1 { color:#193e58; margin:6px 0; }
+.ws-app .batch-header p { color:#405e6a; }
+.ws-app .ws-card,.ws-app .reward-card,.ws-app .ws-range { border:1px solid var(--stroke); box-shadow:var(--shadow); border-radius:18px; background:#fff; min-width:0; }
+.ws-app .ws-range { margin-bottom:18px; }
+.ws-app .ws-range>summary { padding:14px 18px; cursor:pointer; font-weight:650; min-height:48px; }
+.ws-app .ws-range>summary span { font-size:.82rem; margin-inline-start:8px; color:var(--muted); font-weight:450; }
+.ws-app .ws-range>.ws-card { border:0; box-shadow:none; margin:0; }
+.ws-app .ws-range .ws-card-head { padding-block:8px; }
+.ws-app .ws-card-head { gap:12px; flex-wrap:wrap; }
+.ws-app .ws-filter-details summary { min-height:44px; align-content:center; }
+.ws-app .ws-filter-details { margin-top:10px; padding-top:4px; }
+.ws-app :is(input,textarea,select):not([type=checkbox]):not([type=radio]) {
+  min-height:46px; border:1px solid #afc8d4; border-radius:10px; background-color:#f8fbfd; color:var(--ink);
+  max-width:100%; font-size:1rem; box-shadow:inset 0 1px 2px #152b3905;
+}
+.ws-app input[type=checkbox],.ws-app input[type=radio] { accent-color:#275d73; }
+.ws-app :is(input,textarea,select):user-invalid { border-color:#aa433c; }
+.ws-app :is(a,button,input,textarea,select,summary):focus-visible { outline:3px solid #416e99; outline-offset:2px; }
+.ws-app button:disabled,.ws-app :is(input,select):disabled { opacity:.64; cursor:not-allowed; }
+.ws-app .ws-actions,.ws-app .reward-tabs,.ws-app .ws-tabs { flex-wrap:wrap; align-items:center; gap:8px; }
+.ws-app .reward-tabs button,.ws-app .ws-tabs button { min-height:44px; }
+.ws-app .reward-tabs [aria-pressed="true"],.ws-app .ws-tabs [aria-pressed="true"] { border-color:#bed6db; color:#204f64; background:#e2f2ed; }
+/* Navigation links and action buttons occupy the same segment, including when
+   permissions limit the number of available roles. */
+.ws-app :is(.ws-role-nav,.reward-tabs[aria-label="管理员业务入口"]) {
+  display:grid; grid-template-columns:none; grid-auto-flow:column; grid-auto-columns:minmax(0,1fr);
+  align-items:stretch; gap:4px; padding:5px; border:1px solid var(--stroke); border-radius:16px;
+  background:#f5f9fc;
+}
+.ws-app .reward-tabs[aria-label="管理员业务入口"] { max-width:27rem; margin:0 0 18px; }
+.ws-app :is(.ws-role-nav,.reward-tabs[aria-label="管理员业务入口"]) > :is(button,a) {
+  display:grid; place-items:center; min-width:0; min-height:44px; margin:0;
+  padding:8px 5px; border:1px solid transparent; border-radius:11px;
+  background:transparent; box-shadow:none; color:#465e70; text-decoration:none;
+  font-family:inherit; font-weight:550; font-size:.875rem; line-height:1.35;
+  text-align:center;
+}
+@media (hover:hover) {
+  .ws-app :is(.ws-role-nav,.reward-tabs[aria-label="管理员业务入口"]) > :is(button,a):not([aria-current="page"],[aria-pressed="true"]):hover {
+    background:#e8eff5; color:#203f57;
+  }
+}
+.ws-app :is(.ws-role-nav,.reward-tabs[aria-label="管理员业务入口"]) > :is([aria-current="page"],[aria-pressed="true"]) {
+  background:linear-gradient(110deg,#d0eee8,#dfeafb 68%,#e7e0f7); color:#153d56;
+  border-color:#b8d4df; font-weight:700;
+}
+.ws-app :is(.ws-role-nav,.reward-tabs[aria-label="管理员业务入口"]) > :focus-visible { outline:2px solid #356783; outline-offset:1px; }
+.ws-app .ws-table-wrap { min-width:0; max-width:100%; overscroll-behavior-inline:contain; }
+.ws-app .ws-notice,.ws-app .reward-note,.ws-app .reward-alert,.ws-app .reward-pending { overflow-wrap:anywhere; }
+.ws-app .reward-confirm { border-color:#b4cfd5; box-shadow:0 5px 24px #203b4a12; }
+.ws-app .reward-confirm button { min-height:44px; }
+.ws-app .ws-metric { background:linear-gradient(135deg,#fff,#f4f8fb); }
+@media(max-width:800px) {
+  .ws-app .ws-main,.ws-app .ws-topbar { padding-inline:clamp(10px,3.4vw,18px); }
+  .ws-app .ws-team-bar { display:grid; grid-template-columns:minmax(0,1fr) auto; }
+  .ws-app .ws-team-bar label { min-width:0; }
+  .ws-app .ws-filter-grid,.ws-app .ws-filter-grid.conditions,.ws-app .ws-group-grid,.ws-app .ws-session-grid { grid-template-columns:repeat(auto-fit,minmax(min(12rem,100%),1fr)); }
+  .ws-app .ws-filter-bottom { align-items:stretch; flex-wrap:wrap; }
+  .ws-app .ws-span-2 { grid-column:1/-1; }
+  .ws-app .ws-metrics { grid-template-columns:repeat(2,minmax(0,1fr)); gap:9px; }
+  .ws-app .ws-member-checks { grid-template-columns:repeat(auto-fit,minmax(min(12rem,100%),1fr)); }
+  .ws-app .ws-brand { padding:10px 16px; }
+  .ws-app .ws-role-nav { margin:0 12px 8px; }
+  .ws-app .ws-facts>div { flex-wrap:wrap; gap:4px 12px; }
+  .ws-app .reward-search,.ws-app .reward-form-grid { grid-template-columns:repeat(auto-fit,minmax(min(11rem,100%),1fr)); }
+  .ws-app .ws-main-nav { padding:2px 12px 7px; }
+}
+@media(max-width:390px) {
+  .ws-app .ws-card-body,.ws-app .reward-card { padding:14px; }
+  .ws-app .ws-tabs,.ws-app .ws-plot-controls { gap:6px; }
+  .ws-app .ws-filter-grid,.ws-app .ws-filter-grid.conditions { grid-template-columns:1fr; }
+}

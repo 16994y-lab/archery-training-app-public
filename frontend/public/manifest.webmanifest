@@ -1,0 +1,11 @@
+{
+  "name": "弓行记 · 射箭训练",
+  "short_name": "弓行记",
+  "lang": "zh-CN",
+  "display": "standalone",
+  "start_url": "/",
+  "background_color": "#f7f8f5",
+  "theme_color": "#103a56",
+  "description": "可离线记录、联网后同步的个人射箭训练工具",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }]
+}

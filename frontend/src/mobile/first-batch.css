@@ -1,0 +1,27 @@
+/* Decorative colour is confined to the header and selections; inputs sit on solid surfaces. */
+.batch-header {
+  position:relative; isolation:isolate; overflow:hidden; box-sizing:border-box;
+  display:flex; align-items:center; min-height:172px; padding:clamp(20px,3vw,38px);
+  border:1px solid #dce4f8; border-radius:22px; color:#172e54;
+  background:
+    radial-gradient(ellipse at 97% 2%,#b8baf5 0%,transparent 44%),
+    radial-gradient(ellipse at 58% 108%,#fbdace 0%,transparent 40%),
+    radial-gradient(ellipse at 35% -7%,#c6ecfa 0%,transparent 58%),
+    linear-gradient(107deg,#f7fbff 14%,#e6edff 51%,#d0cbf1 76%,#bbe8fb);
+}
+.batch-header-copy {position:relative;z-index:1;max-width:66%}
+.batch-header .batch-eyebrow,.studio-kicker {
+  display:inline-flex;align-items:center;gap:8px;color:#345888;font-size:11px;
+  line-height:1.4;letter-spacing:.11em;font-weight:700;
+}
+.batch-header .batch-eyebrow:before,.studio-kicker:before {content:"";width:21px;height:2px;border-radius:3px;background:#678bd7}
+.batch-header .batch-header-copy h1 {margin:10px 0 6px;color:#162e54;font-size:clamp(24px,2.4vw,34px);line-height:1.24;letter-spacing:-.045em;text-align:left}
+.batch-header .batch-header-copy p {margin:0;color:#34506c;font-size:14px;line-height:1.65;overflow-wrap:anywhere}
+.batch-header-meta {display:inline-flex;align-items:center;gap:7px;margin-top:12px;padding:4px 11px;border-radius:20px;background:#ffffffb5;color:#325c66;font-size:12px;font-weight:600}
+.batch-target {position:absolute;right:-3%;top:50%;transform:translateY(-50%);width:43%;height:145%;pointer-events:none}
+@media(max-width:600px) {
+  .batch-header {min-height:150px;padding:18px;border-radius:18px}
+  .batch-header-copy {max-width:72%}
+  .batch-header .batch-header-copy p {font-size:13px}
+  .batch-target {right:-13%;width:54%;opacity:.83}
+}

@@ -1,0 +1,31 @@
+/* Keep the photo area and its controls in the same viewport, without a horizontal tool strip. */
+.photo-compare-fullscreen{display:grid;grid-template-rows:auto auto minmax(0,1fr) auto;gap:5px;padding:max(6px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));box-sizing:border-box;height:100%;height:100dvh;overflow:hidden}
+.photo-compare-fullscreen>.photo-fullscreen-toolbar{position:relative;inset:auto;grid-row:1;padding:5px;margin:0}
+.photo-compare-fullscreen>.media-zoom-tools{position:relative;inset:auto;grid-row:2;justify-self:end;margin:0;padding:2px 4px}
+.photo-compare-fullscreen>.media-compare{position:relative;inset:auto;grid-row:3;min-height:0;width:100%}
+.photo-compare-fullscreen>.photo-fullscreen-editbar{position:relative;inset:auto;grid-row:4;display:grid;grid-template-columns:minmax(0,1fr);gap:4px;overflow:visible;padding:5px;margin:0}
+.photo-review-point-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:4px;min-width:0}
+.photo-review-point-row>b{min-width:0;max-width:none}
+.photo-review-action-row{display:flex;align-items:center;justify-content:center;gap:4px;min-width:0;flex-wrap:wrap}
+.photo-review-action-row>.button,.photo-review-action-row>label{flex:1 1 auto;min-width:0}
+.photo-review-action-row>label{justify-content:center}
+.photo-review-mode-note{margin:0;color:#d6e5f4;font-size:11px;line-height:1.35}
+.photo-review-more{position:relative;flex:0 0 auto;color:#fff}
+.photo-review-more>summary{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border:1px solid #b9cee055;border-radius:8px;cursor:pointer;font-size:12px;box-sizing:border-box}
+.photo-review-more[open]>div{position:absolute;right:0;bottom:calc(100% + 7px);z-index:8;display:grid;gap:5px;width:160px;padding:8px;border:1px solid #8ba5bf;border-radius:10px;background:#18364d;box-shadow:0 2px 12px #0006}
+.photo-review-more>summary:focus-visible{outline:3px solid #ffd166;outline-offset:2px}
+.photo-review-nudge{position:absolute;z-index:4;right:max(10px,env(safe-area-inset-right));top:50%;transform:translateY(-50%);display:grid;gap:4px;padding:5px;border:1px solid #b9cee055;border-radius:14px;background:#0d263e99;backdrop-filter:blur(4px);box-shadow:0 2px 12px #0003}
+.photo-review-step{display:grid;grid-template-columns:1fr 1fr;gap:4px}
+.photo-review-directions{display:grid;grid-template-columns:repeat(3,44px);grid-template-rows:repeat(3,44px);gap:2px}
+.photo-review-nudge .button{min-width:44px;min-height:44px;padding:4px;font-size:14px;border-color:#d9e4ed99;background:#edf4faca;color:#173752}
+.photo-review-nudge .button.selected{background:#2867abe0;color:#fff}
+.photo-review-directions .nudge-up{grid-row:1;grid-column:2}
+.photo-review-directions .nudge-left{grid-row:2;grid-column:1}
+.photo-review-directions .nudge-right{grid-row:2;grid-column:3}
+.photo-review-directions .nudge-down{grid-row:3;grid-column:2}
+.photo-review-directions>span{grid-row:2;grid-column:2;display:grid;place-items:center;font-size:11px;color:#e4eef8}
+.photo-tools-collapsed>.media-compare{grid-row:2/5}
+.photo-tools-collapsed>.photo-review-nudge{display:none}
+@media(min-width:640px){.photo-compare-fullscreen>.photo-fullscreen-editbar{grid-template-columns:minmax(180px,.8fr) minmax(0,1.2fr)}.photo-review-mode-note{grid-column:1/-1}.photo-review-action-row{justify-content:flex-end}.photo-review-action-row>.button,.photo-review-action-row>label{flex:0 1 auto}}
+@media(max-width:420px){.photo-fullscreen-title>span{display:none}.photo-fullscreen-toolbar b{font-size:13px}.photo-fullscreen-toolbar .button{padding:6px;font-size:11px}.photo-review-action-row>.button{padding:6px}.photo-review-action-row label{font-size:11px}.photo-review-action-row select{min-width:48px}}
+@media(max-height:460px){.photo-fullscreen-title>span{display:none}.photo-compare-fullscreen{gap:2px}.photo-review-nudge{display:flex;align-items:center;top:auto;bottom:102px;transform:none}.photo-review-step{grid-template-columns:44px;grid-template-rows:44px 44px}.photo-review-mode-note{font-size:10px}.photo-compare-fullscreen>.photo-fullscreen-toolbar,.photo-compare-fullscreen>.photo-fullscreen-editbar{padding:3px}}

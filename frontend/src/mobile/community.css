@@ -1,0 +1,24 @@
+.community-page{max-width:680px;margin:0 auto}
+.community-page .app-back{min-width:44px;min-height:44px;padding:6px 8px}
+.community-intro{font-size:13px;color:#52657b}
+.community-label{display:block;font-size:13px;font-weight:600;margin:8px 0 5px}
+.community-page input,.community-page textarea,.community-page select{width:100%;min-width:0;border:1px solid #adbed0;border-radius:8px;background:#fff;color:#18324f;padding:10px;font-size:16px}
+.community-page textarea{min-height:98px;resize:vertical}
+.community-row,.community-actions,.community-heading,.community-meta{display:flex;align-items:center;gap:8px}
+.community-row{justify-content:space-between}.community-row input{flex:1}
+.community-heading{justify-content:space-between;margin-top:22px}.community-heading h2{margin:0}
+.community-card,.community-pending{background:#fff;border:1px solid #d6e2ee;border-radius:14px;padding:16px;margin:12px 0;overflow-wrap:anywhere}
+.community-pending{border-color:#bd793e;background:#fff7ef}
+.community-meta{justify-content:space-between;font-size:12px;color:#52657b;flex-wrap:wrap}
+.community-meta strong{font-size:14px;color:#17375e}
+.community-body{white-space:pre-wrap;overflow-wrap:anywhere;margin:10px 0}
+.community-actions{flex-wrap:wrap}.community-actions .button{min-height:44px}
+.community-comments{border-top:1px solid #d6e2ee;margin-top:14px;padding-top:10px}
+.community-comment{border-top:1px solid #e5ebf3;padding:12px 0}
+.community-message{padding:10px 12px;border-radius:8px;background:#eaf2fc}
+.community-warning{color:#8a4815;font-size:13px}
+.community-report{position:fixed;inset:0;z-index:30;background:#10253a88;display:flex;align-items:end;justify-content:center;padding:12px}
+.community-report .panel{width:min(100%,680px);max-height:80dvh;overflow:auto;margin:0}
+.community-sandbox-banner{background:#fff2d6;border-bottom:2px solid #ad7530;padding:10px 16px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;font-size:12px}
+.community-sandbox-banner span{flex:1 1 220px}.community-sandbox-banner select{min-height:44px;font-size:16px}
+@media(max-width:390px){.community-card,.community-pending{padding:12px}.community-page .button{font-size:13px}}

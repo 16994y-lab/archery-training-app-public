@@ -1,0 +1,44 @@
+/* Presentation only. Current screenshots and original logo retain their colors. */
+.intro-screens { max-width: 680px; margin: 0 auto; min-height: 100dvh; padding: max(14px,env(safe-area-inset-top)) 12px max(20px,env(safe-area-inset-bottom)); color: var(--ui-ink,#20364c); font-size: 1rem; line-height: 1.55; overflow-wrap: anywhere; }
+.intro-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 4px 4px 14px; }
+.intro-brand { display: flex; align-items: center; gap: 9px; min-width: 0; }
+.intro-brand img { flex-shrink: 0; object-fit: contain; }
+.intro-brand strong { display: block; font-size: 1.15em; }
+.intro-brand span { display: block; font-size: .75em; color: var(--ui-muted,#586f82); }
+.intro-screens button { font: inherit; white-space: normal; min-height: 46px; min-width: 44px; border-radius: 14px; border: 1px solid var(--surface-stroke,#dce6ed); padding: 10px 14px; color: inherit; background: var(--surface,#fff); cursor: pointer; }
+.intro-screens button:disabled { opacity: .45; cursor: default; }
+.intro-screens button:focus-visible { outline: 3px solid #2464d9; outline-offset: 3px; }
+.intro-screens .intro-link { flex-shrink: 0; background: transparent; border-color: transparent; font-size: .875em; padding: 10px; }
+.intro-content { border-radius: var(--card-radius,20px); background: var(--flow-surface,linear-gradient(120deg,#e7f5fd,#f9fafc)); border: 1px solid var(--surface-stroke,#dce6ed); overflow: hidden; }
+.intro-swiper { --height: auto; --border-radius: 20px; }
+.intro-card { padding: 20px 16px 12px; height: 100%; }
+.intro-kicker { font-size: .65em; letter-spacing: .12em; color: var(--ui-muted,#586f82); margin: 0 0 8px; }
+.intro-card h2 { font-size: 1.45em; line-height: 1.3; margin: 0 0 8px; font-weight: 750; }
+.intro-description { color: var(--ui-muted,#586f82); font-size: .875em; margin: 0 0 16px; }
+.intro-figure { margin: 0 0 16px; border-radius: 14px; overflow: hidden; border: 1px solid var(--surface-stroke,#dce6ed); background: #fff; }
+.intro-figure > img { display: block; width: 100%; height: auto; object-fit: contain; filter: none; }
+.intro-figure figcaption { margin: 0; padding: 7px 10px; text-align: center; font-size: .7em; color: var(--ui-muted,#586f82); background: #fff; }
+.intro-image-fallback { min-height: 200px; display: flex; flex-direction: column; justify-content: center; padding: 20px; background: var(--surface-soft,#f3f8fb); font-size: .875em; }
+.intro-image-fallback p { margin: 8px 0 0; }
+.intro-steps { padding: 0; margin: 0; list-style: none; counter-reset: intro-step; }
+.intro-steps li { counter-increment: intro-step; display: grid; grid-template-columns: 24px minmax(0,1fr); gap: 8px; font-size: .875em; margin: 0 0 10px; }
+.intro-steps li::before { content: counter(intro-step); width: 24px; height: 24px; display: grid; place-items: center; background: #fff; border-radius: 50%; color: var(--ui-accent,#21618d); font-weight: 700; }
+.intro-footer { padding: 12px 4px 0; }
+.intro-progress { text-align: center; font-size: .75em; color: var(--ui-muted,#586f82); margin: 0 0 10px; }
+.intro-actions { display: grid; grid-template-columns: minmax(0,.8fr) minmax(0,1.4fr); gap: 10px; }
+.intro-screens .intro-next { background: var(--brand-gradient,linear-gradient(120deg,#2464d9,#365bd0)); color: #fff; border-color: transparent; font-weight: 650; }
+.intro-screens .intro-account { width: 100%; margin: 8px 0 0; border-color: transparent; background: transparent; color: var(--ui-accent,#21618d); font-size: .875em; }
+@media (max-width: 370px) { .intro-card { padding: 18px 12px 10px; } .intro-actions { gap: 8px; } }
+@media (prefers-reduced-motion: reduce) { .intro-screens *, .intro-screens *::before { scroll-behavior: auto; transition: none; } }
+
+.intro-content {background:linear-gradient(130deg,#e5f3fb,#eff0fb 60%,#f7eeeb)}
+.intro-card {background:transparent}
+.intro-figure {background:white}
+@media(min-width:850px) {
+  .intro-screens {max-width:940px}
+  .intro-card {display:grid;align-content:center;align-items:start;grid-template-columns:minmax(0,1fr) minmax(260px,.82fr);column-gap:28px;padding:24px}
+  .intro-card>.intro-kicker,.intro-card>h2,.intro-card>.intro-description,.intro-card>.intro-steps {grid-column:1}
+  .intro-card>.intro-figure {grid-column:2;grid-row:1/6;margin:0;align-self:center}
+  .intro-card>.intro-steps {margin-top:12px}
+  .intro-footer {max-width:570px;margin:auto}
+}

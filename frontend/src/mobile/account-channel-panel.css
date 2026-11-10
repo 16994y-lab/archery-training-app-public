@@ -1,0 +1,9 @@
+.account-channel-panel { display:grid; gap:.75rem; padding:1rem; }
+.account-channel-panel h3,.account-channel-panel p { margin:0; }
+.account-channel-panel label,.account-channel-panel form { display:grid; gap:.4rem; }
+.account-channel-panel input,.account-channel-panel select,.account-channel-panel button { font:inherit; min-height:44px; max-width:100%; box-sizing:border-box; }
+.account-channel-panel input { width:100%; }
+.account-channel-panel input[type=checkbox] { width:24px; min-height:24px; }
+.account-channel-panel button { padding:.6rem .8rem; border-radius:.75rem; }
+.account-channel-panel [role=alert] { color:var(--account-error,#a82b22); }
+.account-channel-panel :focus-visible { outline:3px solid var(--accent,#cf941d); outline-offset:2px; }

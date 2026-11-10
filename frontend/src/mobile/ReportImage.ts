@@ -1,0 +1,49 @@
+import { Session, Target, Arrow, allArrows, scoreValue, sessionPlannedArrows, unexecutedGroups } from './domain';
+import { statistics, decimal, percent } from './statistics';
+import { concentration } from '../features/model-alignment/spread-analysis';
+import { scoreExtremes } from './review-data';
+import { savedCoordinateCoverage } from './analysis-insights';
+
+const escapeXml=(s:unknown)=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]!));
+export function reportText(s:Session,sections:string[]) {
+  const st=statistics(allArrows(s)),coverage=savedCoordinateCoverage(s),spatial=statistics(coverage.trusted);
+  const lines=['弓行记 · 训练报告',`${s.date} · ${s.name}`,`${s.conditions.distance}m · ${s.conditions.target.name} · 靶纸 ${s.conditions.size??'未知'}cm · ${s.conditions.bow||'弓种未知'}`,`器材：${s.conditions.equipment?.name??'未填写'}；本机训练记录。`];
+  if(sections.includes('summary'))lines.push(`实际 ${st.n} 箭 / 计划 ${sessionPlannedArrows(s)??'不限'} 箭；未执行 ${unexecutedGroups(s)??0} 组；总分 ${st.total}；加权平均 ${decimal(st.average)}环。`,`9+10+X ${percent(st.yellow)}；X ${percent(st.x)}；普通10 ${percent(st.ten)}；M ${percent(st.miss)}；命中率 ${percent(scoreExtremes(allArrows(s)).hit)}。各比例分母均为全部 ${st.n} 箭（含M），命中指非M箭。`,`可信坐标 ${coverage.trusted.length}/${st.n}（${percent(st.n?coverage.trusted.length/st.n:null)}）；照片参考映射另画方点，数字箭不生成坐标。`);
+  if(sections.includes('ends'))s.ends.forEach((end,i)=>{if(!end.arrows.length)return;const e=scoreExtremes(end.arrows);lines.push(`第${i+1}组 ${end.half}：${end.arrows.map(a=>a.code+(s.conditions.target.face_count>1?`(靶${a.face})`:'')).join(' / ')}；${end.arrows.length}箭 / ${statistics(end.arrows).total}分；最高/最低箭 ${e.max}/${e.min}环，命中率 ${percent(e.hit)}。`);if(sections.includes('notes')){if(end.note)lines.push(`本组备注：${end.note}`);end.arrows.forEach((a,j)=>{if(a.note)lines.push(`第${i+1}组录入位${j+1}备注：${a.note}`);});}});
+  if(sections.includes('spatial'))lines.push(`有位置 ${coverage.trusted.length+coverage.estimated.length}/${st.n} 箭：点靶 ${coverage.target}、照片人工确认 ${coverage.photoManual}、照片参考映射 ${coverage.photoMapped}；数字 ${coverage.numeric} 无位置。`,`可信靶内坐标样本 ${spatial.inside.length}；水平/垂直中心 ${decimal(spatial.circle?.x)} / ${decimal(spatial.circle?.y)}（计分半径；右/上为正）。`,`${(spatial.groups?.groups.length??0)>1?'多个候选中心，各群分别观察，不画统一集中圈':`80%经验集中圈半径 ${decimal(spatial.circle?.radius)}；实际覆盖 ${spatial.circle?.included??0}/${spatial.circle?.count??0} 个可信靶内点`}。${spatial.groups?`${spatial.groups.groups.length}个候选群，${spatial.groups.unassigned.length}个未分群点`:'超过1500靶内点，候选分群未计算'}。`,`可信坐标散布宽/高 ${decimal(spatial.extents?.width)} / ${decimal(spatial.extents?.height)} 个计分半径（含有坐标M）；${s.conditions.size===null?'尺寸未知，无厘米分析':spatial.extents?`约 ${decimal(spatial.extents.width*s.conditions.size*s.conditions.target.sizeRatio/2)} / ${decimal(spatial.extents.height*s.conditions.size*s.conditions.target.sizeRatio/2)}cm`:'没有可信坐标，无法计算厘米散布'}。`,'照片参考映射仅供比较位置，不参加中心、集中圈或散布计算。',s.conditions.target.face_count>1?'三联靶总体统计采用明确的靶心对齐坐标；图像报告同时保留各靶位独立图。':'落点图按本场规则快照绘制。');
+  if(sections.includes('notes'))lines.push(`心得：${s.note||'未填写'}`,`主观体能 ${s.energy??'未填写'}/10；主观疲劳 ${s.fatigue??'未填写'}/10。缺失不补数值。`);
+  lines.push('仅描述真实记录；候选分群不证明动作或器材原因。录入位不是射箭顺序，录入间隔不是射箭节奏。');
+  return lines.join('\n\n');
+}
+function targetSvg(target:Target,arrows:Arrow[],x:number,y:number,size:number) {
+  const st=statistics(arrows),circle=st.circle;
+  const groups=st.groups===null?[]:(st.groups.groups.length>1?st.groups.groups:[st.inside]);
+  const p=(n:number)=>Number(n.toFixed(6));
+  return `<svg x="${x}" y="${y}" width="${size}" height="${size}" viewBox="-1.2 -1.2 2.4 2.4"><rect x="-1.19" y="-1.19" width="2.38" height="2.38" fill="white" stroke="#9eb7ce" stroke-width=".012"/>${[...(target.ring_rules??[])].reverse().map(r=>`<circle r="${p(r.outer_radius_norm*2)}" fill="${escapeXml(r.color)}" stroke="#526273" stroke-width=".004"/>`).join('')}${groups.map((g,i)=>{const c=concentration(g);return c&&g.length>=3?`<circle cx="${p(c.x)}" cy="${p(-c.y)}" r="${p(c.radius)}" stroke="#123d78" stroke-width=".02" fill="none" stroke-dasharray=".045 .02"/><text x="${p(c.x)}" y="${p(-c.y-.035)}" font-size=".08" fill="#123d78" stroke="white" stroke-width=".01" paint-order="stroke">${groups.length>1?`候选${i+1}`:'80%'}</text>`:'';}).join('')}${arrows.map(a=>a.source==='photo'&&a.coordinateEvidence!=='manual-target-confirmed'?`<rect data-point-source="photo-mapped" x="${p(a.x!-.035)}" y="${p(-a.y!-.035)}" width=".07" height=".07" fill="#e88b43" stroke="white" stroke-width=".01"/>`:`<circle data-point-source="${a.source==='photo'?'photo-manual':'target'}" cx="${p(a.x!)}" cy="${p(-a.y!)}" r=".028" fill="${a.source==='photo'?'#7052a5':'#123d78'}" stroke="white" stroke-width=".01"/>`).join('')}<path d="M-.025 0H.025M0-.025V.025" stroke="#123d78" stroke-width=".009"/><text x="1.08" y="-1.07" font-size=".09" fill="#567087">M</text></svg>`;
+}
+export function imageReport(s:Session,sections:string[]) {
+  const arrows=allArrows(s),st=statistics(arrows),coverage=savedCoordinateCoverage(s),plotted=[...coverage.trusted,...coverage.estimated];
+  if(sections.includes('ends')&&arrows.length>1200)throw new Error('本场逐箭记录超过1200箭，单张图像过长。请取消“逐箭记录”后导出概览图；完整逐箭数据仍可导出CSV或JSON，不会截断。');
+  const width=760,parts:string[]=[];let y=36;
+  const line=(text:string,size=18,color='#264765')=>{const chars=Array.from(text),count=Math.floor(684/(size*.94));for(let i=0;i<chars.length||i===0;i+=count){parts.push(`<text x="38" y="${y}" font-size="${size}" fill="${color}">${escapeXml(chars.slice(i,i+count).join(''))}</text>`);y+=size+10;}};
+  const heading=(text:string)=>{y+=18;line(text,24,'#123d78');};
+  line('弓行记 · 训练复盘',30,'#123d78');line(`${s.date} · ${s.name}`);line(`${s.conditions.distance}m · ${s.conditions.target.name} · 靶纸 ${s.conditions.size??'未知'}cm`);line(`${s.conditions.bow||'弓种未知'} · ${s.conditions.equipment?.name??'器材未填写'}`);line('真实本机训练记录',15);
+  if(sections.includes('summary')) {
+    heading('成绩概览');line(`${st.n}箭 / ${st.total}分 / 加权平均 ${decimal(st.average)}环`);line(`计划 ${sessionPlannedArrows(s)??'不限'}箭；原编排未执行 ${unexecutedGroups(s)??0}组，不补M。`);
+    const entries=['X','10','9','8','7','6','5','4','3','2','1','M'].map(c=>[c,st.distribution[c]] as const),max=Math.max(1,...entries.map(([,n])=>n));
+    parts.push(`<line x1="58" x2="704" y1="${y+156}" y2="${y+156}" stroke="#a5b9ca"/>`);
+    entries.forEach(([code,n],i)=>{const x=64+i*53,h=n/max*128;parts.push(`<rect x="${x}" y="${y+156-h}" width="29" height="${h}" fill="${code==='X'?'#ea823d':'#123d78'}"/><text x="${x+14}" y="${y+146-h}" text-anchor="middle" font-size="14">${n}</text><text x="${x+14}" y="${y+177}" text-anchor="middle" font-size="15">${code}</text>`);});y+=206;
+    line('纵轴为箭数；X与普通10分别统计。',15);line(`9+10+X ${percent(st.yellow)} · X ${percent(st.x)} · 普通10 ${percent(st.ten)} · M ${percent(st.miss)}`,17);line(`命中率 ${percent(scoreExtremes(arrows).hit)}；比例分母为全部 ${st.n}箭，命中为非M箭。`,15);line(`有位置 ${plotted.length}/${st.n}；可信坐标 ${coverage.trusted.length}/${st.n}；照片参考映射 ${coverage.photoMapped}；数字 ${coverage.numeric} 无位置。`,15);
+  }
+  if(sections.includes('spatial')) {
+    heading('实际落点与空间分析');
+    const faces=s.conditions.target.face_count>1?[1,2,3]:[1];
+    faces.forEach(face=>{const subset=arrows.filter(a=>a.face===face),trusted=coverage.trusted.filter(a=>a.face===face),mapped=coverage.estimated.filter(a=>a.face===face),stats=statistics(trusted),multiple=(stats.groups?.groups.length??0)>1;line(s.conditions.target.face_count>1?`${face}号靶位 · 独立坐标图`:'本场实际坐标图',20);parts.push(targetSvg(s.conditions.target,plotted.filter(a=>a.face===face),180,y,400));y+=418;line(`${subset.length}箭；有位置 ${trusted.length+mapped.length}/${subset.length}；可信坐标 ${trusted.length}/${subset.length}；靶内${stats.inside.length}点；有坐标M ${stats.located-stats.inside.length}点。`,16);line(`点靶 ${trusted.filter(a=>a.source==='target').length}；照片人工确认 ${trusted.filter(a=>a.source==='photo').length}；照片参考映射 ${mapped.length}；数字 ${subset.filter(a=>a.source==='number').length} 无位置。`,16);line(`水平 / 垂直中心 ${decimal(stats.circle?.x)} / ${decimal(stats.circle?.y)}；RMS ${decimal(stats.circle?.rms)} 个计分半径。`,16);line(multiple?'多个候选中心，各群分别绘圈，不画统一圈。':`80%经验圈：半径 ${decimal(stats.circle?.radius)}；实际覆盖 ${stats.circle?.included??0}/${stats.circle?.count??0} 个可信靶内点。`,16);if(stats.inside.length<3)line('可信靶内少于3点，不绘集中圈。',15);if(stats.groups===null)line('超过1500个可信靶内点，候选分群未计算。',15);line(s.conditions.size===null?'尺寸未知，仅相对坐标，无厘米分析。':stats.extents?`可信坐标含M的宽/高：${decimal(stats.extents.width*s.conditions.size*s.conditions.target.sizeRatio/2)} / ${decimal(stats.extents.height*s.conditions.size*s.conditions.target.sizeRatio/2)} cm。`:'没有可信坐标，无法计算散布。',16);y+=12;});
+    line('右、上为正；单位为计分半径。蓝圆点为点靶，紫圆点为照片人工确认；橙方点为照片参考映射，不参加中心、集中圈或散布计算。',15);line('M不进入靶内集中圈；候选分群只帮助观察，不能据此诊断动作或器材。',15);
+  }
+  if(sections.includes('ends')) {heading('实际逐组记录');s.ends.forEach((end,i)=>{if(!end.arrows.length)return;const e=scoreExtremes(end.arrows);line(`第${i+1}组 ${end.half} · ${end.arrows.length}箭 / ${statistics(end.arrows).total}分`,20);line(end.arrows.map((a,j)=>`${j+1}:${a.code}${s.conditions.target.face_count>1?`(靶${a.face})`:''}`).join('  '),17);line(`最高/最低单箭 ${e.max}/${e.min}环 · 命中率 ${percent(e.hit)}`,15);if(sections.includes('notes')){if(end.note)line(`组备注：${end.note}`,16);end.arrows.forEach((a,j)=>{if(a.note)line(`录入位${j+1}：${a.note}`,16);});}});}
+  if(sections.includes('notes')){heading('心得与主观自评');line(s.note||'未填写心得',18);line(`主观体能 ${s.energy??'未填'}/10 · 主观疲劳 ${s.fatigue??'未填'}/10。缺失不补数值。`,16);}
+  y+=18;line('报告仅描述记录；录入位不是射箭顺序，录入间隔不是射箭节奏。',15);line('分享内容由当前勾选项决定；未包含照片、视频、账号或令牌。',15);
+  if(y>30000)throw new Error('报告图像超过安全高度，请减少所选内容；全部数据仍可用TXT、CSV、JSON导出，不会截断。');
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${y+24}" viewBox="0 0 ${width} ${y+24}" role="img" aria-label="弓行记真实训练报告"><rect width="100%" height="100%" fill="#f5f9fd"/><g font-family="sans-serif" fill="#264765">${parts.join('')}</g></svg>`;
+}

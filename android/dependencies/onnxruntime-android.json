@@ -1,0 +1,49 @@
+{
+  "version": "1.30.0",
+  "source": "https://repo.maven.apache.org/maven2/com/microsoft/onnxruntime/onnxruntime-android/1.30.0/onnxruntime-android-1.30.0.aar",
+  "sha256": "e7fb945e402205f6db858d65bb78d2bdb0812317b383976c9e3bceb4862c73f1",
+  "publishedSHA1": "656d941369b97c730c4dc963799b159667893a45",
+  "bytes": 53040218,
+  "files": {
+    "classes.jar": {
+      "bytes": 141135,
+      "sha256": "65e2e2d76d672253aaf0792a06c71cc40d09b0e2e251ccf925bee7175b91a1b0"
+    },
+    "jni/arm64-v8a/libonnxruntime.so": {
+      "bytes": 32990480,
+      "sha256": "df5d25c72a868dca773597c71e2000756d43fe4d70ade516d3693c54e12e0ada"
+    },
+    "jni/arm64-v8a/libonnxruntime4j_jni.so": {
+      "bytes": 111648,
+      "sha256": "0695257178815f8c58c1719ba07d6d5d91a2b339634328cca2a0a98aa7ff2952"
+    },
+    "jni/armeabi-v7a/libonnxruntime.so": {
+      "bytes": 23311344,
+      "sha256": "d8c6e57af1848c4b9b2571a8864ac53592e57105dc67fb1e7b9e49828e555279"
+    },
+    "jni/armeabi-v7a/libonnxruntime4j_jni.so": {
+      "bytes": 81584,
+      "sha256": "05c34d683a148da634af1997ee31aa4383307cf1daba0c890f15f2cfff2c3171"
+    },
+    "proguard.txt": {
+      "bytes": 293,
+      "sha256": "15fde63961e35c5e59b1cf292fa1f326728e8b47b2c511d7a0622081b5216728"
+    },
+    "jni/x86/libonnxruntime.so": {
+      "bytes": 39266604,
+      "sha256": "2c140256e58dd8b2a8b93020ee973f8c67500f945053da671239d7ae7425ef7f"
+    },
+    "jni/x86/libonnxruntime4j_jni.so": {
+      "bytes": 93620,
+      "sha256": "21576db11fec50c1698bd6f14c9eaac894c5e1024ee3d162c15aa61a4885d501"
+    },
+    "jni/x86_64/libonnxruntime.so": {
+      "bytes": 39348488,
+      "sha256": "f59d4d59d4c71532028d56ab6ca1dae62c3838c7982adfdad7f2560048b89ed9"
+    },
+    "jni/x86_64/libonnxruntime4j_jni.so": {
+      "bytes": 100032,
+      "sha256": "fba30194109597cca36512e86c8f30d18951a0bdaa177ea680b562f9d8ea77a2"
+    }
+  }
+}

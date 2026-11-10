@@ -1,0 +1,63 @@
+.choice-native{display:none!important}
+.choice-trigger{box-sizing:border-box;display:flex;align-items:center;justify-content:space-between;gap:12px;width:100%;min-width:0;min-height:44px;padding:10px 12px;border:1px solid var(--surface-stroke,#dce7f3);border-radius:12px;background:var(--surface-soft,#f7f9fc);color:var(--ui-ink,#20364c);font:inherit;font-size:15px;line-height:1.45;text-align:left;cursor:pointer}
+.choice-trigger>span{min-width:0;overflow-wrap:anywhere}.choice-trigger>svg{flex:none;width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;color:var(--ui-muted)}
+.choice-trigger:disabled{opacity:.5;cursor:default}.choice-trigger:focus-visible,.choice-options button:focus-visible,.choice-cancel:focus-visible{outline:3px solid var(--brand,#2464d9);outline-offset:2px}
+.choice-options{display:grid;gap:5px;margin:8px 0 12px;max-height:54vh;overflow:auto;overscroll-behavior:contain}
+.choice-options>button{display:flex;align-items:center;gap:12px;justify-content:space-between;width:100%;min-height:48px;padding:12px;border:0;border-radius:12px;background:transparent;color:var(--ui-ink,#20364c);font:inherit;font-size:15px;line-height:1.5;text-align:left}
+.choice-options>button>span:first-child{min-width:0;overflow-wrap:anywhere}.choice-options>button[aria-selected=true]{background:var(--brand-tint,#edf3ff);color:var(--brand,#2464d9);font-weight:600}.choice-options>button:disabled{opacity:.45}.choice-check{display:grid;place-items:center;width:22px;height:22px;flex:none;border:1px solid var(--surface-stroke,#dce7f3);border-radius:50%;font-size:13px}.choice-options>button[aria-selected=true] .choice-check{background:var(--brand,#2464d9);border-color:var(--brand,#2464d9);color:#fff}
+.choice-cancel{width:100%;min-height:44px;padding:10px;border:0;border-radius:12px;font:inherit;color:var(--ui-ink,#20364c);background:var(--surface-soft,#f7f9fc)}
+.choice-trigger{gap:8px;padding:8px 10px;font-size:14px}
+.choice-trigger>.choice-label,.choice-options>button>.choice-label{display:block;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal;text-align:left}
+.choice-label-content{display:inline-block;white-space:nowrap;max-width:none;vertical-align:top}
+.choice-label.is-running{text-overflow:clip}
+.choice-label.is-running .choice-label-content{animation:choice-label-scroll var(--choice-duration,8s) linear infinite}
+.choice-trigger>.choice-leading,.choice-options .choice-leading{width:20px;height:20px;flex:none;color:var(--brand,#2464d9)}
+.choice-trigger>.choice-chevron{width:16px;height:16px}
+.choice-options{gap:3px;margin:4px 0 8px}.choice-options>button{gap:9px;padding:9px 10px;min-height:46px;font-size:14px}
+@keyframes choice-label-scroll{0%,12%{transform:translateX(0)}75%,90%{transform:translateX(calc(-1 * var(--choice-travel,0px)))}100%{transform:translateX(0)}}
+@media(prefers-reduced-motion:reduce){.choice-label.is-running{text-overflow:ellipsis}.choice-label.is-running .choice-label-content{animation:none}.choice-options>button>.choice-label{white-space:normal;overflow:visible}.choice-options .choice-label-content{white-space:normal}}
+.choice-copy{display:block;flex:1;min-width:0;text-align:left;overflow:hidden}
+.choice-copy>.choice-label{display:block;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;overflow-wrap:normal}
+.choice-copy>.choice-label.is-running{text-overflow:clip}
+.choice-copy>small{display:block;font-size:11px;line-height:1.4;color:var(--ui-muted,#52667e);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+@media(prefers-reduced-motion:reduce){.choice-copy>.choice-label.is-running{text-overflow:ellipsis}.choice-options .choice-copy>.choice-label{white-space:normal;overflow:visible}}
+
+/* Candidate only; never written to product source. Preserve the existing running animation. */
+.choice-trigger[data-appearance="aurora"] {
+  min-height:48px; gap:12px; padding:9px 14px; border:1px solid #c2d2e3;
+  border-radius:12px; background:#fff; color:#203850; font-size:15px;
+}
+.choice-trigger[data-appearance="aurora"]:not(:disabled):hover {border-color:#849ec6;background:#f8fbff}
+.choice-trigger[data-appearance="aurora"]:focus-visible {outline:3px solid #7d9edd;outline-offset:2px}
+.choice-options[data-appearance="aurora"] {padding:3px;gap:5px;scrollbar-color:#bccce3 #f6f9fc}
+.choice-options[data-appearance="aurora"] button {min-height:48px;padding:10px 14px;border:1px solid transparent}
+.choice-options[data-appearance="aurora"] button[aria-selected="true"] {
+  border-color:#bed1f2;background:linear-gradient(105deg,#e3f3ff,#e7eafd);color:#183f81;
+}
+.choice-options[data-appearance="aurora"] .choice-label,
+.choice-options[data-appearance="aurora"] .choice-label .choice-label-content,
+.choice-options[data-appearance="aurora"] .choice-copy small {
+  display:block; width:100%; white-space:normal; overflow-wrap:anywhere;
+  animation:none; text-overflow:clip;
+}
+.choice-options[data-appearance="aurora"] button:not([aria-selected="true"]) .choice-check {border-color:transparent}
+@media(min-width:750px) {
+  .adm-popup-body:has(.choice-options[data-appearance="aurora"]) {
+    inset:0!important;margin:auto;height:fit-content;
+    width:min(440px,calc(100vw - 32px));border-radius:20px;transform:none!important;
+  }
+}
+.choice-copy>.choice-label:not(.is-running) .choice-label-content {
+  display:block;
+  width:100%;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+@media(prefers-reduced-motion:reduce) {
+  .choice-trigger .choice-copy>.choice-label .choice-label-content {
+    display:block;
+    width:100%;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+}

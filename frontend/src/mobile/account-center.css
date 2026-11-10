@@ -1,0 +1,57 @@
+.account-center,.account-detail,.reward-center{width:100%;max-width:940px;margin-inline:auto;color:#1f3548}
+.account-access .account-back-link.button,.reward-center .account-back-link.button{display:inline-flex;align-items:center;min-height:44px;width:auto;margin:0 0 8px;padding:8px 4px;background:transparent;color:#536577;border:0;box-shadow:none;font-size:14px}
+.account-group-label,.partner-section-heading h2{font-size:15px;font-weight:700;letter-spacing:.035em;color:#3e5464;margin:24px 2px 11px}
+.account-destinations{overflow:hidden;border:1px solid #d8e4e9;border-radius:19px;background:rgba(255,255,255,.94)}
+.account-destinations .account-destination{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:16px;width:100%;max-width:none;min-height:76px;margin:0;padding:15px 20px;text-align:start;font:inherit;line-height:1.4;background:transparent;color:#19354a;cursor:pointer;box-shadow:none;border:0;border-radius:0}
+.account-destinations .account-destination+.account-destination{border-top:1px solid #e4edf0}
+.account-destination:hover,.account-destination:focus-visible{background:#f3f8fb}
+.account-destination:focus-visible{outline:2px solid #3277b6;outline-offset:-3px}
+.account-destination strong,.account-destination small{display:block}
+.account-destination strong{font-size:16px;font-weight:650}
+.account-destination small{margin-top:4px;font-size:13px;color:#536777}
+.account-symbol{display:grid;place-items:center;width:42px;height:42px;border-radius:14px;color:#285c9c;background:#eaf1fd}
+.account-tone-mint .account-symbol{color:#226f63;background:#e0f3ec}
+.account-tone-violet .account-symbol{color:#6c54a1;background:#f0eafa}
+.account-tone-rose .account-symbol{color:#9c5454;background:#f9e9e8}
+.account-chevron{font-size:24px;color:#647e8c;font-weight:400}
+.account-notice,.reward-status{padding:12px 15px;background:#fff7df;border:1px solid #e6ce91;border-radius:14px;font-size:14px;line-height:1.65}
+.account-deletion-detail .deletion-flag{display:inline-block;color:#923b37;background:#fff0ed;border:1px solid #f1d0c9;border-radius:20px;font-size:12px;font-weight:700;padding:3px 10px}
+.deletion-intro,.deletion-verify,.deletion-review{line-height:1.65}
+.deletion-intro h2,.deletion-verify h2,.deletion-review h2{font-size:19px}
+.deletion-inventory summary,.partner-rules summary{font-weight:600;color:#305e79;cursor:pointer;padding:10px 0;min-height:44px;box-sizing:border-box}
+.deletion-inventory dl{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;gap:0;margin:2px 0 12px}
+.deletion-inventory dt,.deletion-inventory dd{padding:6px 9px;border-bottom:1px solid #e5ecee}
+.deletion-inventory dd{margin:0;font-variant-numeric:tabular-nums;font-weight:650}
+.deletion-verify [role=group]{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.deletion-verify .button[aria-pressed=true]{background:#eaf2fb;color:#165c93;border-color:#8eb0cd}
+.deletion-final{line-height:1.65}
+.deletion-final .check{display:flex;gap:9px;align-items:flex-start}
+.deletion-final .check input{margin-top:5px;width:18px;height:18px;flex:none}
+.deletion-final .button{margin:8px 8px 0 0}
+@media(min-width:760px){.account-center .account-destinations{max-width:none}.account-destinations .account-destination{padding:17px 24px;min-height:80px}.account-group-label{margin-top:28px}}
+@media(max-width:380px){.account-destinations .account-destination{padding:13px;gap:11px}.account-symbol{width:37px;height:37px;border-radius:12px}}
+@media(min-width:1050px) {
+  .account-center .account-destinations:has(>.account-destination:nth-child(2)) {
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;
+    overflow:visible;border:0;background:none;
+  }
+  .account-center .account-destinations:has(>.account-destination:nth-child(2))>.account-destination {
+    display:grid;grid-template:44px auto / minmax(0,1fr) auto;gap:15px 5px;align-content:start;
+    height:100%;min-height:150px;padding:18px 20px;border:1px solid #d7e3ed;
+    border-radius:16px;background:#fff;
+  }
+  .account-center .account-destinations:has(>.account-destination:nth-child(2))>.account-destination:is(:hover,:focus-visible) {border-color:#96b4d7;background:#f5f9ff}
+  .account-center .account-destinations:has(>.account-destination:nth-child(2)) .account-destination>span:nth-child(2) {grid-column:1/-1;grid-row:2}
+  .account-center .account-destinations:has(>.account-destination:nth-child(2)) .account-chevron {grid-column:2;grid-row:1}
+}
+
+.account-access:is(.account-center,.account-detail,.account-security){max-width:940px}
+.account-security .account-card{max-width:650px}
+.legacy-invite-status {margin:16px 0}
+.legacy-invite-status>summary {min-height:44px;align-content:center;color:#475f79;cursor:pointer;font-size:14px}
+@media(min-width:750px) {
+  .adm-popup-body:has(.deletion-final),body:has(.records-cloud) .adm-popup-body.app-popup {
+    inset:0!important;margin:auto;height:fit-content;width:min(520px,calc(100vw - 32px));
+    transform:none!important;border-radius:20px;
+  }
+}
