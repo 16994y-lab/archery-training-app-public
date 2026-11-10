@@ -14,6 +14,7 @@
     "build": "npm run build:legacy && npm run build:workspace",
     "preview": "vite preview",
     "check:mobile": "tsc -p tsconfig.mobile.json --noEmit",
+    "build:android-offline": "npm run check:mobile && vite build --config vite.android-offline.config.ts",
     "build:legacy": "tsc -b && vite build",
     "check:workspace": "tsc -p tsconfig.workspace.json --noEmit",
     "build:workspace": "npm run check:workspace && vite build --config vite.workspace.config.ts"

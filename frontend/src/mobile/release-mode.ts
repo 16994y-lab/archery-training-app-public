@@ -1,3 +1,8 @@
+declare const __GONGXINGJI_OFFLINE_ANDROID__: boolean | undefined;
+
+/** Only the public offline Android build defines this compile-time constant. */
+export const offlineAndroid = typeof __GONGXINGJI_OFFLINE_ANDROID__ !== 'undefined' && __GONGXINGJI_OFFLINE_ANDROID__;
+
 /** Set by the reviewed mobile build configuration, never by saved user data. */
 export const teamSharingReady =
   (import.meta as ImportMeta & {env?: Record<string,string>}).env?.VITE_TEAM_SHARING_READY === 'true';

@@ -17,6 +17,7 @@
 node_modules/
 dist/
 dist-mobile/
+dist-offline-android/
 dist-workspace/
 build/
 .venv/

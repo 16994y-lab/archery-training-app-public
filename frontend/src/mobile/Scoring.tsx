@@ -7,7 +7,7 @@ import { Metrics, Spatial, Distribution } from './Analysis';
 import { PhotoEntry, VideoEntry } from './media';
 import { ScoringCircles } from './SpreadOverlay';
 import { GroupNotes, SessionSettings } from './ScoringExtras';
-import { videoCoachReady } from './release-mode';
+import { offlineAndroid, videoCoachReady } from './release-mode';
 import {sessionTimeLabel} from './session-label';
 
 // Run inside the existing repository transaction: confirm and advance commit together.
@@ -139,10 +139,10 @@ export function Scoring({sessionId,review=false,onBack,endIndex}:{sessionId:stri
    <div className="score-entry-modes" role="group" aria-label="录入方式">
     <Button aria-pressed={mode==='target'} className={mode==='target'?'selected':''} aria-controls={entryId} onClick={()=>void chooseMode('target')}>点靶录入</Button>
     <Button aria-pressed={mode==='number'} className={mode==='number'?'selected':''} aria-controls={entryId} onClick={()=>void chooseMode('number')}>数字录入</Button>
-    {!review&&<Button aria-pressed={mode==='photo'} className={mode==='photo'?'selected':''} disabled={editing||end.confirmed} aria-controls={entryId} onClick={()=>void chooseMode('photo')}>照片录入<span className="score-beta">测试版</span></Button>}
+    {!offlineAndroid&&!review&&<Button aria-pressed={mode==='photo'} className={mode==='photo'?'selected':''} disabled={editing||end.confirmed} aria-controls={entryId} onClick={()=>void chooseMode('photo')}>照片录入<span className="score-beta">测试版</span></Button>}
    </div>
    <section id={entryId} className={`score-entry-panel ${mode==='photo'?'score-entry-photo':''}`} aria-label={mode==='target'?'点靶录入区':mode==='number'?'数字录入区':'照片录入区'}>
-    {mode==='photo'?<PhotoEntry key={`${s.id}:${end.id}:${face}`} session={s} face={face} onBack={()=>setMode('target')} onDirtyChange={setPhotoDirty}/>:<>
+    {!offlineAndroid&&mode==='photo'?<PhotoEntry key={`${s.id}:${end.id}:${face}`} session={s} face={face} onBack={()=>setMode('target')} onDirtyChange={setPhotoDirty}/>:<>
      <LayoutPicker target={s.conditions.target} face={face} setFace={setFace}/>
      <p className="score-entry-hint" role="status">{editing?(mode==='number'?'选择环值修改此箭；数字改分会清除原坐标。':'轻点靶面调整此箭的位置；双指缩放不记箭。'):cannotAdd?'本组已录完。点击上方成绩可修改，或保存后继续。':mode==='target'?'轻点记一箭；双指缩放，放大后拖动查看。':'轻点环值记一箭；数字录入不生成落点。'}</p>
      {mode==='number'
