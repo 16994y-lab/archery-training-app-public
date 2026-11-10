@@ -20,7 +20,7 @@ declare const __ANDROID_VERSION__:string;
 const APP_VERSION=typeof __ANDROID_VERSION__==='undefined'?'本地预览':__ANDROID_VERSION__;
 export const ACCESSORY_LABELS:Record<string,string>={riser:'弓把 / 弓身',limbs:'弓片 / 磅数',arrows:'箭杆 / 长度 / 挠度',sight:'瞄准器',stabilizer:'平衡杆',string:'弓弦',tab:'护指 / 撒放器',other:'其他配件'};
 const AVATARS:Record<string,string>={initial:'',bow:'🏹',target:'◎',star:'★'};
-function ProfileAvatar({name,avatar}:{name:string;avatar?:string}){const content=AVATARS[avatar??'initial']||Array.from(name.trim())[0]||'弓';return <span className={`profile-avatar profile-avatar-${avatar??'initial'}`} aria-label={`头像：${avatar==='initial'||!avatar?'姓名首字':'预设图案'}`}>{content}</span>;}
+export function ProfileAvatar({name,avatar}:{name:string;avatar?:string}){const content=AVATARS[avatar??'initial']||Array.from(name.trim())[0]||'弓';return <span className={`profile-avatar profile-avatar-${avatar??'initial'}`} aria-label={`头像：${avatar==='initial'||!avatar?'姓名首字':'预设图案'}`}>{content}</span>;}
 
 export function ProfileHome(){
  const {data,update,open,tell}=useApp(),status=useSyncExternalStore(cloudSync.subscribe,cloudSync.getStatus,cloudSync.getStatus);

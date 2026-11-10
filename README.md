@@ -31,10 +31,10 @@ node --test tests/*.test.mjs
 
 ## 安卓离线开发版
 
-[安卓打包教程](docs/ANDROID_OFFLINE_DEV.md)介绍如何从公开源码生成独立的调试 APK，在手机上离线训练、记分和复盘。
+[安卓打包教程](docs/ANDROID_OFFLINE_DEV.md)介绍如何从公开源码生成独立的调试 APK，在手机上离线查看精选资讯和赛历，以及训练、记分和复盘。
 
 ## 发布范围
 
-此快照提供源码与本地构建所需的基础配置。随附基础图标与 Barlow 字体的原许可。资讯正文使用空的本地数据模板。正式服务配置、新闻图片和其他媒体、模型、签名材料、Android 打包脚本和安装包单独管理。网页可构建，移动端可运行类型检查，正式 Android 包需要这些额外输入。
+此快照提供源码与本地构建所需的基础配置。随附基础图标与 Barlow 字体的原许可。安卓离线开发版随附精选资讯、赛事快照和两张授权配图。正式服务配置、完整资讯数据、模型、正式签名材料和安装包单独管理。网页可构建，移动端可运行类型检查。
 
-项目源码采用 [MIT 许可](LICENSE)。随附的 Barlow 字体继续适用其 [SIL Open Font License](frontend/public/fonts/OFL-Barlow.txt)。
+项目源码采用 [MIT 许可](LICENSE)。Barlow 字体适用 [SIL Open Font License](frontend/public/fonts/OFL-Barlow.txt)，随附配图适用各自的 [CC BY 许可](docs/ANDROID_OFFLINE_DEV.md#配图来源及许可)。

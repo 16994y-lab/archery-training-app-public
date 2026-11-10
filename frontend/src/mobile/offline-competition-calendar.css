@@ -1,0 +1,80 @@
+.meet-page {
+  --meet-ink:#213f5c;
+  --meet-secondary:#506a7e;
+  --meet-line:#d7e4ee;
+  width:100%;
+  max-width:760px;
+  margin:12px auto 28px;
+  color:var(--meet-ink);
+}
+.meet-filters {display:grid;grid-template-columns:1fr .85fr 1.15fr;gap:8px;margin:0 0 14px}
+.meet-filters .field {min-width:0;margin:0}
+.meet-filters .field>label {display:block;margin:0 0 5px;font-size:12px;color:var(--meet-secondary)}
+.meet-filters .choice-trigger {gap:5px;padding-inline:8px}
+@media(max-width:480px){.meet-filters .choice-trigger .choice-leading {display:none}}
+.meet-month,.meet-detail-block,.meet-event-list,.meet-empty {border:1px solid var(--meet-line);border-radius:18px;background:var(--surface,#fff)}
+.meet-month {padding:14px clamp(8px,3vw,18px);background:linear-gradient(138deg,#edf7fc 0%,#f6f7ff 30%,#fff 60%)}
+.meet-month-head,.meet-list-heading {display:flex;align-items:center;gap:10px}
+.meet-month-head {justify-content:space-between;padding:0 5px 8px}
+.meet-month-head h2,.meet-list-heading h2 {margin:0;font-size:19px;color:var(--meet-ink)}
+.meet-month-head small {display:inline-flex;align-items:center;gap:6px;color:var(--meet-secondary)}
+.meet-month i {display:block;width:5px;height:5px;border-radius:50%;background:#246b9f}
+.meet-grid {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:2px;text-align:center}
+.meet-weekday {padding:4px 0;color:var(--meet-secondary);font-size:12px}
+.meet-page .meet-day {position:relative;display:grid;place-items:center;min-width:0;width:100%;min-height:42px;padding:0;border:1px solid transparent;border-radius:10px;font:inherit;font-size:14px;font-variant-numeric:tabular-nums;color:#526979}
+.meet-page button.meet-active-day {background:#e7f1fc;color:#154e7e;font-weight:650;cursor:pointer}
+.meet-active-day i {position:absolute;bottom:5px}
+.meet-page .meet-day[aria-pressed=true] {background:#245989;color:#fff}
+.meet-active-day[aria-pressed=true] i {background:#fff}
+.meet-page .meet-day[aria-current=date] {border-color:#347da7}
+.meet-list-heading {min-height:48px;margin:10px 2px 2px}
+.meet-list-heading>span,.meet-row-meta,.meet-row-info,.meet-checked {font-size:13px;color:var(--meet-secondary)}
+.meet-list-heading>button,.meet-empty button {min-height:44px;background:transparent;border:0;color:#195b8a;font:inherit;font-size:14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+.meet-list-heading>button {margin-left:auto}
+.meet-event-list,.meet-links {list-style:none;padding:0;margin:0}
+.meet-event-list {overflow:hidden}
+.meet-event-list li+li {border-top:1px solid var(--meet-line)}
+.meet-event-list a {position:relative;display:grid;gap:5px;min-width:0;padding:15px 35px 15px 16px;color:inherit;text-decoration:none;overflow-wrap:anywhere}
+.meet-event-list strong {font-size:16px;line-height:1.5}
+.meet-row-info {line-height:1.6}
+.meet-entry-state {width:fit-content;padding:2px 7px;border-radius:6px;background:#e9f3f5;color:#245c67;font-size:12px;line-height:1.55}
+.meet-entry-closed {background:#f4ede5;color:#73512e}
+.meet-closed-label {color:#73512e}
+.meet-chevron {position:absolute;right:14px;top:50%;transform:translateY(-50%);color:#517492;font-size:21px}
+.meet-empty {padding:14px 16px;color:var(--meet-secondary)}
+.meet-empty p {margin:0}
+.meet-open-intro {margin:18px 2px 14px}
+.meet-open-intro h2 {margin:0 0 5px;font-size:21px}
+.meet-open-intro p {margin:0;color:var(--meet-secondary);font-size:14px;line-height:1.65}
+.meet-page .meet-area-only {grid-template-columns:minmax(120px,210px)}
+.meet-row-eligibility {font-size:14px;line-height:1.6;color:var(--meet-ink)}
+.meet-empty a {display:inline-flex;align-items:center;min-height:44px;color:#195b8a}
+.meet-links .meet-entry-link {font-weight:650;color:#175e55}
+.meet-detail-head {margin:10px 0 16px;padding:20px 18px;background:linear-gradient(130deg,#dbf2f4,#edf1ff 65%,#fff3e7);border:1px solid var(--meet-line);border-radius:18px;overflow-wrap:anywhere}
+.meet-detail-head h2 {margin:8px 0 12px;font-size:clamp(21px,5.6vw,30px);line-height:1.4}
+.meet-detail-head p {margin:3px 0;font-size:14px;line-height:1.65}
+.meet-detail-head .meet-kicker {font-size:13px;color:#285a84;font-weight:650}
+.meet-kicker span {padding:0 3px}
+.meet-detail-head .meet-date {font-weight:650}
+.meet-detail-head small {display:block;margin-top:6px;color:var(--meet-secondary);line-height:1.6}
+.meet-detail-photo {margin:12px 0;overflow:hidden;border:1px solid var(--meet-line);border-radius:14px;background:var(--surface,#fff)}
+.meet-detail-photo img {display:block;width:100%;height:auto;max-height:300px;object-fit:contain;background:var(--surface-soft,#f4f7fc)}
+.meet-detail-photo figcaption {padding:8px 12px;color:var(--meet-secondary);font-size:12px;line-height:1.6}
+.meet-detail-block {margin:12px 0;padding:16px 18px;overflow-wrap:anywhere}
+.meet-detail-block h3 {margin:0 0 10px;font-size:17px}
+.meet-detail-block p,.meet-detail-block dd,.meet-updates {font-size:15px;line-height:1.75}
+.meet-detail-block p,.meet-detail-block dl {margin:8px 0}
+.meet-detail-block dt {margin-top:10px;font-size:13px;color:var(--meet-secondary)}
+.meet-detail-block dd {margin:2px 0 8px}
+.meet-updates {margin:6px 0;padding-left:1.4em}
+.meet-links {display:flex;flex-wrap:wrap;gap:0 16px}
+.meet-links a {display:inline-flex;align-items:center;min-height:44px;gap:5px;color:#195b8a;text-underline-offset:3px;font-size:14px}
+.meet-checked {margin:15px 4px}
+.meet-page :is(a,button):focus-visible {outline:3px solid #28699c;outline-offset:-3px}
+.meet-detail-head h2:focus {outline:0}
+@media(min-width:640px) {
+  .meet-grid {gap:3px}
+  .meet-filters {max-width:530px;gap:14px}
+  .meet-month,.meet-detail-block,.meet-detail-head {padding:20px 24px}
+  .meet-page .meet-day {min-height:44px}
+}

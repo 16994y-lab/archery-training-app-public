@@ -1,6 +1,6 @@
 # 弓行记安卓离线开发版
 
-这套模板从公开源码生成「弓行记 · 离线开发版」。训练、手动记分和复盘在本机运行。应用的安装标识是 `app.gongxingji.training.offline`，本机记录保存在这个应用自己的数据目录。
+这套模板从公开源码生成「弓行记 · 离线开发版」。训练、记分、复盘、代表性资讯和本机资料均可离线使用。应用的安装标识是 `app.gongxingji.training.offline`，本机记录保存在这个应用自己的数据目录。
 
 ## 1. 准备工具
 
@@ -40,6 +40,15 @@ adb install -r android/offline-dev/build/Gongxingji-offline-dev.apk
 3. 选择「结束训练」和「结束并查看分析」。如果提示还有未录入的箭，选择仅保存已经录入的 3 箭。核对本场为 3 箭、总分 20。
 4. 在系统设置里强制停止**开发版**，再从桌面打开它。进入「复盘」点开刚才的训练，核对 3 箭、总分 20 和逐箭成绩。测试后恢复手机原来的联网设置。
 
-开发版的安装标识、调试签名与正式版各自独立。该模板的构建范围是本机个人训练和复盘，云账号、资讯、照片模型、官方应用更新与正式发布使用各自的流程。
+开发版的安装标识、调试签名与正式版各自独立。「资讯」使用带来源和核对日期的本地选读与赛历。照片可逐箭人工核对，模拟靶纸的练习结果留在练习页。本机训练记录可复盘，海报与单场数据可通过系统文件选择器保存。账号、云同步、团队和应用更新页面会显示其离线状态。
 
 [Android 命令行构建](https://developer.android.com/build/building-cmdline) · [Android 应用签名](https://developer.android.com/studio/publish/app-signing)
+
+## 配图来源及许可
+
+下列原图均未修改，分别适用所列许可。
+
+| 文件 | 署名与出处 | 许可 |
+| --- | --- | --- |
+| `arena-carioca-3.jpg` | Carol Delmazo / Brasil2016.gov.br，[Arena Carioca 3，2016](https://commons.wikimedia.org/wiki/File:Arena_Carioca_3.jpg) | [CC BY 3.0 Brasil](https://creativecommons.org/licenses/by/3.0/br/) |
+| `plos-one-stability-study-figure-1.png` | © 2023 Shinohara 等 / PLOS ONE，[原论文图 1](https://doi.org/10.1371/journal.pone.0285223.g001) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |

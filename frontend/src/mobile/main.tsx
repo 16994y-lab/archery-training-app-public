@@ -10,7 +10,8 @@ import { BottomNavigation } from './Navigation';
 import {DesktopUserShell} from './DesktopUserShell';
 import {chooseLoginDestination,loginLanding,workspacePath} from './login-destination';
 const WorkspaceApp=React.lazy(()=>import('../workspace/WorkspaceApp').then(module=>({default:module.WorkspaceApp})));
-import { News } from './News';
+import {OfflineAbout,OfflineDataManagement,OfflineFeature,OfflinePersonalProfile,
+ OfflineProfileHome,OfflineProfileSettings,OfflineUserGuide} from './OfflineProfilePages';
 import { PromotionEntry } from './PromotionEntry';
 import { copy, Data, defaultConditions, initialData, newPlan, Plan, resumeSession, scoreBlock, setTemporaryHalves, startSession, uid } from './domain';
 import { exportText, repository } from './store';
@@ -46,12 +47,13 @@ import {FirstBatchHeader} from './FirstBatchHeader';
 
 class ErrorBoundary extends React.Component<{children:React.ReactNode},{error:string|null}>{state={error:null as string|null};static getDerivedStateFromError(error:Error){return {error:error.message};}render(){if(this.state.error)return <main><h1>页面无法继续显示</h1><p>已保存的训练没有清空，请重新打开。</p><p>{this.state.error}</p><Button onClick={()=>window.location.reload()}>重新打开</Button></main>;return this.props.children;}}
 const routes=['team','community','news','training','plans','plan','plan-detail','program','programs','calendar','drafts','motion','score','history','history-all','insights','trends','compare','detail','reflection','report','group','profile','settings','personal','support','feedback','rewards','announcements','equipment-list','equipment','accessories','accessory','goals','goal','targets','target','account','legacy-account','data','about','guide','intro','promotion'];
-const offlineRoutes=['training','plans','plan','plan-detail','program','programs','calendar','drafts','score','history','history-all','insights','trends','compare','detail','reflection','group','profile','equipment-list','equipment','accessories','accessory','goals','goal','targets','target'];
-const allowedRoutes=offlineAndroid?offlineRoutes:routes;
 if(!offlineAndroid&&location.hash.startsWith('#/team?'))rememberTeamInvitation(location.hash.split('?')[1]||'');
 if(!offlineAndroid&&!window.Gongxingji&&workspacePath(location.hash.slice(1).split('?')[0]))chooseLoginDestination('coach');
 const AccountBoundary=communityTestOnly?StartupAccount:React.Fragment;
 const DeletionBoundary=offlineAndroid?React.Fragment:AccountDeletionBoundary;
+const News=offlineAndroid
+ ?React.lazy(()=>import('./OfflineNews').then(module=>({default:module.OfflineNews})))
+ :React.lazy(()=>import('./News').then(module=>({default:module.News})));
 function App(){
  const [data,setData]=useState<Data>(initialData),[loaded,setLoaded]=useState(false),[loadError,setLoadError]=useState(''),[busy,setBusy]=useState(false),[saveError,setSaveError]=useState('');
  const lock=useRef(false),[question,setQuestion]=useState<{title:string;body:string;choices:string[]}|null>(null),answer=useRef<((n:number)=>void)|null>(null);
@@ -59,7 +61,7 @@ function App(){
  const configRef=useRef(config);configRef.current=config;
  const setCurrentConfig=(next:typeof config)=>{configRef.current=next;setConfig(next);};
  const startReceipt=useRef<{requestId:string;sessionId:string;epoch:number}|null>(null),startFlight=useRef(false),beginFlight=useRef(false),resumeFlight=useRef(false);
- const location=useLocation(),navigate=useNavigate(),navType=useNavigationType(),requestedRoute=location.pathname.slice(1)||'training';const route={name:!offlineAndroid&&!window.Gongxingji&&workspacePath(location.pathname)?'workspace':allowedRoutes.includes(requestedRoute)&&(requestedRoute!=='motion'||videoCoachReady)?requestedRoute:'training',id:new URLSearchParams(location.search).get('id')??undefined};
+ const location=useLocation(),navigate=useNavigate(),navType=useNavigationType(),requestedRoute=location.pathname.slice(1)||'training';const route={name:!offlineAndroid&&!window.Gongxingji&&workspacePath(location.pathname)?'workspace':routes.includes(requestedRoute)&&(requestedRoute!=='motion'||videoCoachReady||offlineAndroid)?requestedRoute:'training',id:new URLSearchParams(location.search).get('id')??undefined};
  const accountStatus=useSyncExternalStore(cloudSync.subscribe,cloudSync.getStatus,cloudSync.getStatus);
  const showPrivateNotices=!communityTestOnly||accountStatus.localAllowed===true;
  const returnFocus=useRef(new Map<string,string>());
@@ -106,7 +108,7 @@ function App(){
  }
 
  if(name==='adjust'){const s=repository.data.sessions.find(s=>s.id===id);if(!s)return;const p=s.plan?copy(s.plan):newPlan();p.id=uid();p.name=s.name+' · 下次调整';p.conditions=copy(s.conditions);p.archived=false;if(!s.plan)p.blocks=[{...scoreBlock(),ends:Math.max(1,s.ends.filter(e=>e.arrows.length).length),arrows:s.ends[0]?.capacity??6}];setInitialPlan(p);navigate('/plan');return;}
- if(!allowedRoutes.includes(name)||(name==='motion'&&!videoCoachReady))return;
+ if(!routes.includes(name)||(name==='motion'&&!videoCoachReady&&!offlineAndroid))return;
  const path='/'+name+(id?'?id='+encodeURIComponent(id):'');if(path===location.pathname+location.search)return;
  const marker=document.activeElement?.closest<HTMLElement>('[data-return-focus]')?.dataset.returnFocus;
  if(marker)returnFocus.current.set(location.key,marker);else returnFocus.current.delete(location.key);
@@ -138,8 +140,8 @@ function App(){
  let content:React.ReactNode;
  switch(route.name){
  case 'workspace':content=<React.Suspense fallback={<BrandLoading/>}><WorkspaceApp onUser={()=>open('training')}/></React.Suspense>;break;
- case 'team':content=<MyTeam onBack={goBack}/>;break;
- case 'community':case 'news':content=<News/>;break;
+ case 'team':content=offlineAndroid?<OfflineFeature feature="team" onBack={goBack}/>:<MyTeam onBack={goBack}/>;break;
+ case 'community':case 'news':content=<React.Suspense fallback={<BrandLoading/>}><News/></React.Suspense>;break;
  case 'training':content=<TrainingHome onStart={begin} onEdit={editPlan}/>;break;
  case 'plans':content=<PlanLibrary onBack={goBack} onEdit={editPlan}/>;break;
  case 'plan-detail':content=<PlanDetail id={route.id!} onBack={goBack} onStart={begin} onEdit={editPlan}/>;break;
@@ -148,7 +150,7 @@ function App(){
  case 'programs':content=<ProgramList onBack={goBack}/>;break;
  case 'calendar':content=<CalendarPage onBack={goBack} onStart={begin}/>;break;
  case 'drafts':content=<Drafts onBack={goBack}/>;break;
- case 'motion':content=videoCoachReady?<MotionOverview onBack={goBack}/>:<TrainingHome onStart={begin} onEdit={editPlan}/>;break;
+ case 'motion':content=offlineAndroid?<><Back title="动作辅助" onBack={goBack}/><Panel title="离线预览"><p>动作分析需要另外安装本机模型。可以继续使用训练计划、点靶和手动记分。</p><Button onClick={()=>open('training')}>返回训练</Button></Panel></>:videoCoachReady?<MotionOverview onBack={goBack}/>:<TrainingHome onStart={begin} onEdit={editPlan}/>;break;
  case 'score':content=data.activeId?<Scoring key={data.activeId} sessionId={data.activeId}/>:<><FirstBatchHeader eyebrow="训练 / 逐箭记录" title="开始记分" description="选好弓种、距离和靶面，就可以记录第一箭。"/><div className="gx-entry-actions"><Button kind="primary" onClick={()=>begin(null)}>新开训练</Button><Button onClick={()=>open('plans')}>选择可复用计划</Button></div></>;break;
  case 'history':content=<ReviewHomeCandidate/>;break;
  case 'history-all':content=<HistoryAll onBack={goBack} backLabel={reviewReturn.label}/>;break;
@@ -158,13 +160,13 @@ function App(){
  case 'detail':case 'reflection':content=<SessionDetail key={route.id+route.name} id={route.id!} initialTab={route.name==='reflection'?'notes':'records'} onBack={goBack} backLabel={reviewReturn.label}/>;break;
  case 'report':content=<ReportPreview id={route.id!} onBack={goBack} backLabel={reviewReturn.label}/>;break;
  case 'group':{const [id,index]=(route.id??'').split(':');content=<Scoring key={route.id} sessionId={id} endIndex={Number(index)} review onBack={goBack}/>;break;}
- case 'profile':content=offlineAndroid?<><FirstBatchHeader eyebrow="我的 / 本机资料" title="离线训练" description="训练、计划与成绩保存在这台设备。清除应用数据或卸载会移除本机记录。"/><Panel title="训练资料"><div className="gx-entry-actions"><Button onClick={()=>open('goals')}>训练目标</Button><Button onClick={()=>open('equipment-list')}>器材与配件</Button><Button onClick={()=>open('targets')}>自建靶面</Button></div></Panel></>:<ProfileHome/>;break;
- case 'settings':content=<ProfileSettings onBack={goBack}/>;break;
- case 'personal':content=<PersonalProfile onBack={goBack}/>;break;
- case 'support':content=<SupportDeveloper onBack={goBack}/>;break;
- case 'feedback':content=<FeedbackCommunity onBack={goBack}/>;break;
- case 'rewards':content=<AppRewards onBack={goBack} section={route.id}/>;break;
- case 'announcements':content=<AppAnnouncements onBack={goBack}/>;break;
+ case 'profile':content=offlineAndroid?<OfflineProfileHome/>:<ProfileHome/>;break;
+ case 'settings':content=offlineAndroid?<OfflineProfileSettings onBack={goBack}/>:<ProfileSettings onBack={goBack}/>;break;
+ case 'personal':content=offlineAndroid?<OfflinePersonalProfile onBack={goBack}/>:<PersonalProfile onBack={goBack}/>;break;
+ case 'support':content=offlineAndroid?<OfflineFeature feature="support" onBack={goBack}/>:<SupportDeveloper onBack={goBack}/>;break;
+ case 'feedback':content=offlineAndroid?<OfflineFeature feature="feedback" onBack={goBack}/>:<FeedbackCommunity onBack={goBack}/>;break;
+ case 'rewards':content=offlineAndroid?<OfflineFeature feature="rewards" onBack={goBack}/>:<AppRewards onBack={goBack} section={route.id}/>;break;
+ case 'announcements':content=offlineAndroid?<OfflineFeature feature="announcements" onBack={goBack}/>:<AppAnnouncements onBack={goBack}/>;break;
  case 'equipment-list':content=<EquipmentList onBack={goBack}/>;break;
  case 'equipment':content=<EquipmentEditor key={route.id??'new'} id={route.id} onBack={goBack}/>;break;
  case 'accessories':content=<AccessoryList onBack={goBack}/>;break;
@@ -173,13 +175,13 @@ function App(){
  case 'goal':content=<GoalEditor key={route.id??'new'} id={route.id} onBack={goBack}/>;break;
  case 'targets':content=<TargetList onBack={goBack}/>;break;
  case 'target':content=<TargetEditor key={route.id??'new'} id={route.id} onBack={goBack}/>;break;
- case 'legacy-account':content=communityTestOnly?<CloudPanel onBack={goBack}/>:<Account onBack={goBack}/>;break;
- case 'account':content=<CloudPanel section={route.id} onBack={goBack}/>;break;
- case 'data':content=<DataManagement onBack={goBack}/>;break;
- case 'about':content=<About onBack={goBack}/>;break;
- case 'guide':content=<UserGuide onBack={goBack}/>;break;
- case 'intro':content=<IntroScreens revisit onDone={goBack} onSkip={goBack} onExistingAccount={goBack}/>;break;
- case 'promotion':content=<PromotionEntry onBack={goBack}/>;break;
+ case 'legacy-account':content=offlineAndroid?<OfflineFeature feature="account" onBack={goBack}/>:communityTestOnly?<CloudPanel onBack={goBack}/>:<Account onBack={goBack}/>;break;
+ case 'account':content=offlineAndroid?<OfflineFeature feature="account" onBack={goBack}/>:<CloudPanel section={route.id} onBack={goBack}/>;break;
+ case 'data':content=offlineAndroid?<OfflineDataManagement onBack={goBack}/>:<DataManagement onBack={goBack}/>;break;
+ case 'about':content=offlineAndroid?<OfflineAbout onBack={goBack}/>:<About onBack={goBack}/>;break;
+ case 'guide':content=offlineAndroid?<OfflineUserGuide onBack={goBack}/>:<UserGuide onBack={goBack}/>;break;
+ case 'intro':content=offlineAndroid?<OfflineUserGuide onBack={goBack}/>:<IntroScreens revisit onDone={goBack} onSkip={goBack} onExistingAccount={goBack}/>;break;
+ case 'promotion':content=offlineAndroid?<OfflineAbout onBack={goBack}/>:<PromotionEntry onBack={goBack}/>;break;
  default:content=<TrainingHome onStart={begin} onEdit={editPlan}/>;
  }
  if(config)content=<StartConfiguration key={config.requestId} plan={config.plan} blocked={busy||!!repository.pending} onCancel={cancelConfig} onStart={async(c,arrows,half)=>{
@@ -194,7 +196,7 @@ function App(){
   if(saved)finishStart(repository.data);else startFlight.current=false;
  }}/>;
 
- const section=offlineAndroid&&['plans','plan','plan-detail'].includes(route.name)?'plans':['history-all','insights','detail','reflection','report','group','trends','compare'].includes(route.name)?'history':['team','settings','personal','support','feedback','rewards','announcements','equipment-list','equipment','accessories','accessory','goals','goal','targets','target','account','legacy-account','data','about','guide','intro','promotion'].includes(route.name)?'profile':['plans','plan-detail','plan','program','programs','calendar','drafts','motion'].includes(route.name)?'training':route.name==='community'?'news':route.name;
+ const section=['history-all','insights','detail','reflection','report','group','trends','compare'].includes(route.name)?'history':['team','settings','personal','support','feedback','rewards','announcements','equipment-list','equipment','accessories','accessory','goals','goal','targets','target','account','legacy-account','data','about','guide','intro','promotion'].includes(route.name)?'profile':['plans','plan-detail','plan','program','programs','calendar','drafts','motion'].includes(route.name)?'training':route.name==='community'?'news':route.name;
  const compactScoring=route.name==='score'&&!config&&Boolean(data.activeId);
  return <AppCtx.Provider value={{data,update,retryPendingSave,hasPendingSave:()=>lock.current||repository.pending!==null,readSaveState:()=>({data:repository.data,pending:repository.pending}),open,ask,tell}}><DeletionBoundary>{!offlineAndroid&&<ContributionCoordinator/>}<AccountBoundary>{route.name==='workspace'?content:<DesktopUserShell route={route.name} section={section} open={open} enabled={!offlineAndroid&&!window.Gongxingji&&!config&&route.name!=='intro'}>{saveError&&<aside role="alert" className="save-error"><b>尚未保存：{saveError}</b><p>当前待保存内容仍保留，请先重试。</p><Button onClick={()=>void retryPendingSave()}>重试保存</Button><Button onClick={()=>{try{exportText('gongxingji-unsaved-backup.json',JSON.stringify(repository.pending,null,2),'application/json');tell('已请求保存，以系统完成提示为准');}catch(e){tell(e instanceof Error?e.message:'导出失败，待保存内容仍保留');}}}>导出待保存内容</Button><Button onClick={()=>void reloadSaved()}>重新读取已保存记录</Button></aside>}{!offlineAndroid&&<CloudRestoreNotice/>}<main tabIndex={-1} data-route={config?'start':route.name} className={['gx-page',busy?'saving':'',compactScoring?'scoring-main':''].filter(Boolean).join(' ')} aria-busy={busy}>{content}</main>{!config&&route.name!=='intro'&&<BottomNavigation section={section} open={open}/>}</DesktopUserShell>}{showPrivateNotices&&toast&&<AppToast notice={toast}/>}{showPrivateNotices&&question&&<Modal title={question.title} onClose={()=>choose(0)}><p>{question.body}</p><div className="modal-actions">{question.choices.map((choice,i)=><Button key={i} kind={i?'primary':''} onClick={()=>choose(i)}>{choice}</Button>)}</div></Modal>}</AccountBoundary></DeletionBoundary></AppCtx.Provider>;
 }

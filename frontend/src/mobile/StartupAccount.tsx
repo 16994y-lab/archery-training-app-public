@@ -11,13 +11,14 @@ import {isReviewRoute} from './review-navigation';
 import {rememberTeamInvitation,teamInvitationRoute} from './team-invitation';
 import {repository} from './store';
 import {Button,Panel,useApp,useInnerBack} from './ui';
-import {News} from './News';
 import {IntroScreens} from './IntroScreens';
 import {BrandLoading} from './BrandLoading';
 import {hasPendingRegistrationIntro,registrationIntroPersistence,registrationIntroStage,advanceRegistrationIntro,finishRegistrationIntro} from './intro-preference';
 import {PasswordField} from './PasswordField';
 import {PASSWORD_RULE,requireNewPassword} from './password-policy';
 import './account-access.css';
+
+const News=React.lazy(()=>import('./News').then(module=>({default:module.News})));
 const brandLogo=new URL('../../public/ui/logo-mark.png',import.meta.url).href;
 
 /** This gate only verifies identity. Training remains in the existing local store. */
@@ -117,7 +118,7 @@ export function StartupAccount({children}:{children:React.ReactNode}){
     {pendingSection==='deletion'?<AccountDeletionEntry key={status.owner}/>:<Panel title="账号管理"><AccountDeletionLink onClick={()=>navigate('/account?id=deletion')}/></Panel>}
   </main>;
   if(!allowed&&!registrationWelcome&&!publicNews&&!showAccountForm&&verifying)return <BrandLoading/>;
-  if(publicNews)return <main className="startup-account startup-public-news"><Button onClick={()=>navigate('/account',{replace:true})}>返回登录</Button><News/></main>;
+  if(publicNews)return <main className="startup-account startup-public-news"><Button onClick={()=>navigate('/account',{replace:true})}>返回登录</Button><React.Suspense fallback={<BrandLoading/>}><News/></React.Suspense></main>;
   return <><div ref={pageRef} className={keepingPage?'startup-resume-page':undefined} hidden={!showPage} aria-hidden={!showPage} aria-busy={keepingPage} onClickCapture={event=>{if(keepingPage){event.preventDefault();event.stopPropagation();}}} onKeyDownCapture={event=>{if(keepingPage){event.preventDefault();event.stopPropagation();}}}>
     {allowed&&!registrationWelcome&&introStorageNotice&&<p role="status" className="account-preference-warning">{introStorageNotice}</p>}
     {renderedOwner.current&&!registrationWelcome?<React.Fragment key={renderedOwner.current}>{children}</React.Fragment>:null}

@@ -1,3 +1,6 @@
+import {isOfflineFileHost, saveOfflineFile} from './offline-file-export';
+import {offlineAndroid} from './release-mode';
+
 /** Rasterize only the locally generated, escaped report SVG. No external requests. */
 export async function reportPng(svg:string):Promise<string> {
  const url=URL.createObjectURL(new Blob([svg],{type:'image/svg+xml;charset=utf-8'}));
@@ -15,12 +18,14 @@ export async function reportPng(svg:string):Promise<string> {
  } finally {URL.revokeObjectURL(url);}
 }
 
-export type ReportPngResult='native-share-requested'|'native-save-requested'|'web-share-returned'|'share-cancelled'|'download-requested'|'share-download-requested';
+export type ReportPngResult='native-share-requested'|'native-save-requested'|'web-share-returned'|'share-cancelled'|'download-requested'|'share-download-requested'|'offline-saved'|'offline-cancelled';
 
 export function reportPngResultMessage(result:ReportPngResult):string {
  switch(result){
   case 'native-share-requested':return '已请求系统分享，请在系统界面确认';
   case 'native-save-requested':return '正在保存海报到相册，请以完成提示为准';
+  case 'offline-saved':return '海报 PNG 已保存到所选位置';
+  case 'offline-cancelled':return '已取消保存海报';
   case 'web-share-returned':return '系统分享已结束，请在接收应用中确认';
   case 'share-cancelled':return '已取消系统分享，训练记录保持不变';
   case 'share-download-requested':return '此浏览器不支持图片分享，已改为请求下载海报 PNG';
@@ -30,6 +35,10 @@ export function reportPngResultMessage(result:ReportPngResult):string {
 
 export async function saveReportPng(name:string,png:string,share=false):Promise<ReportPngResult> {
  if(!png.startsWith('data:image/png;base64,'))throw new Error('图片尚未准备好');
+ if(offlineAndroid&&isOfflineFileHost()){
+  if(share)throw new Error('请先将海报保存到本机');
+  return await saveOfflineFile(name,png,'image/png')==='saved'?'offline-saved':'offline-cancelled';
+ }
  if(window.Gongxingji){const result=JSON.parse(window.Gongxingji.exportFile(name,png,'image/png',share));if(!result.ok)throw new Error(result.error||'系统尚未接受海报保存请求');return share?'native-share-requested':'native-save-requested';}
  if(share&&navigator.share){
   const raw=atob(png.slice('data:image/png;base64,'.length));
