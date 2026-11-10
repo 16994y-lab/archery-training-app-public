@@ -25,6 +25,10 @@ node --test tests/*.test.mjs
 
 后端需要 Python 3.12 或更高版本。在 `backend/` 安装 `requirements.txt` 和 `pytest` 后，可以运行 `python -m pytest tests` 检查评分、训练契约和训练计划。SQLite 可用于核心测试。完整数据库迁移包含 PostgreSQL 专用结构，账号和云存储服务也需单独配置。
 
+## 自托管
+
+[网页自托管教程](docs/SELF_HOST.md)介绍如何使用自己的 PostgreSQL 和 Supabase 项目部署网页、启用邮箱登录，并在另一个浏览器读回已保存的训练记录。
+
 ## 发布范围
 
 此快照提供源码与本地构建所需的基础配置。随附基础图标与 Barlow 字体的原许可。资讯正文使用空的本地数据模板。正式服务配置、新闻图片和其他媒体、模型、签名材料、Android 打包脚本和安装包单独管理。网页可构建，移动端可运行类型检查，正式 Android 包需要这些额外输入。
