@@ -1,6 +1,8 @@
 // Independent share-poster renderer. All visible training values come from one completed session.
+import { nameCharacters, nicknameValidationMessage, TRAINING_NAME_MAX_LENGTH } from '../name-policy.mjs';
+
 export const POSTER_SIZE = Object.freeze({ width: 760, height: 1120 });
-export const PROMO_PAGE_URL = 'https://service-1.example.invalid/get-app/';
+export const PROMO_PAGE_URL = 'https://api.gongxingji.com/get-app/';
 
 const xml = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&apos;' })[char]);
 const clean = value => String(value ?? '').replace(/[\u0000-\u001f\u007f]/g, ' ').replace(/\s+/g, ' ').trim();
@@ -8,10 +10,21 @@ const finiteInt = (value, name) => {
   if (!Number.isSafeInteger(value) || value < 0) throw new Error(`${name}不是有效的本次训练数据`);
   return value;
 };
-const widthOf = (value, size) => Array.from(value).reduce((width, char) => width + (/\p{Script=Han}|[\u3000-\u303f\uff00-\uffef]/u.test(char) ? 1 : /[A-Z0-9]/.test(char) ? .65 : /\s/.test(char) ? .33 : .62) * size, 0);
+const widthOf = (value, size) => nameCharacters(value).reduce((width, char) => width + (/[^\x00-\x7f]|[MW@%]/.test(char) ? 1.05 : /[A-Z0-9]/.test(char) ? .72 : /\s/.test(char) ? .33 : .63) * size, 0);
+
+export function sharePosterNickname(value) {
+  const name = String(value ?? '');
+  return name.trim() === '射手' || nicknameValidationMessage(name) ? '' : name.trim();
+}
+
+export function sharePosterTitle(value) {
+  const title = clean(value) || '本次训练';
+  const chars = nameCharacters(title);
+  return chars.length > TRAINING_NAME_MAX_LENGTH ? chars.slice(0, TRAINING_NAME_MAX_LENGTH - 1).join('') + '…' : title;
+}
 
 function fittedLines(value, width, maxLines, preferred, minimum, label) {
-  const chars = Array.from(clean(value));
+  const chars = nameCharacters(clean(value));
   for (let size = preferred; size >= minimum; size--) {
     const lines = [''];
     for (const char of chars) {
@@ -24,9 +37,12 @@ function fittedLines(value, width, maxLines, preferred, minimum, label) {
   throw new Error(`${label}过长，无法完整放进海报；请在分享前缩短`);
 }
 
-function textLines(value, x, y, width, maxLines, preferred, minimum, color, weight, label, lineHeight = 1.28) {
-  const { lines, size } = fittedLines(value, width, maxLines, preferred, minimum, label);
+function lineText({ lines, size }, x, y, color, weight, lineHeight = 1.28) {
   return `<text x="${x}" y="${y}" fill="${color}" font-size="${size}" font-weight="${weight}">${lines.map((line, index) => `<tspan x="${x}" dy="${index ? Math.round(size * lineHeight) : 0}">${xml(line)}</tspan>`).join('')}</text>`;
+}
+
+function textLines(value, x, y, width, maxLines, preferred, minimum, color, weight, label) {
+  return lineText(fittedLines(value, width, maxLines, preferred, minimum, label), x, y, color, weight);
 }
 
 function verifyData(data, assets) {
@@ -57,19 +73,19 @@ function verifyData(data, assets) {
       previous = ring.radius;
     }
   }
-  fittedLines(data.title || '本次训练', 640, 2, 37, 23, '训练标题');
-  fittedLines(data.nickname || '射手', 300, 2, 24, 16, '昵称');
-  fittedLines(data.highlight || '', 600, 1, 24, 18, '本次亮点');
-  return { ...data, title: clean(data.title) || '本次训练', nickname: clean(data.nickname) || '射手', arrows, total, x, ten, miss, pointCount };
+  return { ...data, title: sharePosterTitle(data.title), nickname: sharePosterNickname(data.nickname), arrows, total, x, ten, miss };
 }
 
 const defs = `<defs>
  <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fffdf9"/><stop offset=".7" stop-color="#f1f7fb"/><stop offset="1" stop-color="#e8eafc"/></linearGradient>
  <linearGradient id="deep" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0c2655"/><stop offset=".48" stop-color="#174a82"/><stop offset="1" stop-color="#553d8e"/></linearGradient>
- <linearGradient id="night" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#111b42"/><stop offset=".55" stop-color="#1c4277"/><stop offset="1" stop-color="#245979"/></linearGradient>
+ <linearGradient id="night" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#101b38"/><stop offset=".55" stop-color="#163461"/><stop offset="1" stop-color="#183f58"/></linearGradient>
+ <radialGradient id="aim-glow"><stop stop-color="#5cd4e9" stop-opacity=".35"/><stop offset="1" stop-color="#76a2df" stop-opacity="0"/></radialGradient>
+ <linearGradient id="score-paper" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#f7fbff"/><stop offset="1" stop-color="#dbeaf7"/></linearGradient>
  <linearGradient id="glow" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#46d3ef"/><stop offset=".55" stop-color="#a29cf4"/><stop offset="1" stop-color="#ffc589"/></linearGradient>
  <filter id="soft"><feGaussianBlur stdDeviation="30"/></filter>
  <clipPath id="score-clip"><rect x="48" y="326" width="664" height="438" rx="36"/></clipPath>
+ <filter id="qr-ink" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="0 0 0 0 .063 0 0 0 0 .161 0 0 0 0 .302 -1 0 0 1 0"/></filter>
 </defs>`;
 
 function brand(assets, light = false) {
@@ -82,16 +98,21 @@ function demoBadge(data, light = false) {
   return data.demo ? `<rect x="551" y="50" width="155" height="40" rx="20" fill="${light ? '#ffffff' : '#173f77'}" fill-opacity="${light ? '.14' : '1'}"/><text x="628" y="77" text-anchor="middle" fill="${light ? '#ffffff' : '#ffffff'}" font-size="18" font-weight="700">合成演示</text>` : '';
 }
 
-function qrPanel(x, y, assets, dark = false) {
-  const ink = dark ? '#d6ecfa' : '#23446c';
-  if (assets.qr) return `<text x="${x}" y="${y + 30}" fill="${ink}" font-size="20" font-weight="650">扫码了解弓行记</text><text x="${x}" y="${y + 61}" fill="${ink}" font-size="15">训练计划 · 手动记分 · 历史复盘</text>`;
-  return `<text x="${x}" y="${y + 30}" fill="${ink}" font-size="20" font-weight="650">认真练习，清楚记录</text><text x="${x}" y="${y + 61}" fill="${ink}" font-size="15">让每一次练习，都有迹可循</text>`;
+function posterInvite(data, assets, top) {
+  const invitation = data.nickname ? `和 Momo、${data.nickname} 一起射箭吧` : '和 Momo 一起射箭吧';
+  const layout = fittedLines(invitation, assets.qr ? 438 : 608, 2, 30, 18, '昵称');
+  const baseline = top + 82 + layout.size * .34 - (layout.lines.length - 1) * Math.round(layout.size * 1.28) / 2;
+  // The bundled QR has 41 modules including margins. 164 px keeps each module sharp at 50% size.
+  return `<g data-poster-invite="">
+    ${lineText(layout, 76, baseline, '#183e68', 700)}
+    ${assets.qr ? `<image data-poster-qr="" href="${assets.qr}" x="544" y="${top}" width="164" height="164" filter="url(#qr-ink)"/>` : ''}
+  </g>`;
 }
 
 function pointMark(point, x, y, radius) {
   // Older renderer callers have only estimated; retain that distinction without inventing coordinates.
   const source = point.source || (point.estimated ? 'photo-mapped' : 'target');
-  const color = point.code === 'M' ? '#bf3f43' : source === 'photo-mapped' ? '#9b6500' : source === 'photo-manual' ? '#087d87' : '#172c59';
+  const color = point.code === 'M' ? '#98a4b5' : source === 'photo-mapped' ? '#9b6500' : source === 'photo-manual' ? '#087d87' : '#172c59';
   const cx = x.toFixed(2), cy = y.toFixed(2);
   const shape = source === 'photo-mapped'
     ? `<path d="M${cx} ${(y-radius).toFixed(2)} L${(x+radius).toFixed(2)} ${cy} L${cx} ${(y+radius).toFixed(2)} L${(x-radius).toFixed(2)} ${cy} Z" fill="#ffffff" stroke="${color}" stroke-width="2.5"/>`
@@ -101,17 +122,6 @@ function pointMark(point, x, y, radius) {
   return `<g data-point-source="${source}" data-point-miss="${point.code==='M'}">${shape}</g>`;
 }
 
-function pointLegend(data, y, light = false) {
-  if (!data.points.length) return '';
-  const ink = light ? '#d2e7f4' : '#456b8b';
-  return `<g aria-label="落点图例">${[
-    [{source:'target'},90,'点靶'],
-    [{source:'photo-manual'},215,'照片人工'],
-    [{source:'photo-mapped'},385,'照片参考'],
-    [{source:'target',code:'M'},575,'红色为 M'],
-  ].map(([point,x,label])=>`${pointMark(point,x,y,5)}<text x="${x+13}" y="${y+4}" fill="${ink}" font-size="13">${label}</text>`).join('')}</g>`;
-}
-
 function posterA(data, assets) {
   const date = xml(data.date.replaceAll('-', '.'));
   const average = (data.total / data.arrows).toFixed(2);
@@ -119,7 +129,6 @@ function posterA(data, assets) {
   const scoreX = 90 + String(data.total).length * scoreSize * .68;
   const plottedPoints = data.points.map(point => pointMark(point,566+point.x*116,502-point.y*116,6)).join('');
   const scoreRings = data.target?.rings?.length ? [...data.target.rings].reverse().map(ring => `<circle cx="566" cy="502" r="${(ring.radius * 116).toFixed(2)}" fill="${ring.color}" fill-opacity=".72" stroke="#d1e6f1" stroke-opacity=".5" stroke-width="1"/>`).join('') : `<g fill="none" stroke="url(#glow)" opacity=".42"><circle cx="566" cy="502" r="116" stroke-width="14"/><circle cx="566" cy="502" r="84" stroke-width="16"/><circle cx="566" cy="502" r="52" stroke-width="16"/><circle cx="566" cy="502" r="20" stroke-width="15"/></g>`;
-  const pointCaption = data.pointCount > data.points.length ? `显示 ${data.points.length}/${data.pointCount} 个位置 · 详见来源` : `有位置 ${data.pointCount}/${data.arrows} 箭 · 来源见下方说明`;
   return `<rect width="760" height="1120" fill="url(#paper)"/>
     <circle cx="711" cy="103" r="125" fill="#bedaf3" opacity=".35" filter="url(#soft)"/>
     ${brand(assets)}${demoBadge(data)}
@@ -133,55 +142,48 @@ function posterA(data, assets) {
     <text x="87" y="548" fill="#ffffff" font-size="${scoreSize}" font-weight="780">${data.total}</text>
     <text x="${scoreX}" y="540" fill="#dbf5ff" font-size="27">分</text>
     <text x="90" y="596" fill="#d0e5f4" font-size="22">平均 ${average} 环 / 箭</text>
-    <text x="566" y="650" text-anchor="middle" fill="#d4e9f5" font-size="13">${pointCaption}</text>
     <line x1="90" x2="670" y1="670" y2="670" stroke="#a2d4ef" stroke-opacity=".28"/>
     <text x="102" y="714" fill="#ffffff" font-size="24" font-weight="700">X  ${data.x}</text>
     <text x="299" y="714" fill="#ffffff" font-size="24" font-weight="700">10  ${data.ten}</text>
     <text x="503" y="714" fill="#ffffff" font-size="24" font-weight="700">M  ${data.miss}</text>
-    <text x="89" y="795" fill="#728aa2" font-size="17">训练由</text>
-    ${textLines(data.nickname, 164, 798, 300, 2, 24, 16, '#173c68', 700, '昵称')}
-    ${textLines(data.coordinateShortNote || pointCaption, 89, 826, 616, 1, 15, 11, '#456b8b', 600, '落点来源')}
-    ${pointLegend(data,852)}
-    <rect x="48" y="875" width="664" height="70" rx="25" fill="#ffffff" opacity=".9"/>
-    <rect x="48" y="875" width="8" height="70" rx="4" fill="url(#glow)"/>
-    <text x="77" y="898" fill="#6a839c" font-size="14">本次记录亮点</text>
-    ${textLines(data.highlight, 77, 920, 600, 1, 24, 18, '#173c68', 730, '亮点')}
-    <line x1="48" x2="${assets.qr ? 520 : 712}" y1="976" y2="976" stroke="#cad9e8"/>
-    ${qrPanel(56, 982, assets)}
-    ${assets.qr ? `<image href="${assets.qr}" x="544" y="954" width="150" height="150"/>` : `<rect x="573" y="993" width="120" height="69" rx="16" fill="#e3ebf5"/><text x="633" y="1020" text-anchor="middle" fill="#4e6e8e" font-size="16" font-weight="700">GONGXINGJI</text><text x="633" y="1045" text-anchor="middle" fill="#6f88a0" font-size="14">清楚记录</text>`}
-    <text x="55" y="1090" fill="#7390a7" font-size="14">仅描述本次已完成训练 · 分享前请核对内容</text>`;
+    <line x1="48" x2="712" y1="876" y2="876" stroke="#cad9e8"/>
+    ${posterInvite(data, assets, 896)}`;
 }
 
 function targetArt(data) {
+  const cx = 380, cy = 482, radius = 198;
   const rings = data.target?.rings?.length
-    ? [...data.target.rings].reverse().map(ring => `<circle cx="380" cy="482" r="${(ring.radius * 182).toFixed(2)}" fill="${ring.color}" stroke="#253d4f" stroke-width="1.5"/>`).join('')
-    : [184, 155, 126, 97, 68, 39].map((radius, index) => `<circle cx="380" cy="482" r="${radius}" fill="none" stroke="${index % 2 ? '#d7eff9' : '#81c9eb'}" stroke-opacity="${index ? '.34' : '.64'}" stroke-width="${index ? 16 : 19}"/>`).join('');
-  const points = data.points.map(point => pointMark(point,380+point.x*182,482-point.y*182,8)).join('');
-  return `<circle cx="380" cy="482" r="218" fill="#d0ecfa" fill-opacity=".08"/><circle cx="380" cy="482" r="190" fill="#19416c" fill-opacity=".65"/>${rings}<path d="M374 482h12M380 476v12" stroke="#223b53" stroke-width="2"/>${points}`;
+    ? [...data.target.rings].reverse().map(ring => `<circle cx="${cx}" cy="${cy}" r="${(ring.radius * radius).toFixed(2)}" fill="${ring.color}" stroke="#253d4f" stroke-width="1.5"/>`).join('')
+    : [198, 165, 132, 99, 66, 33].map((r, index) => `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="#8fcce8" stroke-opacity="${index ? '.34' : '.64'}" stroke-width="2"/>`).join('');
+  const points = data.points.map(point => pointMark(point,cx+point.x*radius,cy-point.y*radius,8)).join('');
+  return `<ellipse cx="${cx}" cy="${cy}" rx="347" ry="248" fill="url(#aim-glow)"/>
+    <circle cx="${cx}" cy="${cy}" r="229" fill="none" stroke="#a0d6ee" stroke-opacity=".2" stroke-dasharray="2 8"/>
+    <circle cx="${cx}" cy="${cy}" r="212" fill="#142c4e" stroke="#a0d6ee" stroke-opacity=".34"/>
+    <path d="M129 482h26m450 0h26M380 238v15m0 458v15" fill="none" stroke="#a0d6ee" stroke-opacity=".55" stroke-width="2"/>
+    ${rings}<path d="M374 482h12M380 476v12" stroke="#223b53" stroke-width="2"/>${points}`;
 }
 
 function posterB(data, assets) {
-  const shown = data.points.length > 80 ? 80 : data.points.length;
-  const pointNote = data.coordinateNote || (shown ? `已确认靶内点 ${shown}/${data.arrows} 箭；环线仅为示意` : '靶面为视觉示意 · 本场无可展示落点');
-  const scoreSize = Math.min(98, Math.floor(350 / (String(data.total).length * .7)));
+  const scoreSize = Math.min(98, Math.floor(225 / (String(data.total).length * .7)));
+  const counts = [['X', data.x], ['普通 10', data.ten], ['M', data.miss]];
   return `<rect width="760" height="1120" fill="url(#night)"/>
-    <circle cx="60" cy="221" r="135" fill="#65cbdf" opacity=".14" filter="url(#soft)"/>
     ${brand(assets, true)}${demoBadge(data, true)}
-    ${textLines(data.title, 52, 172, 640, 2, 34, 22, '#ffffff', 740, '训练标题')}
-    <text x="54" y="241" fill="#afd2e9" font-size="18">${xml(data.date.replaceAll('-', '.'))}  ·  本次训练</text>
-    ${textLines(data.nickname, 54, 273, 640, 2, 20, 16, '#d7eaf6', 650, '昵称')}
+    <path d="M52 124h656" stroke="#b3d9f2" stroke-opacity=".21"/>
+    ${textLines(data.title, 52, 170, 640, 2, 37, 23, '#ffffff', 740, '训练标题')}
+    <text x="54" y="238" fill="#b7d5ec" font-size="19">${xml(data.date.replaceAll('-', '.'))}</text>
     ${targetArt(data)}
-    ${textLines(pointNote, 62, 710, 636, 2, 16, 13, '#d2e7f4', 600, '落点来源')}
-    ${pointLegend(data,747,true)}
-    <rect x="48" y="764" width="664" height="300" rx="34" fill="#f8fbff"/>
-    <text x="78" y="814" fill="#5c7896" font-size="17" letter-spacing="2">本次 / SESSION</text>
-    <text x="75" y="921" fill="#103b6c" font-size="${scoreSize}" font-weight="780">${data.total}</text>
-    <text x="77" y="950" fill="#587b9a" font-size="20">分 · ${data.arrows} 箭</text>
-    <text x="80" y="1004" fill="#234b75" font-size="18">X ${data.x}　普通 10 ${data.ten}　M ${data.miss}</text>
-    <line x1="470" y1="807" x2="470" y2="1029" stroke="#cadce9"/>
-    <rect x="507" y="830" width="166" height="133" rx="20" fill="#e5eef6"/>
-    ${assets.qr ? `<image href="${assets.qr}" x="530" y="837" width="120" height="120"/><text x="590" y="997" text-anchor="middle" fill="#607e9d" font-size="13">扫码进入网站宣传页</text>` : `<text x="590" y="883" text-anchor="middle" fill="#315b80" font-size="19" font-weight="700">弓行记</text><text x="590" y="916" text-anchor="middle" fill="#6b87a0" font-size="15">清楚记录每一箭</text><text x="590" y="997" text-anchor="middle" fill="#607e9d" font-size="13">训练计划 · 记分 · 复盘</text>`}
-    <text x="52" y="1097" fill="#c6dfea" font-size="14">${xml(data.highlight)}　·　仅本次真实记录</text>`;
+    <rect x="48" y="742" width="664" height="356" rx="28" fill="url(#score-paper)"/>
+    <text x="76" y="780" fill="#4d6b89" font-size="16" letter-spacing="2">本场成绩</text>
+    <text x="72" y="867" fill="#103b6c" font-size="${scoreSize}" font-weight="780">${data.total}</text>
+    <text x="77" y="907" fill="#496783" font-size="20">分 · ${data.arrows} 箭</text>
+    <path d="M322 773v133" stroke="#c7d9e9"/>
+    ${counts.map(([label, count], index) => {
+      const cx = 386 + index * 121;
+      const size = Math.min(39, Math.floor(102 / (String(count).length * .72)));
+      return `<g data-score-kind="${label}" text-anchor="middle"><text x="${cx}" y="839" fill="#103b6c" font-size="${size}" font-weight="750">${count}</text><text x="${cx}" y="878" fill="#496783" font-size="20" font-weight="650">${label}</text></g>`;
+    }).join('')}
+    <path d="M76 926h608" stroke="#bfd3e6"/>
+    ${posterInvite(data, assets, 942)}`;
 }
 
 export function renderSharePosterSvg(rawData, assets, variant = 'score') {

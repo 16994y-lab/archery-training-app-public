@@ -51,8 +51,7 @@ const training: readonly Destination[] = [
 const review: readonly Destination[] = [
   { name: 'history', label: '复盘总览', icon: 'history', routes: ['history'] },
   { name: 'history-all', label: '历史', icon: 'records', routes: ['history-all', 'insights', 'detail', 'reflection', 'report', 'group'] },
-  { name: 'trends', label: '趋势', icon: 'trends', routes: ['trends'] },
-  { name: 'compare', label: '对比', icon: 'compare', routes: ['compare'] },
+  { name: 'trends', label: '长期分析', icon: 'trends', routes: ['trends', 'compare'] },
 ];
 const personal: readonly Destination[] = [
   { name: 'team', label: '我的团队', icon: 'team', routes: ['team'] },

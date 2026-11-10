@@ -1,12 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { init, use, type ComposeOption, type EChartsType } from 'echarts/core';
-import { LineChart, BarChart, type LineSeriesOption, type BarSeriesOption } from 'echarts/charts';
+import { LineChart, BarChart, ScatterChart, type LineSeriesOption, type BarSeriesOption, type ScatterSeriesOption } from 'echarts/charts';
 import { GridComponent, TooltipComponent, LegendComponent, DataZoomComponent, AriaComponent, type GridComponentOption, type TooltipComponentOption, type LegendComponentOption, type DataZoomComponentOption } from 'echarts/components';
 import { SVGRenderer } from 'echarts/renderers';
 import './review.css';
 
-use([LineChart,BarChart,GridComponent,TooltipComponent,LegendComponent,DataZoomComponent,AriaComponent,SVGRenderer]);
-export type ChartOption = ComposeOption<LineSeriesOption|BarSeriesOption|GridComponentOption|TooltipComponentOption|LegendComponentOption|DataZoomComponentOption>;
+use([LineChart,BarChart,ScatterChart,GridComponent,TooltipComponent,LegendComponent,DataZoomComponent,AriaComponent,SVGRenderer]);
+export type ChartOption = ComposeOption<LineSeriesOption|BarSeriesOption|ScatterSeriesOption|GridComponentOption|TooltipComponentOption|LegendComponentOption|DataZoomComponentOption>;
 export const chartColors = ['#123d78','#ea823d','#80b8e6'];
 export function Chart({option,label,height=280,onSelect}:{option:ChartOption;label:string;height?:number;onSelect?:(index:number)=>void}) {
   const node=useRef<HTMLDivElement>(null), instance=useRef<EChartsType>(), selected=useRef(onSelect);

@@ -27,6 +27,6 @@ export function reviewBackTarget(route:ReviewRoute,state:unknown,index:number) {
   route.name==='report'&&route.id?pathFor({name:'insights',id:route.id}):'/history';
  const path=parent?.path??fallback;
  const parentName=path.slice(1).split('?')[0];
- const label=parentName==='history-all'?'返回训练记录':parentName==='trends'?'返回趋势分析':parentName==='compare'?'返回训练对比':parentName==='detail'?'返回单场复盘':parentName==='reflection'?'返回训练心得':parentName==='insights'?'返回单场复盘':'返回复盘';
+ const label=parentName==='history-all'?'返回训练记录':parentName==='trends'?'返回长期分析':parentName==='compare'?'返回长期分析':parentName==='detail'?'返回单场复盘':parentName==='reflection'?'返回训练心得':parentName==='insights'?'返回单场复盘':'返回复盘';
  return {path,label,useHistory:!!parent&&index>0&&parent.index===index-1};
 }

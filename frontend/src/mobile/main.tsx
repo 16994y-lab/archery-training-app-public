@@ -4,7 +4,7 @@ import {CloudRestoreNotice} from './CloudRestoreNotice';
 import { redirectAuthReturn } from '../auth-return';
 import React, { useCallback, useEffect, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { createRoot } from 'react-dom/client';
-import { HashRouter, useLocation, useNavigate, useNavigationType } from 'react-router-dom';
+import { HashRouter, Navigate, useLocation, useNavigate, useNavigationType } from 'react-router-dom';
 import { ConfigProvider, Collapse, Switch } from 'antd-mobile';
 import { BottomNavigation } from './Navigation';
 import {DesktopUserShell} from './DesktopUserShell';
@@ -24,7 +24,7 @@ import { DataManagement, RecoveryScreen } from './DataManagement';
 import { Scoring } from './Scoring';
 import { MotionOverview } from './media';
 import { HistoryAll, HistoryTrends, ReportPreview, SessionDetail } from './History';
-import { ReviewHomeCandidate, AnalysisCandidate, CompareCandidate } from './review-visual-adapter';
+import { ReviewHomeCandidate, AnalysisCandidate } from './review-visual-adapter';
 import { isReviewRoute, reviewNavigation, reviewBackTarget } from './review-navigation';
 import { clearReviewViewState } from './review-state';
 import { FeedbackCommunity } from './SupportPages';
@@ -156,7 +156,7 @@ function App(){
  case 'history-all':content=<HistoryAll onBack={goBack} backLabel={reviewReturn.label}/>;break;
  case 'insights':content=<AnalysisCandidate key={route.id??'latest'} sessionId={route.id} onBack={goBack} backLabel={reviewReturn.label}/>;break;
  case 'trends':content=<HistoryTrends onBack={goBack} backLabel={reviewReturn.label}/>;break;
- case 'compare':content=<CompareCandidate onBack={goBack} backLabel={reviewReturn.label}/>;break;
+ case 'compare':content=<Navigate to="/trends" replace state={location.state}/>;break;
  case 'detail':case 'reflection':content=<SessionDetail key={route.id+route.name} id={route.id!} initialTab={route.name==='reflection'?'notes':'records'} onBack={goBack} backLabel={reviewReturn.label}/>;break;
  case 'report':content=<ReportPreview id={route.id!} onBack={goBack} backLabel={reviewReturn.label}/>;break;
  case 'group':{const [id,index]=(route.id??'').split(':');content=<Scoring key={route.id} sessionId={id} endIndex={Number(index)} review onBack={goBack}/>;break;}

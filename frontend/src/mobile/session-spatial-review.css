@@ -1,0 +1,203 @@
+.review-session-spatial .vx-card-head,
+.review-session-bias .vx-card-head {
+  margin-bottom: 5px;
+}
+
+.review-session-spatial .review-spatial-all {
+  min-height: 44px;
+  padding: 0 8px;
+  border-radius: 7px;
+  background: var(--surface-soft, #edf4f9);
+  color: var(--brand, #245dcc);
+  white-space: nowrap;
+}
+
+.review-spatial-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: 6px;
+}
+
+.review-spatial-primary {
+  position: relative;
+  min-width: 0;
+  align-self: center;
+}
+
+.vx-spatial.review-session-spatial .review-spatial-primary :is(.target, .target-static, .target-review-workspace) {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+}
+
+.review-session-spatial .target-review-workspace {
+  position: relative;
+}
+
+.review-session-spatial .target-review-reset {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 4px 6px;
+  border: 1px solid #b8c8dc;
+  border-radius: 8px;
+  background: white;
+  color: #263952;
+  font-size: 13px;
+}
+
+.review-spatial-empty {
+  position: absolute;
+  inset: auto 4px 4px;
+  margin: 0 !important;
+  padding: 3px;
+  border-radius: 5px;
+  background: #fffef0;
+  color: #273b53;
+  text-align: center;
+  font-size: 13px;
+  pointer-events: none;
+}
+
+.review-spatial-readout {
+  display: grid;
+  align-content: center;
+  gap: 3px;
+  min-width: 0;
+  margin: 0;
+  padding: 5px 6px;
+  border-radius: 8px;
+  background: var(--surface-soft, #edf4f9);
+}
+
+.review-spatial-readout dt {
+  color: var(--ui-muted, #586f82);
+  font-size: 12px;
+}
+
+.review-spatial-readout > div:first-child dt {
+  color: var(--ui-ink, #243754);
+  font-size: 14px;
+  font-weight: 750;
+}
+
+.review-spatial-readout dd {
+  display: grid;
+  justify-items: start;
+  margin: 0;
+  color: var(--ui-ink, #243754);
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.review-spatial-readout > div:first-child dd {
+  color: var(--ui-muted, #586f82);
+  font-size: 12px;
+}
+
+.review-bias-cross {
+  display: block;
+  width: 100%;
+  max-width: 59px;
+  aspect-ratio: 1;
+  color: #7891ac;
+}
+
+.review-spatial-readout .review-bias-cross {
+  max-width: 37px;
+}
+
+.review-spatial-coverage,
+.review-spatial-outlier p {
+  margin: 3px 0 0 !important;
+  color: var(--ui-muted, #586f82);
+  font-size: 13px;
+}
+
+.review-spatial-outlier {
+  margin-top: 5px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  background: #fff2df;
+  color: #542b0f;
+}
+
+.review-spatial-outlier p {
+  color: #67482d;
+}
+
+.review-face-tabs,
+.review-arrow-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+}
+
+.review-face-tabs {
+  margin-bottom: 5px;
+}
+
+.review-face-tabs button,
+.review-arrow-list button {
+  min-height: 44px;
+  padding: 4px 7px;
+  border: 1px solid var(--surface-stroke, #d7e1ed);
+  border-radius: 8px;
+  background: var(--surface-soft, #edf4f9);
+}
+
+.review-face-tabs button {
+  flex: 1;
+}
+
+.review-face-tabs button[aria-pressed='true'],
+.review-arrow-list button[aria-pressed='true'],
+.review-bias-groups button[aria-pressed='true'] {
+  border-color: var(--brand, #285fb4);
+  background: var(--brand-tint, #e9f1ff);
+}
+
+.review-order-toggle {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  width: fit-content;
+  font-size: 13px;
+}
+
+.review-session-spatial .review-order-toggle input {
+  min-height: 0;
+  width: 19px;
+  height: 19px;
+  margin: 0;
+}
+
+.review-bias-groups {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.review-bias-groups button {
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  min-width: 0;
+  min-height: 44px;
+  padding: 4px 2px;
+  border: 1px solid var(--surface-stroke, #d7e1ed);
+  border-radius: 7px;
+  background: var(--surface-soft, #edf4f9);
+  text-align: center;
+  font-size: 14px;
+}
+
+.review-bias-groups button span {
+  color: var(--ui-muted, #586f82);
+  font-size: 13px;
+  font-variant-numeric: tabular-nums;
+}
