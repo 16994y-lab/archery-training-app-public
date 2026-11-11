@@ -21,7 +21,7 @@ export function parseNewsFeed(raw:unknown):NewsFeed{
  }
  return {...feed,articles:[...feed.articles].sort((a,b)=>b.date.localeCompare(a.date)||a.id.localeCompare(b.id))};
 }
-export const bundledNews:NewsFeed={...bundled,schema:1};
+export const bundledNews=parseNewsFeed(bundled);
 export const newsAutoReady=(import.meta as ImportMeta & {env?:Record<string,string>}).env?.VITE_NEWS_AUTO_READY==='true';
 export const NEWS_FEED_URL=newsAutoReady?'https://service-1.example.invalid/api/news/publication.v1.json':'https://service-1.example.invalid/news-feed.v1.json';
 export const NEWS_CACHE_KEY='gongxingji-reviewed-news-v1';

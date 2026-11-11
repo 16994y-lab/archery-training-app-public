@@ -1,6 +1,80 @@
 {
   "schema": 1,
   "revision": 1,
-  "reviewedAt": "2026-01-01",
-  "articles": []
+  "reviewedAt": "2026-10-05",
+  "articles": [
+    {
+      "id": "national-championship-2026",
+      "title": "全国射箭奥林匹克项目锦标赛落幕",
+      "date": "2026-06-15",
+      "source": "国家体育总局",
+      "summary": "2026 年全国射箭奥林匹克项目锦标赛于 6 月 14 日在安徽淮南结束，反曲弓和复合弓项目共决出 10 枚金牌。",
+      "url": "https://www.sport.gov.cn/n20001280/n20067662/n20067613/c29691316/content.html",
+      "paragraphs": [
+        "复合弓女子团体半决赛中，山西队张月、王嘉慧、宋嘉欣打出 236 环，刷新该项目淘汰赛全国纪录；女子团体冠军由河南队获得。",
+        "反曲弓个人项目的两枚金牌均由新疆队选手获得。男子、女子团体金牌赛都进入“一箭决胜负”，海南队和江苏队分别夺冠。"
+      ],
+      "category": "赛事"
+    },
+    {
+      "id": "world-3d-qualifying-2026",
+      "title": "世界 3D 射箭锦标赛资格赛结束",
+      "date": "2026-09-30",
+      "source": "世界射箭联合会",
+      "summary": "世界射箭联合会报道，2026 年世界 3D 射箭锦标赛在美国扬克顿完成资格赛。意大利选手 Cinzia Noziglia 以 921 分暂列女子裸弓第一。",
+      "url": "https://www.worldarchery.sport/news/202657/defending-champion-cinzia-noziglia-leads-qualifying-completes-yankton-world-3d",
+      "paragraphs": [
+        "Noziglia 两天分别取得 468 分和 453 分，领先第二名、美国选手 Ava Jones 20 分。这是资格赛排名，并非赛事最终名次。",
+        "其他项目资格赛领先者包括男子裸弓的 David Jackson，以及男子复合弓的 Nico Wiener。赛事随后进入个人和团体淘汰赛。"
+      ],
+      "category": "赛事"
+    },
+    {
+      "id": "hand-dexterity-2026",
+      "category": "研究",
+      "title": "射箭运动员的手部精细操作表现",
+      "date": "2026-07-15",
+      "source": "Frontiers in Physiology",
+      "summary": "114人的横断面比较：射箭运动员在部分手部精细操作任务中表现较好。能力差异不等于训练因果。",
+      "paragraphs": [
+        "研究比较射箭运动员、其他运动员与非运动者，观察手部操作、力量及认知表现；射箭组并非在所有认知指标上都占优。",
+        "这不是随机训练试验，不能据此断言练射箭会提升认知，也不能推出某套训练能增加环数。可把它作为训练研究的背景阅读。"
+      ],
+      "url": "https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2026.1880932/full",
+      "doi": "10.3389/fphys.2026.1880932",
+      "attribution": "Gao 等，2026。原文 CC BY；此处为弓行记独立整理摘要。"
+    },
+    {
+      "id": "aiming-rhythm-2025",
+      "category": "研究",
+      "title": "高水平射手的瞄准节奏存在个人差异",
+      "date": "2025-09-19",
+      "source": "Frontiers in Sports and Active Living",
+      "summary": "8名高水平射手的记录显示，瞄准与随动策略既有共同特征，也有个人差异。",
+      "paragraphs": [
+        "研究在70米射箭条件下记录8名法国高水平射手的肌肉活动、姿态及瞄准节奏。不同射手的表现关联并不完全相同。",
+        "样本较小，且射手来自同一教练，不能推出人人都应采用同一瞄准时长。",
+        "训练观察建议：记录自己的节奏，与教练一起对照多次训练。此条是编辑提出的观察方法，不是研究已验证的提分方案。"
+      ],
+      "url": "https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2025.1650300/full",
+      "doi": "10.3389/fspor.2025.1650300",
+      "attribution": "Jacquot 等，2025。原文 CC BY；此处为弓行记独立整理摘要。"
+    },
+    {
+      "id": "stability-study-2023",
+      "category": "训练",
+      "title": "稳定性训练选读：侧桥与瞄准抖动",
+      "date": "2023-05-01",
+      "source": "PLOS ONE",
+      "summary": "20名男性大学生的小型研究观察到瞄准抖动指标下降，未证明比赛环数提升。",
+      "paragraphs": [
+        "研究将20名男性大学生随机分组，观察按选定角度进行4周侧桥练习后的变化。结果涉及瞄准动作中的弓抖动指标。",
+        "研究对象不是职业射手，不能直接推广到所有射手或把抖动变化等同于环数提升。具体角度、负荷和动作安排应结合个人情况与教练指导。",
+        "这是一篇研究选读，保留原始发表日期，不包装成近期赛事新闻。"
+      ],
+      "url": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0285223",
+      "doi": "10.1371/journal.pone.0285223",
+      "attribution": "Shinohara 等，2023。原文 CC BY；此处为弓行记独立整理摘要。"
+    }
+  ]
 }

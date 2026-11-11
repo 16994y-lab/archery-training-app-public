@@ -10,7 +10,13 @@
 .cloud-discovery,.cloud-scope,.cloud-explainer p,.cloud-attention p { margin:6px 0; color:#456172; font-size:.9rem; }
 .cloud-facts { margin:18px 0; display:grid; grid-template-columns:repeat(auto-fit,minmax(min(12rem,100%),1fr)); border:1px solid var(--cloud-line); background:var(--cloud-soft); border-radius:14px; padding:12px 15px; gap:10px 16px; }
 .cloud-facts dt { color:#526976; font-size:.76rem; }
-.cloud-facts dd { margin:2px 0 0; font-weight:650; font-variant-numeric:tabular-nums; }
+.cloud-facts dd { margin:2px 0 0; font-weight:650; font-variant-numeric:tabular-nums; overflow-wrap:anywhere; }
+.backup-conflict-options {min-width:0;margin:12px 0;padding:6px 12px;border:1px solid var(--gx-line);border-radius:12px}
+.backup-conflict-options legend {padding-inline:4px;font-weight:650}
+.backup-conflict-options label {display:flex;gap:8px;align-items:center;min-height:44px;font-size:14px;cursor:pointer}
+.backup-conflict-options input {width:18px;height:18px;flex:none;margin:0;accent-color:var(--brand)}
+.backup-conflict-options label:focus-within {outline:2px solid var(--gx-focus);outline-offset:2px;border-radius:6px}
+@media(min-width:375px) { .cloud-facts { grid-template-columns:repeat(2,minmax(0,1fr)); } }
 .cloud-actions { margin:14px 0 8px; }
 .cloud-explainer { border-top:1px solid var(--cloud-line); margin-top:12px; }
 .records-cloud summary { cursor:pointer; min-height:44px; align-content:center; color:#285364; font-weight:600; font-size:.88rem; }

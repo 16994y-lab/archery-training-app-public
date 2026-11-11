@@ -27,7 +27,17 @@
 
 .usage-notice{margin-top:20px;color:var(--ui-muted,#52667e);font-size:13px;line-height:1.7}.usage-notice summary{cursor:pointer;min-height:44px;display:list-item;padding:10px 4px;box-sizing:border-box}.usage-notice summary:focus-visible{outline:2px solid #2867ab;outline-offset:2px}.usage-notice div{padding:0 4px 8px}.startup-account{min-height:100vh;padding:20px 12px 24px;min-height:100dvh;padding:max(20px,env(safe-area-inset-top)) 12px max(24px,env(safe-area-inset-bottom))}
 
-/* One phone/code form; route choices follow the primary action. */
+/* Keep the login route switch in the same position on every form. */
+.account-card .account-login-ways { grid-template-columns:repeat(3,minmax(0,1fr)); margin:12px 0 16px; }
+.account-card .account-login-ways .button.adm-button { padding-inline:2px; font-size:13px; white-space:normal; }
+@media(max-width:350px){.account-card .account-login-ways .button.adm-button{font-size:12px}}
+.account-recovery-control { display:grid; justify-items:end; margin:0 0 12px; }
+.account-card .account-recovery-control .account-forgot { min-height:44px; margin:0; box-shadow:none; }
+.account-recovery-control .account-recovery-choices { width:100%; margin:0; }
+.account-recovery-steps { list-style:none; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:6px; padding:4px; margin:0 0 16px; border-radius:12px; background:var(--surface-soft,#eef4fa); }
+.account-recovery-steps li { min-height:38px; padding:8px 6px; border-radius:9px; color:var(--ui-muted,#52667e); text-align:center; font-size:13px; }
+.account-recovery-steps [aria-current="step"] { background:var(--surface,#fff); color:var(--ui-accent,#2867ab); font-weight:650; }
+.account-recovery-card .account-recovery-return { margin-top:14px; }
 .account-entry-form .field{margin:14px 0;gap:7px}
 .account-entry-form .field>label{margin-bottom:0}
 .account-code-entry{display:flex;align-items:stretch;min-width:0;border:1px solid #bbccdf;border-radius:12px;background:var(--surface,#fff)}
@@ -36,12 +46,6 @@
 .account-access .account-code-entry input:focus-visible{outline:0}
 .account-access .account-sms-send.button.adm-button{flex:0 0 auto;min-width:106px;min-height:48px;margin:0;padding:10px 12px;border:0;border-left:1px solid var(--surface-stroke,#bbccdf);border-radius:0 11px 11px 0;background:transparent;box-shadow:none;color:var(--ui-accent,#2867ab);font-size:13px;white-space:nowrap}
 .account-access .account-text-link.button.adm-button{min-height:44px;margin:0;padding:9px 0;background:transparent;border:0;box-shadow:none;color:var(--ui-accent,#2867ab);font-size:14px}
-.account-phone-return{display:block;text-align:left}
-.account-entry-links{display:flex;justify-content:flex-end;margin-top:2px}
 .account-access .account-code-hint{margin:6px 0;color:var(--ui-muted,#52667e);font-size:12px}
 .account-access .account-change-phone.button.adm-button{display:block;margin:0 0 0 auto}
-.account-alternative{margin-top:12px}
-.account-divider{display:flex;align-items:center;gap:14px;margin:10px 0;color:var(--ui-muted,#52667e);font-size:13px}
-.account-divider:before,.account-divider:after{content:"";height:1px;flex:1;background:var(--surface-stroke,#dce6ed)}
-.account-access .account-email-entry.button.adm-button{margin:0;background:transparent;border:1px solid var(--surface-stroke,#dce6ed);box-shadow:none;color:var(--ui-ink,#20364c)}
 @media(max-width:350px){.account-access .account-sms-send.button.adm-button{min-width:96px;padding-inline:8px}.account-access .account-code-entry input{padding-inline:9px}}

@@ -16,7 +16,7 @@ export function useToast(){
 export function AppToast({notice}:{notice:ToastMessage}){
  return <div role="status" aria-live="polite" aria-atomic="true" className={notice.placement==='top'?'toast toast-top':'toast'}>{notice.message}</div>;
 }
-export type AppContext = { data:Data; update:Update; retryPendingSave:()=>Promise<boolean>; hasPendingSave:()=>boolean; readSaveState?:()=>PhotoSaveState; open:(name:string,id?:string)=>void; ask:(title:string,body:string,choices:string[])=>Promise<number>; tell:(message:string,options?:ToastOptions)=>void };
+export type AppContext = { data:Data; update:Update; retryPendingSave:()=>Promise<boolean>; hasPendingSave:()=>boolean; readSaveState?:()=>PhotoSaveState; open:(name:string,id?:string)=>void; ask:(title:string,body:string,choices:string[],primaryChoice?:number)=>Promise<number>; tell:(message:string,options?:ToastOptions)=>void };
 export const AppCtx=createContext<AppContext>(null!);
 export const useApp=()=>useContext(AppCtx);
 export function useEditGuard(value:unknown){const {ask}=useApp();const initial=useRef(JSON.stringify(value)),approved=useRef(false);const dirty=JSON.stringify(value)!==initial.current;
@@ -46,7 +46,7 @@ export function Back({title,onBack,label='返回',dirty,action}:{title:string;on
 const backHandlers=new Map<symbol,{priority:number;run:()=>void}>();
 if(typeof window!=='undefined')window.addEventListener('gongxingji-back',e=>{const top=[...backHandlers.values()].reverse().sort((a,b)=>b.priority-a.priority)[0];if(top){e.stopImmediatePropagation();top.run();}},true);
 export function useInnerBack(active:boolean,onBack:()=>void,priority=10) {const fn=useRef(onBack);fn.current=onBack;useEffect(()=>{if(!active)return;const key=Symbol();backHandlers.set(key,{priority,run:()=>fn.current()});return()=>{backHandlers.delete(key);};},[active,priority]);}
-type ModalProps={title:string;children:React.ReactNode;onClose:()=>void};
+type ModalProps={title:string;children:React.ReactNode;onClose:()=>void;container?:HTMLElement};
 const modalDialogs=new Map<symbol,HTMLElement>();
 function ModalBody({title,children,onClose}:ModalProps){
  const dialog=useRef<HTMLElement>(null),close=useRef(onClose);close.current=onClose;
@@ -59,7 +59,10 @@ function ModalBody({title,children,onClose}:ModalProps){
   const focus=()=>element.focus({preventScroll:true});
   const keyboard=(event:KeyboardEvent)=>{
    if(top()!==element||event.isComposing)return;
-   if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();close.current();}
+   if(event.key==='Escape'){
+    if(event.target instanceof HTMLSelectElement&&CSS.supports('selector(select:open)')&&event.target.matches(':open'))return;
+    event.preventDefault();event.stopImmediatePropagation();close.current();
+   }
    if(event.key==='Tab'){
     const items=controls(),first=items[0],last=items[items.length-1],active=document.activeElement;
     if(!first){event.preventDefault();focus();}
@@ -79,7 +82,7 @@ function ModalBody({title,children,onClose}:ModalProps){
  },[]);
  return <section ref={dialog} role="dialog" aria-modal="true" aria-label={title} tabIndex={-1}><button type="button" className="adm-popup-close-icon" aria-label={`关闭${title}`} style={{border:0,background:'transparent',color:'inherit',cursor:'pointer'}} onClick={onClose}>×</button><h2>{title}</h2>{children}</section>;
 }
-export function Modal(props:ModalProps) {useInnerBack(true,props.onClose,100);return <Popup visible onClose={props.onClose} onMaskClick={props.onClose} bodyClassName="app-popup" bodyStyle={{borderTopLeftRadius:24,borderTopRightRadius:24,maxHeight:'88dvh',overflowY:'auto'}}><ModalBody {...props}/></Popup>;}
+export function Modal(props:ModalProps) {useInnerBack(true,props.onClose,100);return <Popup visible getContainer={props.container} onClose={props.onClose} onMaskClick={props.onClose} bodyClassName="app-popup" bodyStyle={{borderTopLeftRadius:24,borderTopRightRadius:24,maxHeight:'88dvh',overflowY:'auto'}}><ModalBody {...props}/></Popup>;}
 export function ValidatedForm({children,onFinish}:{children:React.ReactNode;onFinish:()=>void|Promise<void>}) {return <Form className="app-form" onFinish={onFinish} layout="vertical">{children}</Form>;}
 export function sessionIn(d:Data,id:string):Session{const s=d.sessions.find(s=>s.id===id);if(!s)throw new Error('记录不存在');return s;}
 export {TargetFace} from './TargetFace';

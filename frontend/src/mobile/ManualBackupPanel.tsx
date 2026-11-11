@@ -1,5 +1,5 @@
 import React,{useEffect,useMemo,useRef,useState} from 'react';
-import {useApp,Button,Panel,Field} from './ui';
+import {useApp,Button,Panel} from './ui';
 import {repository} from './store';
 import {cloudSync} from './cloud-sync';
 import {maskEmail} from './account-display';
@@ -7,7 +7,7 @@ import {ManualBackup,type BackupPreview,type BackupSummary} from './manual-backu
 
 const summary=(s:BackupSummary)=>`${s.sessions} 场 / ${s.arrows} 箭（完成 ${s.completed} 场、草稿 ${s.drafts} 场）；计划 ${s.plans}、靶面 ${s.targets}、器材 ${s.equipment}、配件 ${s.accessories}、日历 ${s.schedules}、长期安排 ${s.programs}、目标 ${s.goals}；约 ${(s.bytes/1024).toFixed(1)} KB`;
 export function ManualBackupPanel({owner,email,busy}:{owner:string|null;email:string;busy:boolean}){
-  const {update,ask,tell}=useApp();
+  const {update,ask,tell}=useApp(),strategyName=React.useId();
   const transfer=useMemo(()=>new ManualBackup({read:()=>repository.data,pending:()=>!!repository.pending,update:change=>cloudSync.manualBackupSave(()=>update(change))},{identity:()=>cloudSync.ensureManualBackupIdentity(),current:()=>cloudSync.manualBackupIdentity(),request:(method,identity,document,revision)=>cloudSync.manualBackupRequest(method,identity,document,revision)}),[update]);
   const [preview,setPreview]=useState<BackupPreview|null>(null),[strategy,setStrategy]=useState<'copy-imported'|'keep-existing'>('copy-imported'),[working,setWorking]=useState(false),[receipt,setReceipt]=useState('');
   const inFlight=useRef(false);
@@ -26,7 +26,9 @@ export function ManualBackupPanel({owner,email,busy}:{owner:string|null;email:st
   return <Panel title="完整云备份与恢复">
     <p>账号：{maskEmail(email)||'当前已登录账号'}。每次由你读取、核对并确认；不会自动上传。</p>
     <p className="caption">备份训练与草稿、逐箭成绩及落点、备注与快照、计划、器材、配件、日历、长期安排、目标及个人资料。照片与视频文件不包含在内。单份在线备份容量约 4 MB；超过时请保留本机资料并导出文件。仅保留当前账号最新一份备份。</p>
-    <Field label="同一标识内容不同时"><select disabled={disabled} value={strategy} onChange={e=>{transfer.invalidate();setPreview(null);setReceipt('');setStrategy(e.target.value as typeof strategy);}}><option value="copy-imported">另存副本，保留两份内容</option><option value="keep-existing">保留已有项，跳过冲突内容</option></select></Field>
+    <fieldset className="backup-conflict-options manual-backup-strategy" disabled={disabled}><legend>同一标识内容不同时</legend>
+      {([['copy-imported','另存副本，保留两份内容'],['keep-existing','保留已有项，跳过冲突内容']] as const).map(([value,label])=><label key={value}><input type="radio" name={strategyName} checked={strategy===value} onChange={()=>{transfer.invalidate();setPreview(null);setReceipt('');setStrategy(value);}}/>{label}</label>)}
+    </fieldset>
     <div className="actions"><Button disabled={disabled} onClick={()=>void act(()=>prepare('upload'))}>读取上传摘要</Button><Button disabled={disabled} onClick={()=>void act(()=>prepare('restore'))}>读取恢复预览</Button></div>
     {preview&&<><p>接收位置：{preview.destination} · 云端版本 {preview.revision} · {preview.updatedAt??'尚无备份'}</p><p>本机：{summary(preview.local)}</p><p>云端：{preview.remote?summary(preview.remote):'尚无备份'}</p><p>结果：{summary(preview.result)}</p><p>冲突 {preview.plan.conflicts.length} 项；相同内容 {preview.plan.identical.length} 项。</p>{preview.plan.conflicts.length>0&&<details><summary>查看冲突内容</summary>{preview.plan.conflicts.map(c=><p key={c.collection+':'+c.id}>{c.name}</p>)}</details>}<p className="caption">{preview.kind==='restore'?'默认个人资料从云端恢复，已填写的本机资料与连接设置保留；导入的进行中训练为草稿。':'云端已有的不同标识项目保留；本机个人资料会更新云端个人资料。保留已有项时，冲突的本机内容不会进入这次备份。'}</p><Button kind="primary" disabled={disabled} onClick={()=>void act(confirm)}>{preview.kind==='upload'?'核对并上传一次':'核对并恢复到本机'}</Button></>}
     {receipt&&<p role="status">{receipt}</p>}

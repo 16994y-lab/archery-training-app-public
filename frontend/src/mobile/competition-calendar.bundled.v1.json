@@ -1,0 +1,2220 @@
+{
+  "schema": 1,
+  "revision": 3,
+  "events": [
+    {
+      "id": "2026-liyang-archery-open",
+      "name": "“一带一路”群众体育系列赛·国际射箭公开赛",
+      "level": "大众公开赛",
+      "province": "江苏",
+      "city": "常州",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "startDate": "2026-11-07",
+      "venue": "溧阳市曹山旅游度假区",
+      "dateNote": "11月7日开赛，结束日期待核实。此前公布的10月30日至11月1日为旧赛期。",
+      "eligibility": "设社会组、国际组和青少年组，具体资格以当届规程为准。",
+      "entryNote": "赛期变动后的报名方式和截止时间尚未核到。",
+      "format": "设反曲弓、复合弓、传统弓和光弓，包含个人、团体及混合团体赛。",
+      "reports": [
+        "中国江苏网报道，306名选手参加本站比赛。"
+      ],
+      "links": [
+        {
+          "kind": "report",
+          "label": "中国江苏网开赛报道",
+          "url": "https://jsnews.jschina.com.cn/cz/a/202611/t20261108_s6af001e8e4b0393f8aea8950.shtml"
+        }
+      ]
+    },
+    {
+      "id": "2026-hangzhou-asia-cup",
+      "name": "射箭亚洲杯第三站",
+      "level": "国际赛",
+      "province": "浙江",
+      "city": "杭州",
+      "year": 2026,
+      "checkedOn": "2026-11-03",
+      "startDate": "2026-11-16",
+      "endDate": "2026-11-21",
+      "venue": "黄龙体育场（资格赛）、黄龙东广场（决赛）",
+      "dateNote": "组委会邀请函列出的赛期为11月16日至21日。15日抵达，22日离会。",
+      "eligibility": "由世界射箭联合会会员协会组队参赛。",
+      "entryMethod": "会员协会通过世界射箭联合会报名系统 WAREOS 提交名单。",
+      "entryNote": "报名于7月17日开放，8月18日截止预报名，10月25日截止最终报名。",
+      "entryDeadline": "2026-10-25",
+      "format": "反曲弓、复合弓均设资格赛和淘汰赛。",
+      "schedule": [
+        "11月16日　器材检查、官方练习和领队会",
+        "11月17日　资格赛",
+        "11月18日至20日　个人及团体淘汰赛",
+        "11月21日　决赛、颁奖。以上为邀请函初步安排。"
+      ],
+      "spectator": {
+        "admission": "资格赛在黄龙体育场，决赛在黄龙东广场。尚未核到公众入场、购票或预约公告。",
+        "broadcast": "尚未核到本届赛事的官方直播安排。"
+      },
+      "links": [
+        {
+          "kind": "notice",
+          "label": "组委会邀请函（含报名条件和初步赛程）",
+          "url": "https://documents.worldarchery.sport/Events/World_Ranking/2026/26_WRE_Asia_Cup_Legg_lll_CHN/2026_Hangzhou_China_Invitation_package_V1.0.pdf"
+        },
+        {
+          "kind": "schedule",
+          "label": "世界射箭联合会赛事文件",
+          "url": "https://extranet.worldarchery.sport/documents/?dir=1403"
+        }
+      ]
+    },
+    {
+      "id": "2026-liuzhou-university-championship",
+      "name": "学体联全国大学生射箭锦标赛",
+      "level": "大学生赛",
+      "province": "广西",
+      "city": "柳州",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "startDate": "2026-10-18",
+      "endDate": "2026-10-24",
+      "venue": "柳州铁道职业技术学院",
+      "eligibility": "高校代表队参赛，涵盖本科和高职院校。",
+      "entryMethod": "中国学生体育联合会赛事报名平台受理报名。",
+      "entryNote": "8月19日8时开始受理。",
+      "entryDeadline": "2026-09-24T18:00:00+08:00",
+      "format": "设个人、团体和混合团体项目。排位赛和淘汰赛分别列出名次。",
+      "reports": [
+        "南阳理工学院在反曲弓男子甲组团体排位赛获第二，随后夺得团体淘汰赛冠军。"
+      ],
+      "result": "中国学生体育联合会于10月30日公示成绩册，可按弓种、组别和项目查名次。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "中国学生体育联合会参赛名单公示",
+          "url": "https://www.sports.edu.cn/b/a/c/content_3836.shtml"
+        },
+        {
+          "kind": "entry",
+          "label": "学体联赛事报名目录（搜索“射箭”）",
+          "url": "https://www.sports.edu.cn/web/html/competition/wonderful-apply.html"
+        },
+        {
+          "kind": "report",
+          "label": "南阳理工学院赛后报道",
+          "url": "https://news.nyist.edu.cn/info/1002/69277.htm"
+        },
+        {
+          "kind": "results",
+          "label": "学体联成绩公示",
+          "url": "https://www.sports.edu.cn/b/a/c/content_3877.shtml"
+        },
+        {
+          "kind": "results",
+          "label": "官方成绩册 PDF（161页）",
+          "url": "https://www.sports.edu.cn/b/a/c/images/202610301793348554426_0_617.pdf"
+        }
+      ]
+    },
+    {
+      "id": "2026-harbin-open-and-university",
+      "name": "“遇箭·哈尔滨”室外射箭大众公开赛暨第二届大学生射箭邀请赛",
+      "level": "大众与高校赛事",
+      "province": "黑龙江",
+      "city": "哈尔滨",
+      "year": 2026,
+      "checkedOn": "2026-11-03",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-17",
+      "venue": "黑龙江财经学院田径场",
+      "eligibility": "省内高校及射箭协会组织报名，个人参赛条件见通知所附规程。",
+      "entryMethod": "省体育局通知附竞赛规程、报名表和自愿参赛责任书。",
+      "format": "反曲弓、传统弓分设男、女个人赛。排位赛每人36箭，前16名进入淘汰赛。",
+      "reports": [
+        "10月16日上午，女子反曲弓10米、男子传统弓10米和男子反曲弓30米项目先后开赛。"
+      ],
+      "links": [
+        {
+          "kind": "rules",
+          "label": "黑龙江省体育局竞赛规程及报名表",
+          "url": "https://tyj.hlj.gov.cn/tyj/c112436/202609/c00_31979920.shtml"
+        },
+        {
+          "kind": "report",
+          "label": "黑龙江省体育局开赛报道",
+          "url": "https://tyj.hlj.gov.cn/tyj/c112421/202610/c00_31984960.shtml"
+        }
+      ]
+    },
+    {
+      "id": "2026-huainan-olympic-championship",
+      "name": "全国射箭奥林匹克项目锦标赛",
+      "level": "全国锦标赛",
+      "province": "安徽",
+      "city": "淮南",
+      "year": 2026,
+      "checkedOn": "2026-11-03",
+      "startDate": "2026-06-08",
+      "endDate": "2026-06-14",
+      "venue": "淮南奥体中心、淮南爱琴海购物中心广场",
+      "dateNote": "6月8日开赛，14日决赛。补充通知所列6月6日至15日包括报到和离会。",
+      "eligibility": "各参赛单位统一报名，需提交盖章报名表、体能成绩和第二季度反兴奋剂准入材料。",
+      "entryMethod": "由代表队在中国射箭协会赛事报名系统提交材料。",
+      "entryNote": "报名截止时间为5月25日24时。",
+      "entryDeadline": "2026-05-25",
+      "format": "反曲弓、复合弓分设男子个人、女子个人、男子团体、女子团体及混合团体。",
+      "schedule": [
+        "6月8日　在淮南奥体中心开赛",
+        "6月14日　在淮南爱琴海购物中心广场决赛"
+      ],
+      "result": "新疆队包揽反曲弓个人金牌。山西队在复合弓女子团体半决赛射出236环，刷新全国纪录。河南队获得该项冠军。",
+      "links": [
+        {
+          "kind": "rules",
+          "label": "中国射箭协会补充通知（中国香港射箭总会存档）",
+          "url": "https://www.archery.org.hk/system/files/2026%E5%B9%B4%E5%85%A8%E5%9B%BD%E5%B0%84%E7%AE%AD%E5%A5%A5%E6%9E%97%E5%8C%B9%E5%85%8B%E9%A1%B9%E7%9B%AE%E9%94%A6%E6%A0%87%E8%B5%9B%E8%A3%9C%E5%85%85%E9%80%9A%E7%9F%A5.pdf"
+        },
+        {
+          "kind": "report",
+          "label": "中华全国体育总会开赛报道",
+          "url": "https://www.sport.org.cn/shouye/jd/2026/0612/699145.html"
+        },
+        {
+          "kind": "results",
+          "label": "国家体育总局决赛报道",
+          "url": "https://www.sport.gov.cn/n20001280/n20067662/n20067613/c29691316/content.html"
+        }
+      ]
+    },
+    {
+      "id": "2026-shijiazhuang-archery-king",
+      "name": "中国箭王争霸赛石家庄站",
+      "level": "大众赛事",
+      "province": "河北",
+      "city": "石家庄",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "startDate": "2026-05-30",
+      "endDate": "2026-05-31",
+      "venue": "正定县长乐门广场、南城门瓮城",
+      "dateNote": "运动员5月29日报到，30日至31日比赛。",
+      "eligibility": "符合竞赛规程的运动员可以个人名义报名。报名团体项目的代表单位须完成中国射箭协会赛事注册。",
+      "entryMethod": "扫描补充通知中的二维码报名。优先名额5月9日开放，常规个人报名为5月11日至17日。",
+      "entryDeadline": "2026-05-17",
+      "entryNote": "报名费200元/人（含意外保险），往届符合条件的箭王免报名费。限额400人，满额即止。",
+      "format": "反曲弓、复合弓、传统弓、光弓各设个人及混合团体项目。",
+      "reports": [
+        "正定县融媒体中心报道，来自全国20多个省级行政区的400名射箭爱好者参赛。"
+      ],
+      "links": [
+        {
+          "kind": "rules",
+          "label": "体育总局射运中心补充通知（转载页）",
+          "url": "https://npo0717xg.npoall.com/news/itemid-262610.html"
+        },
+        {
+          "kind": "report",
+          "label": "正定县开赛报道",
+          "url": "https://www.zd.gov.cn/columns/1ebb97b2-ca47-4434-a3ce-48a6de0713c3/202606/01/1aa9f661-d2a3-4ff9-8441-f2dc591f8556.html"
+        }
+      ]
+    },
+    {
+      "id": "2026-nanjing-archery-king",
+      "name": "中国箭王争霸赛江苏南京站",
+      "level": "大众赛事",
+      "province": "江苏",
+      "city": "南京",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "startDate": "2026-04-18",
+      "endDate": "2026-04-19",
+      "venue": "高淳区固城湖水慢城",
+      "dateNote": "高淳区报道的活动为4月17至19日，赛事开幕和比赛为18至19日。",
+      "eligibility": "代表单位须按协会要求办理赛事注册。个人参赛按本站规程执行。",
+      "entryNote": "本站报名入口、截止时间及具体资格条件尚未核到。",
+      "format": "设传统弓、光弓、反曲弓和复合弓，包含个人赛与混合团体赛。",
+      "reports": [
+        "扬子晚报报道，本站共有来自12个省级行政区的321名选手参赛。"
+      ],
+      "links": [
+        {
+          "kind": "notice",
+          "label": "中国射箭协会年度代表单位注册要求",
+          "url": "https://npo0717xg.npoall.com/news/itemid-243523.html"
+        },
+        {
+          "kind": "report",
+          "label": "高淳区人民政府赛事报道",
+          "url": "https://www.njgc.gov.cn/jrgc/gcyw/202604/t20260421_5827217.html"
+        },
+        {
+          "kind": "report",
+          "label": "扬子晚报收官报道",
+          "url": "https://www.yzwb.net/news/ty/202604/t20260418_343623.html"
+        }
+      ]
+    },
+    {
+      "id": "2026-huzhou-archery-king",
+      "name": "中国箭王争霸赛浙江湖州站",
+      "level": "大众赛事",
+      "province": "浙江",
+      "city": "湖州",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "startDate": "2026-09-11",
+      "endDate": "2026-09-13",
+      "venue": "安吉县杭垓镇黄浦江源射击射箭基地",
+      "dateNote": "9月11日为运动员报到日，赛期以射运中心补充通知为准。",
+      "eligibility": "符合当届竞赛规程的选手可个人报名。代表单位须先完成赛事注册才能报团体项目。",
+      "individualEntryFrom": "2026-08-14",
+      "entryDeadline": "2026-08-31",
+      "entryMethod": "扫描本站补充通知内的个人报名二维码。优先报名于8月12日开放，常规报名于8月14日开放。",
+      "entryNote": "报名费200元/人（含意外保险），往届符合条件的箭王免报名费。限额400人，满额即止。",
+      "reports": [
+        "参赛队羿龙 NIKA 发布了本站部分反曲弓和光弓项目成绩。"
+      ],
+      "links": [
+        {
+          "kind": "entry",
+          "label": "射运中心补充通知及当届报名二维码（转载）",
+          "url": "https://npo0717xg.npoall.com/news/itemid-294442.html"
+        },
+        {
+          "kind": "report",
+          "label": "羿龙 NIKA 参赛队赛后记录",
+          "url": "https://www.elongoutdoor.com/cn/new/new-30-51.html"
+        }
+      ]
+    },
+    {
+      "id": "world-cup-shanghai-2026",
+      "name": "射箭世界杯上海站",
+      "level": "世界杯",
+      "province": "上海",
+      "city": "上海",
+      "year": 2026,
+      "startDate": "2026-05-05",
+      "endDate": "2026-05-10",
+      "venue": "源深体育中心（资格赛、淘汰赛）和滨江金融广场（决赛）",
+      "checkedOn": "2026-11-03",
+      "eligibility": "由世界射箭联合会的会员协会选派运动员，每个国家或地区每个组别最多报 4 人。",
+      "entryMethod": "会员协会通过世界射联报名系统 WAREOS 提交名单。3 月 4 日前预报名，4 月 14 日前确认最终名单并付清费用。",
+      "entryDeadline": "2026-04-14",
+      "schedule": [
+        "5 月 5 日至 8 日，资格赛和淘汰赛。",
+        "5 月 9 日，复合弓决赛。5 月 10 日，反曲弓决赛。"
+      ],
+      "result": "李梦麒以 6 比 4 击败梅特·加佐兹，夺得男子反曲弓个人冠军。他与黄雨薇还拿下反曲弓混合团体冠军。",
+      "links": [
+        {
+          "kind": "rules",
+          "label": "世界射联参赛邀请函与报名须知（英文 PDF）",
+          "url": "https://extranet.worldarchery.sport/documents/index.php/?doc=7513"
+        },
+        {
+          "kind": "schedule",
+          "label": "两处比赛场馆及决赛日程",
+          "url": "https://www.sport.gov.cn/n20001280/n20067662/n20067613/c29598050/content.html"
+        },
+        {
+          "kind": "report",
+          "label": "李梦麒在上海站的晋级过程",
+          "url": "https://www.sport.gov.cn/n20001280/n20067662/n20067613/c29614061/content.html"
+        },
+        {
+          "kind": "results",
+          "label": "世界射联各轮成绩册（PDF）",
+          "url": "https://extranet.worldarchery.sport/documents/index.php/Events/World_Cup/2026/2_Shanghai_WC_CHN/BOOK.pdf"
+        }
+      ]
+    },
+    {
+      "id": "greater-bay-indoor-hong-kong-2026",
+      "name": "大湾区室内射箭公开赛（香港）",
+      "level": "国际射联星章赛",
+      "province": "香港",
+      "city": "香港",
+      "year": 2026,
+      "startDate": "2026-07-18",
+      "endDate": "2026-07-19",
+      "venue": "大埔东昌街体育馆，东昌街康体大楼三楼",
+      "checkedOn": "2026-11-03",
+      "eligibility": "设男子、女子反曲弓和复合弓组。参赛时须带有效身份证件或护照。",
+      "entryMethod": "参赛队在邀请函所附表格填写所属协会或俱乐部，向中国香港射箭总会提交报名表、付款表和付款凭证。",
+      "entryDeadline": "2026-05-15",
+      "entryNote": "已提交的名单最迟可在 5 月 22 日修改。",
+      "schedule": [
+        "7 月 18 日，18 米资格赛，每人 60 支箭。",
+        "7 月 19 日，各组资格赛前 32 名进入个人淘汰赛，决出名次。"
+      ],
+      "result": "成绩册列有各组两轮 18 米排位成绩，以及 7 月 19 日的逐轮淘汰赛对阵和比分。",
+      "links": [
+        {
+          "kind": "rules",
+          "label": "总会邀请函、分组和报名表（英文 PDF）",
+          "url": "https://www.archery.org.hk/system/files/Greater%20Bay%20Area%20Indoor%20Archery%20Open%20%28Hong%20Kong%202026%29%28Star%20Shoot%29_ENG_1.pdf"
+        },
+        {
+          "kind": "results",
+          "label": "中国香港射箭总会完整成绩册（PDF）",
+          "url": "https://www.archery.org.hk/system/files/GreaterBay_4.pdf"
+        }
+      ]
+    },
+    {
+      "id": "two-day-single-hong-kong-2026",
+      "name": "香港双日单轮射箭比赛（2026–2027 年度）",
+      "level": "地区星章赛",
+      "province": "香港",
+      "city": "香港",
+      "year": 2026,
+      "startDate": "2026-12-12",
+      "endDate": "2026-12-13",
+      "venue": "小西湾运动场",
+      "checkedOn": "2026-11-03",
+      "entryDeadline": "2026-11-20T17:00:00+08:00",
+      "entryNote": "设公开组及青少年组。在总会的「认可赛事」中打开「雙日單輪射箭比賽（星章賽）」附件查看报名要求。另列的「徵求場地設置服務」是场地服务招标。",
+      "schedule": [
+        "12 月 12 日，远距离比赛。",
+        "12 月 13 日，近距离比赛。"
+      ],
+      "links": [
+        {
+          "kind": "notice",
+          "label": "中国香港射箭总会认可赛事公告与附件",
+          "url": "https://www.archery.org.hk/taxonomy/term/41"
+        },
+        {
+          "kind": "schedule",
+          "label": "总会年度赛历第 13 项（PDF）",
+          "url": "https://www.archery.org.hk/system/files/EventCalendar2026-2027_1.pdf"
+        }
+      ]
+    },
+    {
+      "id": "world-cup-shanghai-2027",
+      "name": "射箭世界杯上海站",
+      "level": "世界杯",
+      "province": "上海",
+      "city": "上海",
+      "year": 2027,
+      "startDate": "2027-04-13",
+      "endDate": "2027-04-18",
+      "checkedOn": "2026-11-03",
+      "eligibility": "世界杯由各国家和地区代表队参赛。",
+      "entryNote": "本届的报名期限、比赛场馆和逐日安排仍待确认。",
+      "links": [
+        {
+          "kind": "rules",
+          "label": "世界射联对世界杯参赛队伍的说明",
+          "url": "https://www.worldarchery.sport/about-us/corporate/event-hosting"
+        },
+        {
+          "kind": "schedule",
+          "label": "世界射联公布的 2027 年赛历和上海站日期",
+          "url": "https://www.worldarchery.sport/news/202517/world-archery-executive-board-confirms-updates-2027-international-calendar"
+        }
+      ]
+    },
+    {
+      "id": "changchun-xidu-cup-2026",
+      "name": "长春市第二届“喜都杯”室外射箭邀请赛",
+      "level": "地方杯赛",
+      "province": "吉林",
+      "city": "长春",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "month": 8,
+      "venue": "二道区长春国际物流经济开发区实验学校",
+      "dateNote": "中国吉林网8月15日报道室外赛已开赛，完整赛期待核实。省体育局名录另列同名室内赛，暂未核到该条目的赛期。",
+      "entryNote": "当届竞赛规程、报名入口和截止时间待核实。",
+      "links": [
+        {
+          "kind": "report",
+          "label": "吉祥新闻室外赛现场报道",
+          "url": "https://weibo.com/2/detail/5332641482020377"
+        },
+        {
+          "kind": "report",
+          "label": "另见吉林省体育局名录中的同名室内赛（第10项）",
+          "url": "https://tyj.jl.gov.cn/xwzx/tzgg/202605/P020260513503464928913.pdf"
+        }
+      ]
+    },
+    {
+      "id": "yancheng-dazonghu-cup-2026",
+      "name": "大纵湖杯江苏射箭俱乐部联赛暨全国旅游城市射箭俱乐部邀请赛",
+      "level": "俱乐部联赛",
+      "province": "江苏",
+      "city": "盐城",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "startDate": "2026-10-23",
+      "endDate": "2026-10-25",
+      "venue": "大纵湖景区",
+      "dateNote": "赛期来自赛前预告，10月23日为报到日。实际举办情况和赛果待核实。",
+      "eligibility": "面向旅游城市射箭俱乐部，分男子、女子和青少年组。个人报名资格待核实。",
+      "format": "设反曲弓、复合弓、光弓、美猎弓和传统弓。",
+      "schedule": [
+        "10月24日　个人排位赛和淘汰赛",
+        "10月25日　团体淘汰赛、决赛和颁奖（赛前安排）"
+      ],
+      "spectator": {
+        "admission": "赛前预告邀请公众到现场观赛，是否需要景区门票或预约待核实。",
+        "broadcast": "赛前预告提到决赛直播，尚未核到播放地址或回放。"
+      },
+      "links": [
+        {
+          "kind": "spectator",
+          "label": "盐城晚报赛前观赛报道",
+          "url": "https://paper.ycnews.cn/wb/wap/content/202610/14/content_366000.html"
+        },
+        {
+          "kind": "schedule",
+          "label": "盐都发布赛程及决赛直播预告",
+          "url": "https://m.weibo.cn/2/detail/5356521216279409"
+        }
+      ]
+    },
+    {
+      "id": "wuzhong-acac-2026",
+      "name": "ACAC 室外射箭公开赛吴忠站",
+      "level": "俱乐部公开赛",
+      "province": "宁夏",
+      "city": "吴忠",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "startDate": "2026-08-08",
+      "endDate": "2026-08-09",
+      "venue": "吴忠市滨河体育运动公园",
+      "eligibility": "设成人及青少年组。当届具体报名资格待核实。",
+      "entryNote": "当届报名渠道和截止时间待核实。",
+      "reports": [
+        "央广网报道，赛事由吴忠市文化旅游体育广电局、吴忠市教育局主办，吴忠市体育中心承办。"
+      ],
+      "links": [
+        {
+          "kind": "report",
+          "label": "央广网赛事报道（转载）",
+          "url": "https://m.sohu.com/a/1060655195_362042"
+        }
+      ]
+    },
+    {
+      "id": "laiyuan-super-archer-2026",
+      "name": "“超级射手”射箭联赛第二站室外射箭邀请赛",
+      "level": "大众联赛",
+      "province": "河北",
+      "city": "保定",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "startDate": "2026-08-15",
+      "venue": "涞源县涞源湖景区",
+      "dateNote": "8月15日开赛，结束日期待核实。",
+      "entryNote": "当届报名渠道、参赛资格及截止时间待核实。",
+      "format": "设反曲弓、复合弓、光弓、美式猎弓和传统弓。",
+      "reports": [
+        "长城网报道，来自32个地市的240余名运动员参赛。"
+      ],
+      "links": [
+        {
+          "kind": "report",
+          "label": "长城网开赛报道",
+          "url": "https://bd.hebccw.cn/system/2026/08/16/102213684.shtml"
+        }
+      ]
+    },
+    {
+      "id": "taoyuan-youth-traditional-2026",
+      "name": "乌尼囊关怀杯青少年传统射箭邀请赛",
+      "level": "青少年邀请赛",
+      "province": "台湾",
+      "city": "桃园",
+      "year": 2026,
+      "checkedOn": "2026-11-03",
+      "startDate": "2026-12-12",
+      "endDate": "2026-12-12",
+      "venue": "复兴区三民里活动中心传统射箭场",
+      "eligibility": "限本学年在台湾（含离岛）就读幼儿园或小学的选手。小学四至六年级可个人申请，由主办方协助组队。",
+      "individualEntryFrom": "2026-10-06",
+      "entryDeadline": "2026-11-20",
+      "entryMethod": "从简章第 2 页扫码填表，再按简章寄送同意及保证书。家长同意书须于 11 月 27 日前送达。",
+      "entryNote": "比赛免费，分组限额。简章未列截止时刻。扫码后的表单是否仍有名额尚未核实。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "赛事公告与报名文件",
+          "url": "https://www.wanrung.gov.tw/News_Content.aspx?n=8136&s=231753"
+        },
+        {
+          "kind": "entry",
+          "label": "竞赛简章第 2 页 · 扫码报名",
+          "url": "https://ws.hl.gov.tw/Download.ashx?n=56u26LO957Ch56ugLnBkZg%3D%3D&u=LzAwMS9VcGxvYWQvNDY3L3JlbGZpbGUvMTQzOTAvMjMxNzUzL2Y2ZTlmNWUxLWY1ZjktNDRhZS1hOWUzLTExNmNiYzM3NTgzYy5wZGY%3D#page=2"
+        }
+      ]
+    },
+    {
+      "id": "taichung-university-traditional-2026",
+      "name": "大专校院国术锦标赛 · 传统弓术",
+      "level": "高校赛",
+      "province": "台湾",
+      "city": "台中",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "startDate": "2026-11-30",
+      "endDate": "2026-12-01",
+      "venue": "台湾体育运动大学体育馆（北区双十路一段 16 号）",
+      "dateNote": "日期为整届锦标赛赛期。",
+      "eligibility": "大专院校体育总会会员学校本学期在籍学生。",
+      "entryDeadline": "2026-11-09T17:00:00+08:00",
+      "entryMethod": "学校统一线上填报，签章后电邮扫描件并寄送正本。",
+      "entryNote": "由领队或教练签名并加盖学校公章，按规程于报名截止日寄出正本。",
+      "links": [
+        {
+          "kind": "entry",
+          "label": "学校报名表",
+          "url": "https://www.beclass.com/rid=30527da6a8e6f4449aa7"
+        },
+        {
+          "kind": "rules",
+          "label": "公告与规程",
+          "url": "https://www.ouk.edu.tw/ActivitiesDetailC001100.aspx?Cond=96901220-7fb7-4b85-9da5-5670dc29774a"
+        }
+      ]
+    },
+    {
+      "id": "xian-nwu-health-cup-2026",
+      "name": "西北大学体育文化节“健康杯”射艺比赛",
+      "level": "校内赛",
+      "province": "陕西",
+      "city": "西安",
+      "year": 2026,
+      "checkedOn": "2026-11-03",
+      "startDate": "2026-05-30",
+      "endDate": "2026-05-31",
+      "venue": "西北大学长安校区射艺场（智华体育场西北角外）",
+      "eligibility": "长安、太白校区身体健康且有保险的在籍本科生和研究生，按院系组队。",
+      "entryDeadline": "2026-05-20",
+      "entryMethod": "院系领队下载学校报名表，按规程电邮给校方负责人。",
+      "format": "设传统弓、反曲弓和复合弓项目。",
+      "links": [
+        {
+          "kind": "entry",
+          "label": "西北大学竞赛规程、报名表及递交方式",
+          "url": "https://tyb.nwu.edu.cn/info/1096/2953.htm"
+        }
+      ]
+    },
+    {
+      "id": "guangzhou-tathlum-outdoor-2026",
+      "name": "尚盛·弓夫杯射箭星球室外邀请赛",
+      "level": "大众邀请赛",
+      "province": "广东",
+      "city": "广州",
+      "year": 2026,
+      "checkedOn": "2026-11-03",
+      "startDate": "2026-04-11",
+      "endDate": "2026-04-12",
+      "venue": "广东女子职业技术学院番禺校区",
+      "dateNote": "报名通知原列 4 月 10 至 12 日，主办方赛后确认实际比赛为 11 至 12 日。",
+      "eligibility": "成人及青少年依弓种分组，另设初学者反曲弓 18 米组。",
+      "entryDeadline": "2026-04-03T18:00:00+08:00",
+      "entryMethod": "主办方比赛通知附报名说明及报名表下载二维码。",
+      "links": [
+        {
+          "kind": "entry",
+          "label": "主办方比赛通知及报名表",
+          "url": "https://tathlum-archery.com/sys-nd/47.html"
+        },
+        {
+          "kind": "report",
+          "label": "主办方收官消息（4 月 14 日）",
+          "url": "https://www.tathlum-archery.com/sys-nr/?g=1"
+        }
+      ]
+    },
+    {
+      "id": "anji-field-2026",
+      "name": "全国野外射箭赛（浙江湖州）",
+      "level": "大众赛事",
+      "province": "浙江",
+      "city": "湖州",
+      "year": 2026,
+      "checkedOn": "2026-11-03",
+      "startDate": "2026-06-12",
+      "endDate": "2026-06-14",
+      "venue": "安吉县杭垓镇大梅海景区",
+      "dateNote": "6 月 12 日报到，13 日开幕。",
+      "eligibility": "无代表单位的运动员可按当届规程个人报名。有代表单位的，单位须先在中国射箭协会注册。",
+      "entryDeadline": "2026-06-01",
+      "entryMethod": "扫描补充通知中的报名二维码。5 月 12 日开放，满 300 人提前截止。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "射运中心补充通知及当届报名二维码（转载）",
+          "url": "https://npo0717xg.npoall.com/news/itemid-263489.html"
+        },
+        {
+          "kind": "report",
+          "label": "潮新闻现场报道",
+          "url": "https://tidenews.com.cn/news.html?id=3476044"
+        }
+      ]
+    },
+    {
+      "id": "chongqing-sichuan-youth-2026",
+      "name": "“奔跑吧·少年”川渝射箭交流活动",
+      "level": "地区青少年赛",
+      "province": "重庆",
+      "city": "重庆",
+      "year": 2026,
+      "checkedOn": "2026-11-03",
+      "startDate": "2026-05-21",
+      "endDate": "2026-05-24",
+      "venue": "永川区体育中心",
+      "eligibility": "由川渝两地体育部门、体校、中小学校和俱乐部组队。按年龄分组，运动员须符合规程中的体检和保险要求。",
+      "entryDeadline": "2026-05-05",
+      "entryMethod": "代表队填写并盖章，按规程电邮报名材料。",
+      "links": [
+        {
+          "kind": "entry",
+          "label": "重庆市体育局竞赛规程及代表队报名表",
+          "url": "https://tyj.cq.gov.cn/tygz/qsnty/202604/t20260421_15625844.html"
+        }
+      ]
+    },
+    {
+      "id": "jinjiang-youth-open-2026",
+      "name": "全国青少年大众射箭公开赛（福建晋江）",
+      "level": "青少年公开赛",
+      "province": "福建",
+      "city": "泉州",
+      "year": 2026,
+      "checkedOn": "2026-11-03",
+      "startDate": "2026-02-07",
+      "endDate": "2026-02-08",
+      "venue": "晋江市足球训练中心",
+      "dateNote": "本届沿用 2025 年赛事名称，延期至 2026 年 2 月举办。运动员 6 日报到，7 至 8 日比赛。",
+      "eligibility": "设 U12、U14、U16、U18 组。须符合当届参赛年龄及安全要求，未成年人需监护人同意。",
+      "entryDeadline": "2026-01-23",
+      "entryMethod": "按协会补充通知中的运动员报名二维码申报。通知列有俱乐部、协会及院校等参赛单位。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "中国射箭协会补充通知及当届报名二维码（转载）",
+          "url": "https://npo0717xg.npoall.com/news/itemid-222364.html"
+        },
+        {
+          "kind": "report",
+          "label": "晋江经济报比赛报道",
+          "url": "https://jjjjb.fjdaily.com/pc/con/202602/09/content_512501.html"
+        }
+      ]
+    },
+    {
+      "id": "gt-open-strassen-2026",
+      "name": "GT Open 室内射箭世界系列赛",
+      "level": "室内公开赛",
+      "country": "卢森堡",
+      "province": "卢森堡",
+      "city": "斯特拉森",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "startDate": "2026-11-20",
+      "endDate": "2026-11-22",
+      "venue": "Marcel Balthasar 射箭馆",
+      "eligibility": "代表队及俱乐部射手，设反曲弓、复合弓。",
+      "entryMethod": "个人用 Open WAREOS，会员协会用 WAREOS。",
+      "individualEntryFrom": "2026-08-30",
+      "entryDeadline": "2026-11-09",
+      "entryDeadlineZone": "UTC",
+      "entryNote": "官方仅列截止日期，未公布具体时刻。名额以报名系统为准，主办方签证支持已于10月15日截止。",
+      "schedule": [
+        "11月20日　资格赛第1、2场",
+        "11月21日　资格赛第3、4场，随后进行个人淘汰赛",
+        "11月22日　继续淘汰赛及奖牌赛。以上为组委会初步赛程，按当地日期。"
+      ],
+      "spectator": {
+        "status": "免费入场",
+        "admission": "斯特拉森市政公告确认观众免费入场。场馆位于 299 Rue de Reckenthal，停车位有限；公告未列预约要求。",
+        "broadcast": "主办方称奖牌赛将在社交平台发布，尚未核到具体平台和当届直播链接。"
+      },
+      "links": [
+        {
+          "kind": "entry",
+          "label": "主办方报名页",
+          "url": "https://www.gt-s.lu/registration-272627v4"
+        },
+        {
+          "kind": "rules",
+          "label": "竞赛规程",
+          "url": "https://documents.worldarchery.sport/?doc=7773"
+        },
+        {
+          "kind": "spectator",
+          "label": "市政观赛公告",
+          "url": "https://www.strassen.lu/fr/agenda/event/2026-11-20/gt-open"
+        },
+        {
+          "kind": "broadcast",
+          "label": "主办方赛事消息",
+          "url": "https://www.gt-s.lu/gt-open-world-series-272598v4"
+        }
+      ]
+    },
+    {
+      "id": "rio-indoor-250-2026",
+      "name": "里约室内射箭世界系列赛 250",
+      "level": "室内公开赛",
+      "country": "巴西",
+      "province": "巴西",
+      "city": "里约热内卢",
+      "year": 2026,
+      "checkedOn": "2026-11-08",
+      "startDate": "2026-12-04",
+      "endDate": "2026-12-06",
+      "venue": "里约奥林匹克公园 Arena 3（Isabel Salgado 体育馆）",
+      "eligibility": "设反曲弓、复合弓及裸弓组，年龄组别以规程为准。",
+      "entryMethod": "个人通过 Open WAREOS 办理。9月30日预报名已截止，11月12日为最终报名及缴费期限。",
+      "entryDeadline": "2026-11-12",
+      "entryDeadlineZone": "UTC",
+      "entryNote": "未核实是否接收未预报名的新申请。官方仅列截止日期，未公布具体时刻。",
+      "schedule": [
+        "12月4日　资格赛",
+        "12月5日　淘汰赛，U21、50岁以上及裸弓组决赛",
+        "12月6日 09:00–20:00　成年反曲弓和复合弓决赛。以上为邀请函初步赛程，按里约当地时间。"
+      ],
+      "spectator": {
+        "admission": "场馆为里约奥林匹克公园 Arena 3，邀请函列入口 Gate 06。尚未核到本届观众购票或入场办法。",
+        "broadcast": "尚未核到本届官方直播安排。"
+      },
+      "links": [
+        {
+          "kind": "entry",
+          "label": "官方报名系统",
+          "url": "https://extranet.worldarchery.sport/wareos/"
+        },
+        {
+          "kind": "rules",
+          "label": "竞赛规程 v2.0",
+          "url": "https://documents.worldarchery.sport/?doc=7804"
+        },
+        {
+          "kind": "spectator",
+          "label": "奥林匹克公园赛事消息",
+          "url": "https://parqueolimpico.rio.br/indoor-world-series-rio-250-trara-duelo-marcus-dalmeida-e-brady-ellison/"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "national-archery-tour-qingliu-2026",
+      "name": "2026年全国射箭巡回赛第一站（福建清流）",
+      "level": "全国巡回赛",
+      "province": "福建",
+      "city": "三明",
+      "venue": "清流县开元射击射箭训练基地，决赛在清流县九龙广场",
+      "startDate": "2026-04-03",
+      "endDate": "2026-04-06",
+      "dateNote": "中国射箭协会报道4月3日开赛、6日决赛，并将赛会安排描述为五天。清流县融媒体中心赛后报道确认4月6日收官。",
+      "eligibility": "全国各地代表队运动员，报道共44队318人报名。",
+      "entryNote": "未核到个人公开报名。",
+      "format": "反曲弓70米、复合弓50米，设男女个人、团体和混合团体。",
+      "spectator": {
+        "admission": "决赛设于九龙广场，未核到独立公众入场政策。",
+        "broadcast": "4月6日决赛曾由中国射箭协会、中华全国体育总会及华奥星空等平台直播，回放可用性待核。"
+      },
+      "reports": [
+        "三明市政府报道本场赛事在清流举行。"
+      ],
+      "links": [
+        {
+          "kind": "broadcast",
+          "label": "中国射箭协会决赛直播公告",
+          "url": "https://www.sport.org.cn/shouye/jd/2026/0403/693375.html"
+        },
+        {
+          "kind": "report",
+          "label": "三明市政府活动报道",
+          "url": "https://www.sm.gov.cn/zw/zwxx/sjdt/202604/t20260407_2198955.htm"
+        }
+      ]
+    },
+    {
+      "id": "jinjiang-school-target-2026",
+      "name": "2026年晋江市中小学生射箭、射艺比赛",
+      "level": "市县校际赛",
+      "province": "福建",
+      "city": "泉州",
+      "startDate": "2026-04-25",
+      "endDate": "2026-04-26",
+      "dateNote": "联合规程原定4月25–26日，晋江经济报赛后报道证实同日举行。",
+      "venue": "晋江华侨职业中专学校（晋江市双龙路463号）",
+      "entryDeadline": "2026-04-17",
+      "eligibilitySummary": "晋江正式学籍学生，由学校组队",
+      "eligibility": "面向晋江市小学、中学及职校。运动员须持第二代居民身份证并具备晋江学校正式学籍，参赛单位统一负责保险。",
+      "entryMethod": "学校分队汇总加盖公章的报名表及学籍、保险等材料，按联合规程附件3指定邮箱提交。",
+      "format": "传统弓与反曲弓分小学、初中、高中组。设个人排名、全能及相应团体项目，距离与计分按各组规程。",
+      "schedule": [
+        "4月24日15:30，领队和教练员联席会。",
+        "4月25–26日，正式比赛。"
+      ],
+      "reports": [
+        "赛后报道确认24支代表队、215名运动员参加。尚未核到主办方完整成绩册。"
+      ],
+      "links": [
+        {
+          "kind": "rules",
+          "label": "晋江市文旅局、教育局联合通知与附件3规程",
+          "url": "https://www.jinjiang.gov.cn/xxgk/zdxxgk/ggwhty/gyxtysshhd/202604/t20260413_3283025.htm"
+        },
+        {
+          "kind": "report",
+          "label": "晋江经济报4月27日赛后报道（PDF）",
+          "url": "https://jjjjb.fjdaily.com/pc/att/202604/27/31c887c9-a5e3-43e4-9f89-b5af952df818.pdf"
+        },
+        {
+          "kind": "notice",
+          "label": "福建省教育考试院公布的学校地址",
+          "url": "https://www.eeafj.cn/zzxkgsgg/20260402/14465.html"
+        }
+      ],
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到当届面向公众的入场安排。",
+        "broadcast": "尚未核到主办方直播或官方回放。"
+      }
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到公开入场、购票或预约信息。",
+        "broadcast": "尚未核到官方直播或回放。"
+      },
+      "id": "2026-beijing-youth-archery-championship",
+      "name": "2026年北京市青少年射箭锦标赛",
+      "level": "市级青少年锦标赛",
+      "province": "北京",
+      "city": "北京",
+      "month": 5,
+      "venue": "北京市芦城体育运动技术学校射箭场（大兴区黄村镇芦城南政府路21号）",
+      "dateNote": "主办方公告安排5月23日至24日和5月30日至31日，两段赛程不连续。尚未核到当届赛后通报及成绩册。",
+      "eligibility": "北京市各区青少年代表队。具体资格见当届竞赛规程。",
+      "eligibilitySummary": "各区青少年代表队",
+      "entryMethod": "由各区体育主管部门组队报名。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "北京市体育局赛事通知及附件",
+          "url": "https://tyj.beijing.gov.cn/bjsports/zfxxgk_/tzgg40/744005949/index.html"
+        },
+        {
+          "kind": "rules",
+          "label": "射箭锦标赛竞赛规程（DOCX）",
+          "url": "https://tyj.beijing.gov.cn/bjsports/zfxxgk_/tzgg40/744005949/2026051116512423206.docx"
+        },
+        {
+          "kind": "notice",
+          "label": "体育学校地址",
+          "url": "https://tyj.beijing.gov.cn/bjsports/zfxxgk_/gkzp/744125442/index.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "赛后报道确认设置市民体验区，比赛现场的入场方式未核实。",
+        "broadcast": "未核到官方直播或回放。"
+      },
+      "id": "2026-urumqi-hanlin-cup",
+      "name": "第二届“翰林”杯全国射箭公开赛",
+      "level": "大众公开赛",
+      "province": "新疆",
+      "city": "乌鲁木齐",
+      "startDate": "2026-05-03",
+      "endDate": "2026-05-04",
+      "venue": "乌鲁木齐奥林匹克体育中心体育场",
+      "dateNote": "场馆活动信息列5月3日至4日。自治区体育局确认赛事为期两天，5月4日闭幕。",
+      "eligibility": "为全国射箭爱好者举办，实有14支代表队、150余人参赛。具体资格和报名方式尚未核到。",
+      "eligibilitySummary": "全国射箭爱好者",
+      "format": "分五种弓型设项。完整比赛规程及成绩册尚未核到。",
+      "links": [
+        {
+          "kind": "report",
+          "label": "新疆维吾尔自治区体育局闭幕报道",
+          "url": "https://tyj.xinjiang.gov.cn/xjtyj/xjtt/202605/21151876904b4aa68eb4392e0f05918b.shtml"
+        },
+        {
+          "kind": "schedule",
+          "label": "奥体中心假期活动赛程",
+          "url": "https://m.wlmq.bendibao.com/xiuxian/67884.shtm"
+        }
+      ]
+    },
+    {
+      "id": "quanzhou-childrens-target-2026",
+      "name": "2026年泉州市少年儿童射箭锦标赛",
+      "level": "市级青少年锦标赛",
+      "province": "福建",
+      "city": "泉州",
+      "startDate": "2026-05-09",
+      "endDate": "2026-05-10",
+      "dateNote": "泉州市体育局承办单位赛后通报确认5月9–10日举办。",
+      "venue": "惠安县嘉惠中学",
+      "eligibility": "由泉州各县（市、区）代表队参赛，按甲、乙、丙、丁四个年龄组竞赛。",
+      "entryNote": "当届报名操作和截止日期未核到。",
+      "format": "射程包括50、30、25、18和15米，设个人双轮全能、单项及团体双轮全能。",
+      "result": "男子团体总分南安第一，女子团体总分惠安第一。",
+      "links": [
+        {
+          "kind": "results",
+          "label": "泉州市体育局发布的赛后通报",
+          "url": "https://tyj.quanzhou.gov.cn/gzdt/zsdw/fjsqztyydxx/202605/t20260512_3290812.htm"
+        }
+      ],
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到当届面向公众的入场安排。",
+        "broadcast": "尚未核到主办方直播或官方回放。"
+      }
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到公开入场、购票或预约信息。",
+        "broadcast": "尚未核到官方直播或回放。"
+      },
+      "id": "2026-manzhouli-china-russia-archery",
+      "name": "2026年“万里茶道·友谊之约”中俄射箭邀请赛",
+      "level": "地方邀请赛",
+      "province": "内蒙古",
+      "city": "呼伦贝尔",
+      "startDate": "2026-06-06",
+      "endDate": "2026-06-07",
+      "venue": "满洲里市体育场",
+      "dateNote": "呼伦贝尔市总工会报道确认6月6日至7日举行，21支代表队200名射箭爱好者参赛。",
+      "eligibility": "来自俄罗斯及呼伦贝尔市各旗市区的代表队。",
+      "eligibilitySummary": "中俄受邀代表队",
+      "entryNote": "未核到当届公开报名流程及完整规程。",
+      "format": "18米光弓、30米反曲弓，设个人排位、个人淘汰及团体淘汰。",
+      "result": "赛后报道列出两项个人赛冠军及团体赛前三名。",
+      "links": [
+        {
+          "kind": "results",
+          "label": "呼伦贝尔市总工会完赛及赛果",
+          "url": "https://www.sohu.com/a/1034872397_121106854"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "national-youth-public-open-nanjing-gaochun-2026",
+      "name": "2026年全国青少年大众射箭公开赛（江苏南京）",
+      "level": "大众公开赛",
+      "province": "江苏",
+      "city": "南京",
+      "venue": "高淳体育中心（高淳区双湖南路，西1门报到）",
+      "startDate": "2026-06-06",
+      "endDate": "2026-06-07",
+      "dateNote": "规程所列赛会安排为6月5日至7日，5日运动员报到。赛事志愿服务学校确认比赛于6日至7日进行。",
+      "eligibility": "中国籍青少年，按U12、U14、U16及青少年反曲弓专业组条件报名，未满18岁须监护人书面同意。",
+      "entryDeadline": "2026-05-24",
+      "entryMethod": "当届规程公布扫码报名，团体项目由代表单位统一报名。报名已结束。",
+      "format": "反曲弓和复合弓，设个人、团体、混合团体。",
+      "spectator": {
+        "admission": "未核到公众入场、预约或票务公告。",
+        "broadcast": "未核到官方直播或回放。"
+      },
+      "reports": [
+        "苏州科技大学天平学院南京校区的赛后记录确认赛事实际举行，未核到完整公开成绩。"
+      ],
+      "links": [
+        {
+          "kind": "rules",
+          "label": "中国射箭协会竞赛规程",
+          "url": "https://npo0717xg.npoall.com/news/itemid-261607.html"
+        },
+        {
+          "kind": "report",
+          "label": "赛事志愿服务学校赛后记录",
+          "url": "https://tpxy.usts.edu.cn/njxq/info/1012/1438.htm"
+        }
+      ]
+    },
+    {
+      "id": "2026-guangzhou-jiangyuan-cup-archery",
+      "name": "第三届“江苑杯”青少年射箭公开赛",
+      "province": "广东",
+      "city": "广州",
+      "level": "地方杯赛",
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "未核到本场面向公众的入场公告。",
+        "broadcast": "未核到主办方直播或回放。"
+      },
+      "startDate": "2026-06-13",
+      "endDate": "2026-06-14",
+      "venue": "海珠区大江苑小学（新港西路南贤大街20号）",
+      "dateNote": "广州日报赛后报道确认6月13日至14日已举办。",
+      "eligibility": "涵盖小学至初中年龄段，实际有来自广州、深圳、东莞、佛山等地的187名选手。",
+      "entryNote": "当届报名规程、资格细则、报名方式及截止时间未核到。",
+      "format": "反曲弓、复合弓分年龄组，包含排位、淘汰及团体赛。",
+      "reports": [
+        "由广州市海珠区射箭协会主办、海珠区大江苑小学协办。未核到完整成绩单。"
+      ],
+      "links": [
+        {
+          "kind": "report",
+          "label": "广州日报新花城收官报道（含组委会消息）",
+          "url": "https://huacheng.gz-cmc.com/pages/2026/06/15/88c536ec663c480fb3e28011e6501981.html"
+        },
+        {
+          "kind": "report",
+          "label": "海珠区政府公布的学校地址",
+          "url": "https://www.haizhu.gov.cn/attachment/7/7399/7399408/9125014.pdf"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "赛后报道记载有场边观众，未核到当届公开入场安排。",
+        "broadcast": "未核到官方直播或回放。"
+      },
+      "id": "2026-aihui-morigen-cup",
+      "name": "黑河市爱辉区首届“莫日根杯”箭王争霸赛",
+      "level": "地方杯赛",
+      "province": "黑龙江",
+      "city": "黑河",
+      "startDate": "2026-06-21",
+      "endDate": "2026-06-21",
+      "venue": "爱辉区新生鄂伦春族乡",
+      "dateNote": "爱辉区人民政府网站赛后报道确认6月21日开赛并当日完赛。",
+      "eligibility": "139名中外射箭爱好者参赛，包括俄罗斯受邀选手。完整参赛资格未核到。",
+      "entryNote": "未核到本届主办方公开报名通告或完整规程。",
+      "format": "反曲弓和传统弓，18米射准，排位赛36箭，含个人及团体淘汰赛。",
+      "result": "区政府网站报道发布了男女箭王归属及各弓种赛事概况。完整成绩册未核到。",
+      "links": [
+        {
+          "kind": "results",
+          "label": "爱辉区人民政府网站完赛及赛果",
+          "url": "https://www.aihui.gov.cn/ahq/c101034/202606/c11_355465.shtml"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到公开入场、购票或预约信息。",
+        "broadcast": "尚未核到官方直播或回放。"
+      },
+      "id": "2026-xinjiang-15th-games-archery",
+      "name": "新疆维吾尔自治区第十五届运动会射箭比赛",
+      "level": "自治区运动会",
+      "province": "新疆",
+      "city": "伊犁",
+      "month": 7,
+      "venue": "察布查尔锡伯自治县射箭运动学校",
+      "dateNote": "自治区体育局确认赛期六天、7月24日完赛。尚未核到明确的开赛日期及完整日程。",
+      "eligibility": "全疆10个地州市派队参赛，设少儿、少年及青年组。",
+      "eligibilitySummary": "自治区地州代表队",
+      "entryNote": "未核到公开报名办法。",
+      "format": "反曲弓、复合弓，个人、团体及混合团体排名、淘汰和决赛。",
+      "result": "自治区体育局报道，伊犁州队以10金、12银、14铜位列金牌榜第二。完整成绩册未核到。",
+      "links": [
+        {
+          "kind": "results",
+          "label": "新疆维吾尔自治区体育局完赛及赛果",
+          "url": "https://tyj.xinjiang.gov.cn/xjtyj/c116361/202607/0393f26178fa4bc58a001188de129fcf.shtml"
+        }
+      ]
+    },
+    {
+      "id": "2026-liaoning-games-youth-archery",
+      "name": "辽宁省第十五届运动会青少年组射箭比赛",
+      "province": "辽宁",
+      "city": "葫芦岛",
+      "level": "省运会",
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "未核到本场面向公众的入场公告。",
+        "broadcast": "未核到主办方直播或回放。"
+      },
+      "startDate": "2026-07-02",
+      "endDate": "2026-07-06",
+      "dateNote": "地方报道确认7月2日开赛，省体育局确认7月6日落幕、竞赛历时4天。具体场馆未核到。",
+      "eligibility": "省运会青少年代表队运动员，须完成相应注册及资格审查。",
+      "entryMethod": "由参赛代表团按省运会总规程报名，未核到公开个人报名。",
+      "format": "报道包括70米、60米、25米、18米反曲弓双轮项目。",
+      "result": "15支队伍212人参赛，决出34枚金牌。省体育局报道大连、沈阳、辽阳分列奖牌榜前三。",
+      "links": [
+        {
+          "kind": "rules",
+          "label": "辽宁省体育局青少年组竞赛规程总则",
+          "url": "https://tyj.ln.gov.cn/tyj/qsnty/jsgz/2026033010312139695/index.shtml"
+        },
+        {
+          "kind": "notice",
+          "label": "辽宁省体育局参赛资格审查补充公示",
+          "url": "https://tyj.ln.gov.cn/tyj/qsnty/jsgz/2026060216485966234/index.shtml"
+        },
+        {
+          "kind": "report",
+          "label": "辽宁日报发布账号开赛消息",
+          "url": "https://www.sohu.com/a/1045089538_121106822"
+        },
+        {
+          "kind": "results",
+          "label": "辽宁省体育局收官报道",
+          "url": "https://tyj.ln.gov.cn/tyj/qsnty/jscj/2026070615061212463/index.shtml"
+        }
+      ]
+    },
+    {
+      "id": "jinjiang-fujian-mass-open-2026",
+      "name": "2026年福建省射箭协会第二届大众射箭公开赛",
+      "level": "协会大众公开赛",
+      "province": "福建",
+      "city": "泉州",
+      "startDate": "2026-07-04",
+      "endDate": "2026-07-05",
+      "dateNote": "赛前报道公布为7月4–5日，实际举办及赛果仍待核实。",
+      "venue": "晋江市少年儿童业余体育学校（安海镇养正路3号）",
+      "eligibilitySummary": "全国俱乐部及个人爱好者",
+      "eligibility": "全国射箭俱乐部及个人爱好者均可报名。体育系统注册及现役、退役专业运动员不得报反曲弓18米和30米俱乐部组。",
+      "entryNote": "赛前通知公布最多400人、额满截止。未核到可回溯的当届报名表单和精确截止日。",
+      "format": "分竞技反曲、传统弓、光弓及复合弓等组别，设个人排位与淘汰、团体及混合双人赛。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "晋江市融媒体中心公布的赛期与报名安排",
+          "url": "https://news.ijjnews.com/txzr/wtyl/2026/06/01/489702.shtml"
+        },
+        {
+          "kind": "notice",
+          "label": "晋江市文旅局公布的场馆地址",
+          "url": "https://www.jinjiang.gov.cn/szf/jgsz/jgzn/202103/t20210327_2532627.htm"
+        }
+      ],
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到当届面向公众的入场安排。",
+        "broadcast": "尚未核到主办方直播或官方回放。"
+      }
+    },
+    {
+      "id": "2026-shenzhen-youth-archery-championship",
+      "name": "2026年深圳市青少年（儿童）射箭锦标赛",
+      "province": "广东",
+      "city": "深圳",
+      "level": "市级青少年赛事",
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "未核到本场面向公众的入场公告。",
+        "broadcast": "未核到主办方直播或回放。"
+      },
+      "startDate": "2026-07-11",
+      "endDate": "2026-07-12",
+      "dateNote": "市规程原列7月、地点待定。南山区政府赛后确认实际为7月11日至12日，具体场馆未核到。",
+      "eligibility": "各区青少年代表队，设U16、U14、U12。每区限报1队，参赛者按规程通过资格审核。",
+      "entryMethod": "参赛单位经注册系统报名，规程为赛前45天开放、35天截止，再按规定提交盖章报名表、健康及保险材料。",
+      "format": "设50米、30米、18米反曲弓和复合弓排名赛、淘汰赛及团体赛。",
+      "result": "南山区政府报道南山队1金4银2铜，团体总分第六。",
+      "links": [
+        {
+          "kind": "rules",
+          "label": "深圳市文广旅体局竞赛规程第137至142页",
+          "url": "https://wtl.sz.gov.cn/attachment/1/1710/1710219/12764433.pdf#page=137"
+        },
+        {
+          "kind": "results",
+          "label": "南山区政府赛后成绩",
+          "url": "https://www.szns.gov.cn/xxgk/qzfxxgkml/tpxw/content/post_12895378.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到公开入场、购票或预约信息。",
+        "broadcast": "尚未核到官方直播或回放。"
+      },
+      "id": "2026-shanxi-youth-indoor-archery",
+      "name": "2026年山西省青少年射箭锦标赛（室内）",
+      "level": "省级青少年锦标赛",
+      "province": "山西",
+      "city": "阳泉",
+      "startDate": "2026-07-16",
+      "venue": "阳泉市城区泉民体育中心",
+      "dateNote": "阳泉市政府网站确认7月16日已开赛。结束日期及当届成绩册尚未核到。",
+      "eligibility": "山西省内适龄青少年，分U18、U16、U14、U12。来自体校、中小学和俱乐部的36支代表队参加。",
+      "eligibilitySummary": "省内适龄青少年",
+      "entryNote": "报道确认单位组队参赛，未见公开报名流程或当届规程附件。",
+      "format": "反曲弓、复合弓，设个人、团体及混合团体。",
+      "links": [
+        {
+          "kind": "report",
+          "label": "阳泉市人民政府网站开赛报道",
+          "url": "https://yq.gov.cn/ywdt/tpxw/202607/t20260720_2221171.shtml"
+        }
+      ]
+    },
+    {
+      "id": "2026-guangxi-youth-archery-qualifier",
+      "name": "“中国体育彩票杯”2026年广西青少年射箭锦标赛暨第十六届全区运动会资格赛",
+      "province": "广西",
+      "city": "北海",
+      "level": "省级青少年赛事",
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "未核到本场面向公众的入场公告。",
+        "broadcast": "未核到主办方直播或回放。"
+      },
+      "month": 8,
+      "venue": "合浦县体育中心",
+      "dateNote": "北海市体育运动学校向北海日报确认8月10日收官，报道为期5天。未核到主办方原版赛程与实际首日日期。",
+      "eligibility": "区内青少年代表队，设甲、乙、丙等年龄组。",
+      "entryMethod": "以代表队参赛，未核到公开个人报名。",
+      "format": "反曲弓、复合弓，设全能、排名、个人淘汰及团体、混合团体淘汰。",
+      "result": "广西新闻网通讯员报道北海市代表队10金10银6铜，合浦县队另获5金。北海日报按当地队伍合并统计为15金10银6铜。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "国家体育总局省级赛事名录",
+          "url": "https://www.sport.gov.cn/jts/n4998/c29315251/part/29315282.pdf"
+        },
+        {
+          "kind": "report",
+          "label": "广西新闻网赛后报道（通讯员及组委会资料）",
+          "url": "https://sports.gxnews.com.cn/staticpages/20260812/newgx6a7c4e64-21980255.shtml"
+        },
+        {
+          "kind": "results",
+          "label": "北海日报引北海市体育运动学校成绩",
+          "url": "https://epaper.gxbhxww.cn/bhrb/html/2026-08/11/content_2_179337.htm"
+        }
+      ]
+    },
+    {
+      "id": "2026-hubei-games-sports-school-archery",
+      "name": "湖北省第十七届运动会青少年体育类（体校组）“新孝武杯”射箭比赛",
+      "province": "湖北",
+      "city": "孝感",
+      "level": "省运会",
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "未核到本场面向公众的入场公告。",
+        "broadcast": "未核到主办方直播或回放。"
+      },
+      "month": 8,
+      "venue": "孝感体育中心",
+      "dateNote": "体育总局赛后报道确认8月21日收官，历时4天，未单独列出首日日期。",
+      "eligibility": "湖北省青少年体育类体校组代表队，设U14、U16、U18。",
+      "entryMethod": "以代表队参赛，未核到公开个人报名。",
+      "format": "男女个人、团体及混合团体共25个小项。",
+      "result": "武汉队13金位列金牌榜第一，恩施州队6金第二，荆门市队4金。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "湖北省体育局年度赛事名录",
+          "url": "https://tyj.hubei.gov.cn/bmdt/jjty/202601/P020260115334183512574.pdf"
+        },
+        {
+          "kind": "results",
+          "label": "国家体育总局完赛报道",
+          "url": "https://www.sport.gov.cn/n14471/n14488/n14525/c29887003/content.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到公开入场、购票或预约信息。",
+        "broadcast": "尚未核到官方直播或回放。"
+      },
+      "id": "2026-xizang-14th-games-archery",
+      "name": "西藏自治区第十四届运动会射箭比赛",
+      "level": "自治区运动会",
+      "province": "西藏",
+      "city": "日喀则",
+      "startDate": "2026-08-06",
+      "endDate": "2026-08-08",
+      "venue": "日喀则市第四高级中学操场",
+      "dateNote": "那曲市政府系统发布消息确认8月6日开赛，自治区体育局确认8月8日完赛。",
+      "eligibility": "自治区各地市代表队，设置青年组和成年组。",
+      "eligibilitySummary": "自治区各地市代表队",
+      "entryNote": "未核到当届公开报名规程。",
+      "format": "含个人、团体和混合团体，成年组设70米排名轮。",
+      "result": "自治区体育局列出青年组及成年组部分单项和团体的金牌归属。",
+      "links": [
+        {
+          "kind": "report",
+          "label": "那曲市委员会网站开赛报道",
+          "url": "https://nq.xzdw.gov.cn/xwzx_675/nqyw/202608/t20260807_688978.html"
+        },
+        {
+          "kind": "report",
+          "label": "日喀则市委员会网站赛场报道",
+          "url": "https://rikaze.xzdw.gov.cn/xwzx_455/rkzyw/202608/t20260815_690397.html"
+        },
+        {
+          "kind": "results",
+          "label": "西藏自治区体育局完赛及金牌成绩",
+          "url": "https://sport.xizang.gov.cn/xwzx/tptt/202608/t20260810_553369.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到公开入场、购票或预约信息。",
+        "broadcast": "尚未核到官方直播或回放。"
+      },
+      "id": "2026-beijing-city-games-archery",
+      "name": "北京市第十七届运动会青少年组射箭比赛",
+      "level": "市运会",
+      "province": "北京",
+      "city": "北京",
+      "startDate": "2026-08-07",
+      "endDate": "2026-08-10",
+      "venue": "中国残疾人体育运动管理中心（顺义区裕泰路1号院）",
+      "dateNote": "组委会补充通知公布8月7日至10日。赛后报道确认项目已举办，未核到完整官方成绩册。",
+      "eligibility": "以区组队，须符合市运会资格和2026年度注册要求。获得市青少年射箭锦标赛相应席位的区按所获席位申报，所报运动员须参加过该锦标赛并通过资格审查。",
+      "eligibilitySummary": "经资格赛取得席位的区队",
+      "entryMethod": "区队7月13日至17日按通知邮件报名，7月23日或24日由单位现场交材料。",
+      "result": "石景山区官方发布的赛后回顾称，石景山队取得17金13银12铜，位列全市奖牌榜首位。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "市运会组委会补充通知",
+          "url": "https://tyj.beijing.gov.cn/bjsports/zfxxgk_/tzgg40/744054491/index.html"
+        },
+        {
+          "kind": "rules",
+          "label": "青少年组射箭竞赛规程",
+          "url": "https://tyj.beijing.gov.cn/bjsports/ztzl/bjsdsqjydh/jsxm31/qsnjjz32/744024881/index.html"
+        },
+        {
+          "kind": "notice",
+          "label": "场馆门牌地址公告",
+          "url": "https://www.caspd.org.cn/2024/08/06/6039/"
+        },
+        {
+          "kind": "report",
+          "label": "石景山参赛成绩回顾",
+          "url": "https://finance.sina.com.cn/wm/2026-10-03/doc-inityimz6132125.shtml"
+        }
+      ]
+    },
+    {
+      "id": "yunnan-games-youth-target-2026",
+      "name": "云南省第十七届运动会青少年组射箭比赛",
+      "level": "省运会青少年组",
+      "province": "云南",
+      "city": "昆明",
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "startDate": "2026-08-09",
+      "endDate": "2026-08-13",
+      "venue": "昆明渔浦寒泉森林湿地公园射箭训练基地",
+      "dateNote": "赛中报道确认8月9日起举行，玉溪市政府转载的赛后通报确认8月13日收官。",
+      "eligibility": "省运会青少年组，按州、市代表队参赛。",
+      "entryNote": "射箭决赛专用报名材料和截止日期待核。",
+      "format": "甲、乙、丙组设男、女射箭淘汰赛等小项。",
+      "spectator": {
+        "admission": "未核到当届面向公众的入场安排。",
+        "broadcast": "未核到主办方直播或官方回放。"
+      },
+      "result": "玉溪队该项目获得12金、9银、5铜。完整成绩册待核。",
+      "links": [
+        {
+          "kind": "report",
+          "label": "云南网8月11日赛况",
+          "url": "https://society.yunnan.cn/system/2026/08/11/034119808.shtml"
+        },
+        {
+          "kind": "results",
+          "label": "玉溪市政府发布的赛后成绩",
+          "url": "https://m.yuxi.gov.cn/yxs/xwlb/20260817/1675640.html"
+        }
+      ]
+    },
+    {
+      "id": "2026-hainan-games-archery",
+      "name": "海南省第七届运动会射箭比赛",
+      "province": "海南",
+      "city": "琼海",
+      "level": "省运会",
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "未核到本场面向公众的入场公告。",
+        "broadcast": "未核到主办方直播或回放。"
+      },
+      "startDate": "2026-08-10",
+      "endDate": "2026-08-12",
+      "venue": "嘉积二中运动场",
+      "dateNote": "赛前公布8月10日至12日，赛中及赛后报道确认如期举行并完成。",
+      "eligibility": "海口、琼海、三亚、东方、儋州、白沙、澄迈、琼中8市县代表队。",
+      "entryMethod": "以市县代表队参赛，未核到公开个人报名。",
+      "format": "竞技反曲弓甲组U18含70、50、30米单轮全能及淘汰赛，乙组U14含30米双轮及淘汰赛。",
+      "result": "4枚金牌分属三亚、白沙、儋州和海口。",
+      "links": [
+        {
+          "kind": "schedule",
+          "label": "南海网赛前赛程",
+          "url": "https://m.hinews.cn/page?m=1&n=2838286&s=1044"
+        },
+        {
+          "kind": "report",
+          "label": "海南省旅文厅发布账号赛中报道",
+          "url": "https://m.sohu.com/a/1061923937_121106994/"
+        },
+        {
+          "kind": "results",
+          "label": "海南省旅文厅发布账号赛后报道",
+          "url": "https://www.sohu.com/a/1068360990_121106994"
+        }
+      ]
+    },
+    {
+      "id": "2026-heilongjiang-games-archery",
+      "name": "黑龙江省第十六届运动会射箭比赛",
+      "province": "黑龙江",
+      "city": "哈尔滨",
+      "level": "省运会",
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "未核到本场面向公众的入场公告。",
+        "broadcast": "未核到主办方直播或回放。"
+      },
+      "startDate": "2026-08-11",
+      "endDate": "2026-08-16",
+      "venue": "黑龙江省自行车射击射箭中心",
+      "dateNote": "省体育局转载佳木斯市体育局赛后报道确认8月11日至16日在哈尔滨举行。",
+      "eligibility": "总规程规定由全省各地市组成代表团，运动员按规定注册并具备代表资格。",
+      "entryMethod": "代表团报名，未核到公开个人报名。",
+      "format": "含女子甲组70米及男子乙组室内18米个人、团体等项目。",
+      "result": "佳木斯队4金2铜，金牌总数第二、奖牌及团体总分第三。",
+      "links": [
+        {
+          "kind": "rules",
+          "label": "黑龙江省体育局省运会竞赛规程总则",
+          "url": "https://tyj.hlj.gov.cn/tyj/c112436/202411/c00_31782177.shtml"
+        },
+        {
+          "kind": "results",
+          "label": "佳木斯市体育局赛后成绩",
+          "url": "https://tyj.hlj.gov.cn/tyj/c112392/202608/c00_31968082.shtml"
+        }
+      ]
+    },
+    {
+      "id": "2026-guangdong-games-archery",
+      "name": "广东省第十七届运动会竞技体育组“岚图汽车杯”射箭比赛",
+      "province": "广东",
+      "city": "茂名",
+      "level": "省运会",
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "未核到本场面向公众的入场公告。",
+        "broadcast": "未核到主办方直播或回放。"
+      },
+      "startDate": "2026-08-15",
+      "endDate": "2026-08-20",
+      "venue": "茂名市体育运动学校",
+      "dateNote": "茂名日报确认8月15日开赛，六天赛程，8月20日举行最后阶段的男子反曲弓团体决赛。",
+      "eligibility": "省内地市代表队青少年射手，设甲组U18、乙组U16。",
+      "entryMethod": "通过各地市代表队参赛，未核到公开个人报名。",
+      "format": "设男女个人、男女团体、混合团体等10小项。",
+      "result": "末日男子反曲弓团体决赛中，深圳队获甲组金牌，广州队获乙组金牌，茂名队获乙组铜牌。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "广东省社会体育和训练竞赛中心秩序册栏目",
+          "url": "https://www.sxzx.gd.cn/sports/syh11/zxc51/jjz312"
+        },
+        {
+          "kind": "report",
+          "label": "茂名日报开赛报道",
+          "url": "https://www.mm111.net/2026/08/16/991585117.html"
+        },
+        {
+          "kind": "results",
+          "label": "茂名日报团体决赛报道",
+          "url": "https://www.mm111.net/mpaper/2026-08/21/content_991586005.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到公开入场、购票或预约信息。",
+        "broadcast": "尚未核到官方直播或回放。"
+      },
+      "id": "2026-inner-mongolia-para-games-archery",
+      "name": "内蒙古自治区第七届残疾人运动会暨特奥会射箭比赛",
+      "level": "自治区残运会",
+      "province": "内蒙古",
+      "city": "包头",
+      "startDate": "2026-08-25",
+      "venue": "包头市奥林匹克体育中心",
+      "dateNote": "8月25日射箭项目已开赛。全会8月27日闭幕，未单独核到射箭项目的结束日期。",
+      "eligibility": "自治区代表队，设残奥公开级和聋奥听障组。",
+      "eligibilitySummary": "自治区残奥及聋奥代表队",
+      "entryNote": "未核到当届射箭项目公开报名规程。",
+      "format": "反曲弓、复合弓，共28个小项。",
+      "links": [
+        {
+          "kind": "report",
+          "label": "内蒙古日报现场开赛报道",
+          "url": "https://finance.sina.com.cn/roll/2026-08-27/doc-iniptxkt5354335.shtml"
+        },
+        {
+          "kind": "report",
+          "label": "鄂尔多斯市人民政府网站赛会闭幕回顾",
+          "url": "https://www.ordos.gov.cn/zzms/jrgz/202608/t20260831_3915888.html?slh=true"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "shandong-provincial-games-archery-yishui-2026",
+      "name": "山东省第二十六届运动会射箭决赛",
+      "level": "省级赛事",
+      "province": "山东",
+      "city": "临沂",
+      "venue": "沂水县全民健身运动中心",
+      "startDate": "2026-08-27",
+      "endDate": "2026-09-01",
+      "eligibility": "山东省运会各市参赛代表队选派运动员。",
+      "entryNote": "未核到射箭决赛对公众开放的报名。",
+      "spectator": {
+        "admission": "赛程公告指向「临沂体育」「山东省第26届运动会」公众号查询当届观赛信息。未核到射箭专项票务。",
+        "broadcast": "未核到射箭决赛的官方直播或回放。"
+      },
+      "result": "淄博市体育局报道本队选手获女子甲组个人远距离单项排名赛与个人单轮全能排名赛金牌。",
+      "links": [
+        {
+          "kind": "schedule",
+          "label": "临沂市体育局省运会赛程及观赛查询",
+          "url": "https://lyty.linyi.gov.cn/info/1483/42766.htm"
+        },
+        {
+          "kind": "results",
+          "label": "淄博市体育局本队赛果",
+          "url": "https://tyj.zibo.gov.cn/art/2026/10/19/art_1299_3027081.html"
+        }
+      ]
+    },
+    {
+      "id": "2026-hunan-games-youth-archery",
+      "name": "湖南省第十五届运动会青少年组射箭比赛",
+      "province": "湖南",
+      "city": "益阳",
+      "level": "省运会",
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "未核到本场面向公众的入场公告。",
+        "broadcast": "未核到主办方直播或回放。"
+      },
+      "startDate": "2026-09-01",
+      "endDate": "2026-09-03",
+      "venue": "大通湖区第一中学田径场（河坝镇文化路）",
+      "dateNote": "益阳市政府开赛及收官报道确认实际比赛为9月1日至3日。",
+      "eligibility": "省内市州代表队青少年运动员，设U14、U16、U18组。",
+      "entryMethod": "按市州代表队参赛，未核到公开个人报名。",
+      "format": "设30米、70米个人和团体项目。",
+      "result": "益阳代表队3金3银1铜，金牌数和团体总分均列第一。",
+      "links": [
+        {
+          "kind": "schedule",
+          "label": "湖南省体育局公布赛程",
+          "url": "https://tyj.hunan.gov.cn/tyj/xxgk/gzdt/sstyxw/202608/t20260811_34043276.html"
+        },
+        {
+          "kind": "report",
+          "label": "益阳市政府开赛报道",
+          "url": "https://www.yiyang.gov.cn/yiyang/2/3/73/content_2194326.html"
+        },
+        {
+          "kind": "results",
+          "label": "湖南省体育局收官报道",
+          "url": "https://tyj.hunan.gov.cn/tyj/xxgk/szdt/202609/t20260906_34058634.html"
+        },
+        {
+          "kind": "report",
+          "label": "益阳公共资源交易中心学校地址（采购人信息）",
+          "url": "https://jyzx.yiyang.gov.cn/TPFrame/AttachStorage2/202408/PDF/967b3a73-96e1-47af-a6cf-5060546f8771/0b615fc5-63eb-4236-9082-fcb842b2ac1d.pdf"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "未核到面向公众的现场入场规则。",
+        "broadcast": "9月10日决赛由华奥星空制作信号，在中国射箭协会等渠道播出。回放可用性待核。",
+        "liveStream": "中国射箭协会、华奥星空及虎牙"
+      },
+      "id": "2026-xinjiang-national-archery-tour-2",
+      "name": "2026年全国射箭巡回赛第二站",
+      "level": "全国巡回赛",
+      "province": "新疆",
+      "city": "伊犁",
+      "startDate": "2026-09-07",
+      "endDate": "2026-09-11",
+      "venue": "察布查尔锡伯自治县射箭运动学校",
+      "dateNote": "伊犁新闻网报道9月7日正式开赛、赛会持续至9月11日。山东体育学院记载赛会期为9月5日至11日。9月10日为决赛日。",
+      "eligibility": "各地区代表队运动员。共27支代表队233人参赛。",
+      "eligibilitySummary": "各地区代表队",
+      "entryNote": "未核到主办方原始报名通知。",
+      "format": "反曲弓70米、复合弓50米，含男女个人、团体及混合团体项目。",
+      "result": "山东体育学院发布了本校队员的比赛名次。全赛成绩册尚未核到。",
+      "links": [
+        {
+          "kind": "report",
+          "label": "赛地伊犁新闻网开赛报道",
+          "url": "https://www.ylxw.com.cn/tiyu/2026-09-10/1335992.html"
+        },
+        {
+          "kind": "broadcast",
+          "label": "虎牙决赛直播活动页",
+          "url": "https://hdpage.huya.com/live/webMainActivity/index?id=258829"
+        },
+        {
+          "kind": "schedule",
+          "label": "华奥星空决赛直播日程",
+          "url": "https://www.sports.cn/tcdt/tcjsby/2026/0909/707552.html"
+        },
+        {
+          "kind": "results",
+          "label": "山东体育学院参赛成绩",
+          "url": "https://www.sdpei.edu.cn/2026/0927/c367a29429/page.htm"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "jiangsu-youth-archery-championship-suining-2026",
+      "name": "2026年江苏省青少年射箭锦标赛",
+      "level": "省级青少年赛",
+      "province": "江苏",
+      "city": "徐州",
+      "venue": "睢宁县体育中心体育场",
+      "startDate": "2026-09-07",
+      "endDate": "2026-09-12",
+      "dateNote": "赛前裁判通知安排9月7日至13日，省体育局发布的赛后报道确认9月12日落幕、赛程六天。",
+      "eligibility": "省内设区市代表队参赛，设14岁、16岁、18岁以下组。",
+      "entryMethod": "由代表队组队参赛。",
+      "format": "三个年龄组共24项。",
+      "spectator": {
+        "admission": "未核到公众入场、预约或票务公告。",
+        "broadcast": "未核到官方直播或回放。"
+      },
+      "result": "常州、徐州、南通队分列奖牌榜前三。",
+      "links": [
+        {
+          "kind": "schedule",
+          "label": "江苏省体育局赛前裁判通知",
+          "url": "https://jsstyj.jiangsu.gov.cn/art/2026/7/6/art_79487_11799545.html"
+        },
+        {
+          "kind": "results",
+          "label": "江苏省体育局赛后报道",
+          "url": "https://jsstyj.jiangsu.gov.cn/art/2026/9/14/art_79949_11831012.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到公开入场、购票或预约信息。",
+        "broadcast": "尚未核到官方直播或回放。"
+      },
+      "id": "2026-guizhou-national-archery-cooperation-4",
+      "name": "2026年全国射箭协作区锦标赛（第四站）",
+      "level": "全国协作区锦标赛",
+      "province": "贵州",
+      "city": "贵阳",
+      "startDate": "2026-09-18",
+      "endDate": "2026-09-21",
+      "venue": "贵州省清镇体育训练基地",
+      "dateNote": "国家体育总局发布的开赛及完赛报道确认9月18日至21日实际赛期。",
+      "eligibility": "西南协作区等地代表队，报道确认重庆、云南、贵州、西藏、四川、湖北等地的10支队伍参赛。",
+      "eligibilitySummary": "受邀省区市代表队",
+      "entryNote": "未核到可公开验证的当届报名原件。",
+      "format": "成年组和U18组，含男女个人排名、淘汰及团体淘汰。",
+      "result": "国家体育总局完赛报道列出贵州队4金、2银、2铜的项目分布。未核到全队伍完整成绩册。",
+      "links": [
+        {
+          "kind": "report",
+          "label": "国家体育总局开赛报道",
+          "url": "https://www.sport.gov.cn/n14471/n14495/n14543/c30052661/content.html"
+        },
+        {
+          "kind": "results",
+          "label": "国家体育总局完赛及贵州队成绩",
+          "url": "https://www.sport.gov.cn/n14471/n14495/n14543/c30063893/content.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "shanghai-games-university-archery-2026",
+      "name": "上海市第十八届运动会射箭比赛（高校组）",
+      "level": "高校赛事",
+      "province": "上海",
+      "city": "松江",
+      "venue": "上海对外经贸大学松江校区",
+      "startDate": "2026-09-25",
+      "endDate": "2026-09-26",
+      "eligibility": "市运会高校组运动员，具体参赛要求见总则。",
+      "entryMethod": "以学校为参赛单位组队。",
+      "format": "设传统弓组和反曲弓组。",
+      "spectator": {
+        "admission": "未核到高校组公众入场政策。",
+        "broadcast": "未核到官方直播或回放。"
+      },
+      "result": "复旦大学代表队公布本队2金3银5铜，传统弓组总分第一。",
+      "links": [
+        {
+          "kind": "rules",
+          "label": "上海市体育局、市教委竞赛规程总则",
+          "url": "https://www.shanghai.gov.cn/gwk/search/content/3130ea9d260d4283be4017e01ce8f999"
+        },
+        {
+          "kind": "results",
+          "label": "复旦大学体育教学部本队赛果",
+          "url": "https://fdty.fudan.edu.cn/18/b1/c29221a792753/page.htm"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到公开入场、购票或预约信息。",
+        "broadcast": "尚未核到官方直播或回放。"
+      },
+      "id": "2026-qinghai-student-archery",
+      "name": "2026年青海省青少年（学生）射箭比赛",
+      "level": "省级学生赛事",
+      "province": "青海",
+      "city": "西宁",
+      "startDate": "2026-09-26",
+      "venue": "西宁市湟中区多巴国家高原体育训练基地",
+      "dateNote": "9月26日已开赛。结束日期和成绩册尚未核到。",
+      "eligibility": "14至17周岁，来自青海全省的11支代表队135名选手参赛。",
+      "eligibilitySummary": "14至17周岁青少年代表队",
+      "entryNote": "未核到当届公开报名办法及完整竞赛规程。",
+      "format": "反曲弓30米、现代传统弓25米，每人36箭，进行男女个人及团体排名赛。",
+      "links": [
+        {
+          "kind": "report",
+          "label": "青海省总工会转载的青海日报开赛报道",
+          "url": "https://www.qhszgh.com/index.php?c=show&id=40234"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到公开入场、购票或预约信息。",
+        "broadcast": "尚未核到官方直播或回放。"
+      },
+      "id": "2026-beijing-shijingshan-cup-youth",
+      "name": "2026年“石景山杯”全国青少年射箭邀请赛",
+      "level": "地方杯赛",
+      "province": "北京",
+      "city": "北京",
+      "startDate": "2026-10-03",
+      "endDate": "2026-10-06",
+      "venue": "石景山体育场（石景山区石景山路32号）",
+      "dateNote": "规程安排10月2日报到、3日至6日比赛。区官方账号发布开赛消息，完整成绩册未核到。",
+      "eligibility": "受邀的体校射箭队、射箭协会、俱乐部、青少年射箭团体和学校组队参赛，规程未开放个人报名。",
+      "eligibilitySummary": "受邀单位组队",
+      "entryMethod": "受邀单位按通知，于9月18日前以邮件提交报名表。",
+      "format": "反曲弓U11、U13、U15、U17，复合弓U18，含个人、团体及混合团体项目。",
+      "links": [
+        {
+          "kind": "rules",
+          "label": "石景山体校赛事通知及竞赛规程",
+          "url": "https://peking.bjd.com.cn/content/s6a9a9ad8e4b039a8e2f0a4ac.html"
+        },
+        {
+          "kind": "report",
+          "label": "北京石景山开赛报道",
+          "url": "https://finance.sina.com.cn/wm/2026-10-03/doc-inityimz6132125.shtml"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "shanghai-games-youth-archery-2026",
+      "name": "上海市第十八届运动会射箭比赛（青少年组）",
+      "level": "市级青少年赛",
+      "province": "上海",
+      "city": "松江",
+      "venue": "上海对外经贸大学附属松江实验学校",
+      "startDate": "2026-10-03",
+      "endDate": "2026-10-06",
+      "eligibility": "全市各区青少年代表队参赛，设A、B、C组。",
+      "entryMethod": "由各区组队。",
+      "format": "反曲弓，设个人、团体及混合团体项目。",
+      "spectator": {
+        "admission": "未核到公众入场、预约或票务公告。",
+        "broadcast": "未核到官方直播或回放。"
+      },
+      "result": "青浦区代表队获3金7银5铜，金牌榜第三、总分榜第二。",
+      "links": [
+        {
+          "kind": "rules",
+          "label": "上海市体育局、市教委竞赛规程总则",
+          "url": "https://www.shanghai.gov.cn/gwk/search/content/3130ea9d260d4283be4017e01ce8f999"
+        },
+        {
+          "kind": "results",
+          "label": "青浦区体育局赛后报道",
+          "url": "https://www.shqp.gov.cn/sport/gzdt/20261013/1397254.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "jiangsu-provincial-games-youth-archery-ganyu-2026",
+      "name": "江苏省第二十一届运动会青少年部射箭比赛",
+      "level": "省级青少年赛",
+      "province": "江苏",
+      "city": "连云港",
+      "venue": "赣榆区和安中学",
+      "startDate": "2026-10-07",
+      "endDate": "2026-10-10",
+      "eligibility": "各代表队青少年选手，设14岁、16岁、18岁以下组。",
+      "entryMethod": "由各代表队组织参赛。",
+      "format": "反曲弓个人、团体和混合团体。",
+      "spectator": {
+        "admission": "未核到本项目具体的公众入场或票务安排。",
+        "broadcast": "未核到官方直播或回放。"
+      },
+      "result": "连云港队获1金1铜。赛后报道另列三个年龄组个人淘汰赛冠军。",
+      "links": [
+        {
+          "kind": "schedule",
+          "label": "江苏省体育局赛程通知",
+          "url": "https://jsstyj.jiangsu.gov.cn/art/2026/8/28/art_79490_11833957.html"
+        },
+        {
+          "kind": "report",
+          "label": "赣榆区政府团体决赛报道",
+          "url": "https://www.ganyu.gov.cn/gyqzf/gzdt/content/e3f8daf0-79dc-4e05-bc97-afd86204ba15.html"
+        },
+        {
+          "kind": "results",
+          "label": "连云港体育发布的赛后成绩摘要",
+          "url": "https://sports.jschina.com.cn/tbtj/202610/t20261012_s6acca8cbe4b07e752cfeb767.shtml"
+        }
+      ]
+    },
+    {
+      "id": "chongqing-youth-target-championship-2026",
+      "name": "2026年重庆市青少年射箭锦标赛",
+      "level": "市级青少年锦标赛",
+      "province": "重庆",
+      "city": "重庆",
+      "startDate": "2026-10-14",
+      "endDate": "2026-10-18",
+      "dateNote": "市体育局9月规程原定10月9–16日；10月14日实际开幕，当时发布的赛程至18日，赛后通报确认赛事收官。",
+      "venue": "重庆市南岸区青少年活动中心田径场",
+      "eligibilitySummary": "有重庆学籍并完成注册，由区县组队",
+      "eligibility": "由重庆各区县组队。运动员须符合学籍、市级注册、体检、保险和反兴奋剂考试要求。",
+      "entryMethod": "区县代表队由指定人员网上报名，单位须先备案。9月14日12:00为备案与资格复审节点，正式报名截止另见当届补充通知。",
+      "format": "反曲弓U12、U14、U16、U18及复合弓，分个人和团体。",
+      "result": "沙坪坝赛后发布该区队伍获得10金，赛事完整成绩册待核。",
+      "links": [
+        {
+          "kind": "rules",
+          "label": "重庆市体育局原竞赛规程",
+          "url": "https://tyj.cq.gov.cn/tygz/qsnty/202609/t20260908_16048202.html"
+        },
+        {
+          "kind": "report",
+          "label": "10月14日开赛及当时赛程",
+          "url": "https://www.sohu.com/a/1088166114_121106884"
+        },
+        {
+          "kind": "results",
+          "label": "沙坪坝赛后成绩通报",
+          "url": "https://www.thepaper.cn/newsDetail_forward_34358570"
+        }
+      ],
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到当届面向公众的入场安排。",
+        "broadcast": "尚未核到主办方直播或官方回放。"
+      }
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "national-outdoor-archery-championship-nanjing-2026",
+      "name": "2026年全国射箭锦标赛（室外）",
+      "level": "全国锦标赛",
+      "province": "江苏",
+      "city": "南京",
+      "venue": "江苏省方山体育训练基地（预赛）、玄武湖景区樱洲草坪（决赛）",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-24",
+      "dateNote": "赛事于10月16日开幕，南京市体育局确认10月18日至23日为预赛、24日为决赛。参赛队赛前通知列10月16日至25日。",
+      "eligibility": "全国各地参赛代表队选派运动员，具体资格以竞赛规程为准。",
+      "entryNote": "未核到对公众开放的报名方式。",
+      "format": "反曲弓、复合弓均设男女个人、男女团体和混合团体。",
+      "spectator": {
+        "admission": "决赛在玄武湖景区樱洲草坪举办，未核到该场公众购票或预约细则。",
+        "broadcast": "10月24日决赛曾由中国射箭协会、中国奥委会、中华全国体育总会及华奥星空等平台直播，回放可用性待核。"
+      },
+      "result": "总局报道共决出10枚金牌，反曲弓男、女个人冠军为黄桉、李佳蔓，复合弓男、女个人冠军为史靖宇、王悦。",
+      "links": [
+        {
+          "kind": "report",
+          "label": "南京市体育局决赛报道",
+          "url": "https://sports.nanjing.gov.cn/gzdt/202610/t20261026_6025580.html"
+        },
+        {
+          "kind": "broadcast",
+          "label": "中华全国体育总会决赛直播公告",
+          "url": "https://www.sport.org.cn/shouye/jd/2026/1023/712529.html"
+        },
+        {
+          "kind": "results",
+          "label": "国家体育总局收官及赛果",
+          "url": "https://www.sport.gov.cn/n20001280/n20067662/n20067613/c30129234/content.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "national-youth-public-open-huzhou-anji-oct-2026",
+      "name": "2026年全国青少年大众射箭公开赛（浙江湖州）",
+      "level": "大众公开赛",
+      "province": "浙江",
+      "city": "湖州",
+      "venue": "安吉县黄浦江源射击射箭基地",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-18",
+      "dateNote": "9月2日中国射箭协会公告原定10月16日至18日。尚未核到实际举办、改期、取消或成绩。",
+      "eligibility": "具体组别、年龄和参赛条件见当届规程。",
+      "entryNote": "公告以二维码提供规程，未核到可用的独立报名入口。",
+      "spectator": {
+        "admission": "未核到公众入场或票务公告。",
+        "broadcast": "未核到官方直播或回放。"
+      },
+      "links": [
+        {
+          "kind": "rules",
+          "label": "中国射箭协会原定赛期及竞赛规程",
+          "url": "https://npo0717xg.npoall.com/news/itemid-302487.html"
+        }
+      ]
+    },
+    {
+      "id": "2026-shenzhen-futian-youth-archery",
+      "name": "2026年福田区青少年（儿童）射箭锦标赛",
+      "province": "广东",
+      "city": "深圳",
+      "level": "区级青少年赛事",
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "未核到本场面向公众的入场公告。",
+        "broadcast": "未核到主办方直播或回放。"
+      },
+      "startDate": "2026-10-17",
+      "endDate": "2026-10-18",
+      "venue": "福田区莲花中学南校区（滨河大道5034号）",
+      "dateNote": "赛后报道确认10月17日至18日举办，与7月深圳市级锦标赛是不同场次。",
+      "eligibility": "设U8、U10、U12、U14等组别，参赛单位与具体报名资格以当届规程为准。",
+      "entryNote": "未核到公开报名入口、截止时间或完整竞赛规程。",
+      "format": "10米、12米和18米个人排名、个人夺标及团体比赛。",
+      "reports": [
+        "福田区文化广电旅游体育局、福田区教育局主办，福田区少年业余体育学校协办。"
+      ],
+      "result": "报道统计福田区运动员共获8金12银15铜，未见完整成绩表。",
+      "links": [
+        {
+          "kind": "report",
+          "label": "深圳新闻网赛后报道（主办方供图）",
+          "url": "https://www.sznews.com/news/content/2026-10/19/content_32195458.htm"
+        },
+        {
+          "kind": "report",
+          "label": "莲花中学公告中的南校区地址",
+          "url": "https://lhzx.szftedu.cn/xyzx_5584/tzgg_5587/202507/t20250716_169898.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "national-archery-finals-suzhou-2026",
+      "name": "2026年全国射箭总决赛暨国家射箭队2027年国际比赛组队国内选拔赛资格赛",
+      "level": "全国总决赛",
+      "province": "江苏",
+      "city": "苏州",
+      "venue": "苏州市新时代国防体育公园",
+      "startDate": "2026-10-26",
+      "endDate": "2026-10-31",
+      "dateNote": "直播制作方报道10月26日开赛、31日决赛。参赛队赛前通知列10月25日至31日，国家体育总局赛后报道实际竞赛为期五天。",
+      "eligibility": "根据运动员2026年度相关全国赛事及全国室外锦标赛成绩取得资格。",
+      "entryNote": "由参赛代表队组织报名。",
+      "format": "反曲弓、复合弓均设男子个人和女子个人。",
+      "spectator": {
+        "admission": "未核到公众入场、预约或票务细则。",
+        "broadcast": "10月31日决赛曾由中国射箭协会、中国奥委会、中华全国体育总会及华奥星空等平台直播，回放可用性待核。"
+      },
+      "result": "反曲弓男子、女子个人冠军为李中原、沈佳雯，复合弓男子、女子个人冠军为刘瑾一、马舒佳。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "参赛队备战与资格说明",
+          "url": "https://tyj.xinjiang.gov.cn/xjtyj/c112527/202610/9ccf2318b11445578d42759ef69576b6.shtml"
+        },
+        {
+          "kind": "broadcast",
+          "label": "直播制作方赛程公告",
+          "url": "https://www.sports.cn/tcdt/tcjsby/2026/1030/713213.html"
+        },
+        {
+          "kind": "results",
+          "label": "国家体育总局赛果",
+          "url": "https://www.sport.gov.cn/n20001280/n20067662/n20067613/c30147045/content.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "yangtze-delta-sports-season-archery-suzhou-2026",
+      "name": "第六届长三角体育季射箭比赛",
+      "level": "区域群众赛事",
+      "province": "江苏",
+      "city": "苏州",
+      "venue": "相城区南京师范大学苏州实验学校",
+      "startDate": "2026-10-31",
+      "endDate": "2026-11-01",
+      "eligibility": "赛后报道确认参赛者来自上海、江苏、安徽等地，设成年男女组。",
+      "entryNote": "未核到报名通道、费用或截止。",
+      "format": "18米男女个人，反曲弓、光弓、传统弓，分排名赛与淘汰赛。",
+      "spectator": {
+        "admission": "未核到公众入场、预约或票务公告。",
+        "broadcast": "未核到官方直播或回放。"
+      },
+      "result": "江苏队获赛事亚军。",
+      "links": [
+        {
+          "kind": "results",
+          "label": "江苏省体育局赛后报道",
+          "url": "https://jsstyj.jiangsu.gov.cn/art/2026/11/2/art_79371_11854457.html"
+        }
+      ]
+    },
+    {
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "id": "fujian-provincial-games-youth-archery-2026",
+      "name": "福建省第十八届运动会青少年部射箭比赛",
+      "level": "省级青少年赛",
+      "province": "福建",
+      "city": "三明",
+      "venue": "清流县开元射击射箭训练基地",
+      "startDate": "2026-11-13",
+      "endDate": "2026-11-19",
+      "dateNote": "赛事专题公布的比赛日为11月13日至19日。省体育局6月发布的总日程（2.0版）列11月10日至19日。",
+      "eligibility": "按省运会青少年部规程和资格审查办法核定，省体育局已公布参赛名单。",
+      "entryMethod": "由省运会代表单位组织参赛，未设个人公开报名。",
+      "spectator": {
+        "admission": "尚未核到射箭项目的公众入场或票务通知。",
+        "broadcast": "尚未核到射箭项目的官方直播安排。"
+      },
+      "links": [
+        {
+          "kind": "schedule",
+          "label": "省运会赛事专题",
+          "url": "https://18sy.smnet.com.cn/"
+        },
+        {
+          "kind": "schedule",
+          "label": "福建省体育局总日程（2.0版）",
+          "url": "https://tyj.fj.gov.cn/zwgk/gsgg/202606/t20260612_7162334.htm"
+        },
+        {
+          "kind": "notice",
+          "label": "福建省体育局参赛资格公告",
+          "url": "https://tyj.fujian.gov.cn/zwgk/gsgg/202610/t20261030_7242602.htm"
+        }
+      ]
+    },
+    {
+      "id": "apx-xiamen-indoor-open-2026",
+      "name": "APX 厦门室内射箭公开赛",
+      "level": "室内公开赛",
+      "province": "福建",
+      "city": "厦门",
+      "startDate": "2026-12-18",
+      "endDate": "2026-12-20",
+      "dateNote": "中国香港射箭总会公告列出12月18–20日，具体场馆和分项日程待核。",
+      "entryMethod": "中国香港射箭总会说明，香港有意参赛者以所属俱乐部名义联系赛会报名。",
+      "entryNote": "大陆选手资格、个人报名入口和截止时间尚未核实。",
+      "links": [
+        {
+          "kind": "notice",
+          "label": "中国香港射箭总会赛事公告",
+          "url": "https://www.archery.org.hk/index.php"
+        },
+        {
+          "kind": "notice",
+          "label": "协会所列赛会公众号",
+          "url": "https://mp.weixin.qq.com/s/Pn-KvOwYH7HYrTa7WlhcUA"
+        }
+      ],
+      "year": 2026,
+      "checkedOn": "2026-11-10",
+      "spectator": {
+        "admission": "尚未核到当届面向公众的入场安排。",
+        "broadcast": "尚未核到主办方直播或官方回放。"
+      }
+    }
+  ]
+}

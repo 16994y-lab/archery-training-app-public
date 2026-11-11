@@ -1,8 +1,7 @@
 import React,{useEffect,useState} from 'react';
 import {cloudSync} from './cloud-sync';
 import {AppIcon,type AppIconName} from './AppIcon';
-import {FirstBatchHeader} from './FirstBatchHeader';
-import {Button,useApp} from './ui';
+import {Back,useApp} from './ui';
 import {maskEmail} from './account-display';
 import {accountDeletionReady,automaticRecordsSaveReady,manualBackupReady,privateMediaSaveReady,protectedArchiveReady} from './release-mode';
 import './account-center.css';
@@ -20,8 +19,8 @@ export function AccountOverview({status,onBack}:{status:ReturnType<typeof cloudS
  const backup=queue?.getStatus(),current=backup?.owner&&backup.owner===status.owner?backup:null;
  const cloudAvailable=status.phoneVerified&&(manualBackupReady||status.authVerified&&(automaticRecordsSaveReady||privateMediaSaveReady||protectedArchiveReady));
  return <section className="account-access account-center">
-  <Button className="account-back-link" onClick={onBack}>‹ 返回</Button>
-  <FirstBatchHeader eyebrow="我的 / 账号管理" title="账号中心" description="管理登录方式、备份训练，查看你的邀请权益。" meta={status.authVerified?'已登录':'等待联网核对'}/>
+  <Back title="账号中心" onBack={onBack}/>
+  <p className="account-task-summary" role="status">{status.authVerified?'已登录':'等待联网核对'} · 管理登录方式、训练资料与邀请权益</p>
   {hasPendingSave()&&<p className="account-notice" role="status">本机还有未保存的修改。请先保存或导出，再进行账号操作。</p>}
   <h2 className="account-group-label">账号与资料</h2>
   <div className="account-destinations">

@@ -1,0 +1,50 @@
+.competition-timer-settings { display:grid; gap:12px; }
+.competition-timer-settings > h2, .competition-timer-settings > p { margin:0; }
+.competition-timer-settings > .button { justify-self:start; }
+.competition-timer-options, .competition-timer-custom { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; }
+.competition-timer-options .button { min-height:58px; white-space:normal; padding:8px; }
+.competition-timer-options .button small { display:block; font-weight:400; margin-top:3px; }
+.competition-timer-custom label { display:grid; gap:4px; font-size:13px; }
+.competition-timer-custom input { width:100%; min-height:44px; padding:8px; border:1px solid var(--gx-line,#d7e3f0); border-radius:12px; color:inherit; background:var(--surface,#fff); font:inherit; }
+.competition-timer-mode { display:grid; gap:4px; font-size:13px; }
+.competition-timer-controls { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; }
+.competition-timer-options .button[aria-pressed="true"] small { color:inherit; }
+.competition-timer-sides { width:100%; display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:8px; align-self:center; }
+.competition-timer-side { min-width:0; container-type:inline-size; display:grid; grid-template-columns:minmax(0,1fr); gap:4px; justify-items:center; border:1px solid #b0c5df; border-radius:12px; padding:8px; color:#fff; background:#3d252c; }
+.competition-timer-side[data-active="true"] { background:#085d3b; outline:2px solid #e2fbed; outline-offset:-2px; }
+.competition-timer-side > span { text-align:center; overflow-wrap:anywhere; }
+.competition-timer-side [role="timer"] { font-size:clamp(25px,8vw,78px); font-size:min(34cqw,clamp(25px,8vw,78px)); line-height:1.1; font-weight:750; font-variant-numeric:tabular-nums; }
+.competition-timer-screen .competition-timer-side [role="timer"] { font-size:clamp(30px,min(13vw,26vh),180px); font-size:min(34cqw,26vh,220px); }
+.competition-timer-display {
+ --timer-accent:#dbeafe;
+ display:grid; grid-template-rows:auto 1fr auto auto; justify-items:center; gap:10px;
+ min-height:260px; padding:14px; border-radius:18px; color:#fff; background:#101c30;
+}
+.competition-timer-display[data-stage="prepare"], .competition-timer-display[data-stage="stopped"] { --timer-accent:#ffe2de; background:#801d20; }
+.competition-timer-display[data-stage="shoot"] { --timer-accent:#d4ffe7; background:#065239; }
+.competition-timer-display[data-stage="warning"] { --timer-accent:#fff2ab; background:#604000; }
+.competition-timer-display[data-stage="scoring"] { --timer-accent:#ffe2de; background:#4f202b; }
+.competition-timer-display-head { width:100%; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:8px; }
+.competition-timer-display-head > span { color:var(--timer-accent); font-weight:700; }
+.competition-timer-display-actions { display:flex; flex-wrap:wrap; gap:8px; }
+.competition-timer-cast-help { color:var(--timer-accent); margin:0; font-size:13px; text-align:center; }
+.competition-cast-options { display:grid; gap:10px; padding:0 2px 8px; }
+.competition-cast-options h3, .competition-cast-options p { margin:0; }
+.competition-cast-options label { display:grid; gap:4px; }
+.competition-cast-options input { width:100%; padding:10px; border:1px solid var(--gx-line,#d7e3f0); border-radius:10px; font-size:14px; }
+.competition-timer-display .button { min-height:44px; }
+.competition-timer-time { align-self:center; font-size:clamp(48px,17vw,130px); line-height:1; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:.015em; }
+.competition-timer-stage { color:var(--timer-accent); font-size:clamp(18px,4vw,30px); font-weight:700; }
+.competition-timer-audio { color:var(--timer-accent); margin:0; }
+.competition-timer-dialog { position:fixed; inset:0; width:100%; max-width:none; height:100%; max-height:none; margin:0; border:0; padding:0; background:#101c30; color:#fff; }
+.competition-timer-screen { min-height:100%; display:grid; background:#101c30; }
+.competition-timer-screen .competition-timer-display { min-height:100%; border-radius:0; padding:clamp(12px,3vw,36px); }
+.competition-timer-screen .competition-timer-time { font-size:clamp(48px,min(26vw,43vh),400px); }
+.competition-timer-screen .competition-timer-stage { font-size:clamp(20px,min(5vw,10vh),74px); }
+@media(min-width:680px) {
+ .competition-timer-options { grid-template-columns:repeat(3,minmax(0,1fr)); }
+}
+
+.training-shortcuts > .training-timer-link {grid-column:1 / -1}
+
+.competition-timer-remote { width:100%; max-width:none; min-height:100dvh; padding:0; }

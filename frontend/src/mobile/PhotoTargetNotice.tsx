@@ -1,6 +1,7 @@
 import React,{useId,useState} from 'react';
 import type {Target} from './domain';
 import {Button,Modal} from './ui';
+import {ChoiceSelect} from './ChoiceSelect';
 import {TargetPreview} from './TargetChoice';
 import {photoSupportedTargets,photoTargetNotice,type PhotoTargetLocationIssue} from './photo-target-notice';
 import './photo-target-notice.css';
@@ -26,10 +27,10 @@ export function PhotoTargetNotice({target,face,issue,disabled=false,onManual}:{
    <div className="photo-target-gallery">
     <p>本场当前选择：<strong>{state.selectedLabel}</strong></p>
     <label htmlFor={previewId}>选择对照预览</label>
-    <select id={previewId} value={previewKey} onChange={event=>setPreviewKey(event.target.value)}>
+    <ChoiceSelect id={previewId} value={previewKey} onChange={event=>setPreviewKey(event.target.value)}>
      <option value="current">当前选择：{target.name}</option>
      {supported.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
-    </select>
+    </ChoiceSelect>
     <div className="photo-target-preview"><TargetPreview target={preview}/><b>{preview.name}</b></div>
     <p className="photo-target-preview-note" role="status">此处只切换对照预览，本场仍使用「{target.name}」。</p>
     <details><summary>照片录入支持的 {supported.length} 个内置靶型</summary>

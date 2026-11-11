@@ -92,21 +92,30 @@ export function EmailPasswordRecovery({onClose}:{onClose:()=>void}){
  const useReceivedCode=()=>void act(async()=>{validateEmail();setStep('code');setCode('');setNotice('请填写这次找回邮件中的验证码；此操作不会重新发送邮件。');});
  const verify=()=>void act(async()=>{const token=code;setCode('');await cloudSync.verify(email,token,'recovery');setStep('password');setNotice('验证码已核对，请设置新密码。');});
  const save=()=>void act(async()=>{requireNewPassword(password);if(password!==confirm)throw new Error('两次输入的密码不一致');const secret=password;setPassword('');setConfirm('');await cloudSync.updatePassword(secret);setStep('request');setNotice('密码已更新，请返回使用新密码登录。');});
- return <Panel title="邮箱验证码找回密码">
+ return <Panel className="account-recovery-card" title="邮箱验证码找回密码">
+  <ol className="account-recovery-steps" aria-label="找回步骤">
+   <li aria-current={step==='request'||step==='code'?'step':undefined}>1. 验证邮箱</li>
+   <li aria-current={step==='password'?'step':undefined}>2. 设置新密码</li>
+  </ol>
   <p>请使用已在账号安全验证过的邮箱；也可以返回使用手机验证码找回。</p>
   {!emailOtpReady&&<p role="status">邮箱验证码找回暂不可用，请返回使用手机验证码找回。</p>}
   {error&&<p role="alert" className="account-error">{error}</p>}{notice&&<p role="status">{notice}</p>}
-  <form onSubmit={event=>{event.preventDefault();if(busy)return;if(step==='request'){if(emailOtpReady&&seconds===0)send();}else if(step==='code'){if(/^\d{6,10}$/.test(code))verify();}else save();}}>
+  <form className="account-entry-form" onSubmit={event=>{event.preventDefault();if(busy)return;if(step==='request'){if(emailOtpReady&&seconds===0)send();}else if(step==='code'){if(/^\d{6,10}$/.test(code))verify();}else save();}}>
   {step!=='password'?<>
    <Field label="已验证的登录邮箱"><input type="email" autoComplete="email" value={email} disabled={busy||step==='code'} onChange={e=>setEmail(e.target.value)}/></Field>
-   <Button type={step==='request'?'submit':'button'} disabled={busy||seconds>0||!emailOtpReady} onClick={step==='code'?send:undefined}>{seconds?`${seconds} 秒后可重发`:step==='code'?'重新发送找回邮件':'发送找回邮件'}</Button>
-   {step==='request'&&<Button type="button" disabled={busy||!emailOtpReady||!email.trim()} onClick={useReceivedCode}>已收到验证码，继续验证</Button>}
-   {step==='code'&&<><Field label="邮件验证码"><input type="text" inputMode="numeric" autoComplete="one-time-code" value={code} maxLength={10} onChange={e=>setCode(e.target.value.replace(/\D/g,''))}/></Field><Button type="submit" kind="primary" disabled={busy||!/^\d{6,10}$/.test(code)}>验证找回码</Button></>}
+   {step==='request'?<div className="actions">
+    <Button type="submit" kind="primary" disabled={busy||seconds>0||!emailOtpReady}>{seconds?`${seconds} 秒后可重发`:'发送找回邮件'}</Button>
+    <Button type="button" disabled={busy||!emailOtpReady||!email.trim()} onClick={useReceivedCode}>已收到验证码，继续验证</Button>
+   </div>:<>
+    <Field label="邮件验证码"><input type="text" inputMode="numeric" autoComplete="one-time-code" value={code} maxLength={10} onChange={e=>setCode(e.target.value.replace(/\D/g,''))}/></Field>
+    <Button type="submit" kind="primary" className="wide" disabled={busy||!/^\d{6,10}$/.test(code)}>验证找回码</Button>
+    <div className="actions"><Button type="button" disabled={busy||seconds>0||!emailOtpReady} onClick={send}>{seconds?`${seconds} 秒后可重发`:'重新发送找回邮件'}</Button></div>
+   </>}
   </>:<>
    <p className="caption">{PASSWORD_RULE}</p><PasswordField label="新密码" value={password} onChange={setPassword} disabled={busy} autoComplete="new-password"/><PasswordField label="再次输入新密码" value={confirm} onChange={setConfirm} disabled={busy} autoComplete="new-password"/>
-   <Button type="submit" kind="primary" disabled={busy}>保存新密码</Button>
+   <Button type="submit" kind="primary" className="wide" disabled={busy}>保存新密码</Button>
   </>}
   </form>
-  <Button type="button" disabled={busy} onClick={close}>返回登录</Button>
+  <Button type="button" className="account-recovery-return" disabled={busy} onClick={close}>返回登录</Button>
  </Panel>;
 }

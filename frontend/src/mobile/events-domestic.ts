@@ -1,3 +1,4 @@
+export const liuzhouResultsPdf='https://www.sports.edu.cn/b/a/c/images/202610301793348554426_0_617.pdf';
 import type { CompetitionEvent } from './competition-calendar.types';
 
 export const domesticEvents: readonly CompetitionEvent[] = [

@@ -73,3 +73,7 @@
 .vx-approved-group-records [role=group]>.vx-button[aria-pressed=true]{background:var(--brand-tint,#eaf2ff);color:var(--brand,#2464d9)}
 
 .vx-review-home .vx-analysis-entries{grid-template-columns:minmax(0,1fr)}
+
+.vx-compact-home-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.vx-compact-home-head span{font-size:13px;color:var(--ui-muted,#586f82)}
+.vx-review-home .activity-compact-heading h2{flex:none;font-size:14px;color:var(--ui-ink,#20364c)}

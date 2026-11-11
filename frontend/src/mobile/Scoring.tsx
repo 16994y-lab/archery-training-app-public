@@ -7,7 +7,7 @@ import { Metrics, Spatial, Distribution } from './Analysis';
 import { PhotoEntry, VideoEntry } from './media';
 import { ScoringCircles } from './SpreadOverlay';
 import { GroupNotes, SessionSettings } from './ScoringExtras';
-import { offlineAndroid, videoCoachReady } from './release-mode';
+import { videoCoachReady } from './release-mode';
 import {sessionTimeLabel} from './session-label';
 
 // Run inside the existing repository transaction: confirm and advance commit together.
@@ -64,7 +64,7 @@ export function Scoring({sessionId,review=false,onBack,endIndex}:{sessionId:stri
    let missingMode:'M'|'skip'='skip';
    if(end.arrows.length<end.capacity){
     const missing=end.capacity-end.arrows.length;
-    const choice=await ask('还有未记录的箭，如何保存本组？',`计划 ${end.capacity} 箭，已录 ${end.arrows.length} 箭，少 ${missing} 箭。若照片漏识别了命中箭，请先返回补点或手动录入；只有确认脱靶才记 M。`,['返回录入',`少的 ${missing} 箭确实脱靶，记 M`,`仅保存已录 ${end.arrows.length} 箭，不记 M`]);
+    const choice=await ask('还有未记录的箭，如何保存本组？',`计划 ${end.capacity} 箭，已录 ${end.arrows.length} 箭，少 ${missing} 箭。若照片漏识别了命中箭，请先返回补点或手动录入；只有确认脱靶才记 M。`,['返回录入',`少的 ${missing} 箭确实脱靶，记 M`,`仅保存已录 ${end.arrows.length} 箭，不记 M`],2);
     if(choice===0)return;
     missingMode=choice===1?'M':'skip';
    }
@@ -79,7 +79,7 @@ export function Scoring({sessionId,review=false,onBack,endIndex}:{sessionId:stri
    let missingMode:'M'|'skip'='skip';
    if(end&&!end.confirmed&&end.arrows.length>0&&end.arrows.length<end.capacity){
     const missing=end.capacity-end.arrows.length;
-    const choice=await ask('结束前，缺少的箭如何记录？',`本组计划 ${end.capacity} 箭，已录 ${end.arrows.length} 箭。照片漏识别的命中箭请先返回补录；确认脱靶才记 M。`,['返回录入',`少的 ${missing} 箭确实脱靶，记 M`,`仅保存已录 ${end.arrows.length} 箭，不记 M`]);
+    const choice=await ask('结束前，缺少的箭如何记录？',`本组计划 ${end.capacity} 箭，已录 ${end.arrows.length} 箭。照片漏识别的命中箭请先返回补录；确认脱靶才记 M。`,['返回录入',`少的 ${missing} 箭确实脱靶，记 M`,`仅保存已录 ${end.arrows.length} 箭，不记 M`],2);
     if(choice===0)return;
     missingMode=choice===1?'M':'skip';
    }
@@ -117,17 +117,21 @@ export function Scoring({sessionId,review=false,onBack,endIndex}:{sessionId:stri
   {extras==='settings'&&<SessionSettings session={s} onClose={()=>setExtras(null)}/>}
   {extras==='notes'&&end&&<GroupNotes session={s} index={s.currentEnd} arrowId={selected} onClose={()=>setExtras(null)}/>}
   {extras==='more'&&<Modal title="更多训练操作" onClose={()=>setExtras(null)}>
-   {end&&<Button className="wide" onClick={()=>setExtras('notes')}>{selected?'选中箭备注':'本组备注'}</Button>}
-   <Button className="wide" onClick={()=>setExtras('settings')}>本场设置</Button>
-   <p className="caption">{s.conditions.equipment?.name??'器材未填，可在本场设置中补记'}</p>
-   {!review&&<>
-    {end&&!rest&&!atRest&&<><div className="capacity-row"><Field label="本组箭数"><NumberInput min="1" max="300" value={capacity} onValue={setCapacity}/></Field><Button onClick={async()=>{if(await change(q=>resizeEnd(q,capacity)))setExtras(null);}}>设置箭数</Button><Button onClick={async()=>{if(await change(q=>resizeEnd(q,q.ends[q.currentEnd].capacity+6)))setExtras(null);}}>＋6位置</Button></div>
-     <Button className="wide" kind="danger" disabled={!end.arrows.length||end.confirmed} onClick={async()=>{setExtras(null);if(await ask('清空本组？',`将清除本组 ${end.arrows.length} 支已录箭；其他组保持不变。`,['取消','清空本组'])===1){if(await change(q=>{q.ends[q.currentEnd].arrows=[];q.revision++;})){setSelected(null);setExtras(null);}}}}>清空本组</Button></>}
-    {videoCoachReady&&<Button className="wide" onClick={()=>{setExtras(null);setEntry('video');}}>动作复盘</Button>}
-    {!rest&&!atRest&&<Button className="wide" onClick={async()=>{setExtras(null);const v=await ask('记录自主休息','按实际点击记录起止，不自动判断组间停顿。',['取消','开始不计时休息','开始10分钟页面计时']);if(v>0&&await change(q=>beginRest(q,v===2?10:null,v===2)))setExtras(null);}}>记录休息</Button>}
-   </>}
-   <p className="caption">实际 {allArrows(s).length} 箭 · 已确认 {s.ends.filter(e=>e.confirmed).length} 组 · 原计划 {sessionPlannedArrows(s)??'不限'} 箭</p>
-   <div className="chips">{s.ends.map((e,i)=><Button key={e.id} disabled={!e.confirmed} onClick={()=>{setExtras(null);open('group',s.id+':'+i);}}>第{i+1}组 {e.confirmed?'✓':'录入中'}</Button>)}</div>
+   <div className="score-menu-actions" role="group" aria-label="训练操作">
+    {end&&<Button onClick={()=>setExtras('notes')}>{selected?'选中箭备注':'本组备注'}</Button>}
+    <Button onClick={()=>setExtras('settings')}>本场设置</Button>
+    {!review&&videoCoachReady&&<Button onClick={()=>{setExtras(null);setEntry('video');}}>动作复盘</Button>}
+    {!review&&!rest&&!atRest&&<Button onClick={async()=>{setExtras(null);const v=await ask('记录自主休息','按实际点击记录起止，不自动判断组间停顿。',['取消','开始不计时休息','开始10分钟页面计时']);if(v>0&&await change(q=>beginRest(q,v===2?10:null,v===2)))setExtras(null);}}>记录休息</Button>}
+   </div>
+   {!review&&end&&!rest&&!atRest&&<details className="review-data-details score-menu-capacity"><summary>调整本组箭数</summary>
+    <div className="capacity-row"><Field label="本组箭数"><NumberInput min="1" max="300" value={capacity} onValue={setCapacity}/></Field><Button onClick={async()=>{if(await change(q=>resizeEnd(q,capacity)))setExtras(null);}}>设置箭数</Button><Button onClick={async()=>{if(await change(q=>resizeEnd(q,q.ends[q.currentEnd].capacity+6)))setExtras(null);}}>＋6位置</Button></div>
+   </details>}
+   <section className="score-menu-groups" aria-label="查看分组">
+    <h3>查看分组</h3>
+    <p className="caption">实际 {allArrows(s).length} 箭 · 已确认 {s.ends.filter(e=>e.confirmed).length} 组 · 原计划 {sessionPlannedArrows(s)??'不限'} 箭</p>
+    <div className="chips">{s.ends.map((e,i)=><Button key={e.id} disabled={!e.confirmed} onClick={()=>{setExtras(null);open('group',s.id+':'+i);}}>第{i+1}组 {e.confirmed?'✓':'录入中'}</Button>)}</div>
+   </section>
+   {!review&&end&&!rest&&!atRest&&<div className="score-menu-danger"><Button kind="danger" disabled={!end.arrows.length||end.confirmed} onClick={async()=>{setExtras(null);if(await ask('清空本组？',`将清除本组 ${end.arrows.length} 支已录箭；其他组保持不变。`,['取消','清空本组'])===1){if(await change(q=>{q.ends[q.currentEnd].arrows=[];q.revision++;})){setSelected(null);setExtras(null);}}}}>清空本组</Button></div>}
   </Modal>}
   {end&&(!atRest||review)&&(!rest||review)&&<>
    <section className="score-results" aria-label="本组成绩">
@@ -139,7 +143,7 @@ export function Scoring({sessionId,review=false,onBack,endIndex}:{sessionId:stri
    <div className="score-entry-modes" role="group" aria-label="录入方式">
     <Button aria-pressed={mode==='target'} className={mode==='target'?'selected':''} aria-controls={entryId} onClick={()=>void chooseMode('target')}>点靶录入</Button>
     <Button aria-pressed={mode==='number'} className={mode==='number'?'selected':''} aria-controls={entryId} onClick={()=>void chooseMode('number')}>数字录入</Button>
-    {!review&&<Button aria-pressed={mode==='photo'} className={mode==='photo'?'selected':''} disabled={editing||end.confirmed} aria-controls={entryId} onClick={()=>void chooseMode('photo')}>照片录入<span className="score-beta">{offlineAndroid?'人工核对':'测试版'}</span></Button>}
+    {!review&&<Button aria-pressed={mode==='photo'} className={mode==='photo'?'selected':''} disabled={editing||end.confirmed} aria-controls={entryId} onClick={()=>void chooseMode('photo')}>照片录入<span className="score-beta">测试版</span></Button>}
    </div>
    <section id={entryId} className={`score-entry-panel ${mode==='photo'?'score-entry-photo':''}`} aria-label={mode==='target'?'点靶录入区':mode==='number'?'数字录入区':'照片录入区'}>
     {mode==='photo'?<PhotoEntry key={`${s.id}:${end.id}:${face}`} session={s} face={face} onBack={()=>setMode('target')} onDirtyChange={setPhotoDirty}/>:<>
@@ -151,7 +155,7 @@ export function Scoring({sessionId,review=false,onBack,endIndex}:{sessionId:stri
      }
     </>}
    </section>
-   {!review&&<div className="score-primary-actions"><Button className="score-undo" disabled={photoDirty||!end.arrows.length||end.confirmed} onClick={async()=>{if(await change(q=>{q.ends[q.currentEnd].arrows.pop();q.revision++;}))setSelected(null);}}>撤销上一箭</Button>{end.confirmed?(finishedPlan?<span className="badge">本组已保存</span>:<Button kind="primary" disabled={photoDirty} onClick={()=>change(advance)}>继续下一项 →</Button>):<Button kind="primary" disabled={photoDirty||!end.arrows.length||savingEnd} onClick={continueEnd}>{savingEnd?'正在保存…':finishedPlan?'保存追加组':lastPlanned?'保存最后一组':'保存本组并继续'}</Button>}</div>}
+   {!review&&<div className="score-primary-actions" data-docked={mode==='number'&&cannotAdd&&!editing||undefined}><Button className="score-undo" disabled={photoDirty||!end.arrows.length||end.confirmed} onClick={async()=>{if(await change(q=>{q.ends[q.currentEnd].arrows.pop();q.revision++;}))setSelected(null);}}>撤销上一箭</Button>{end.confirmed?(finishedPlan?<span className="badge">本组已保存</span>:<Button kind="primary" disabled={photoDirty} onClick={()=>change(advance)}>继续下一项 →</Button>):<Button kind="primary" disabled={photoDirty||!end.arrows.length||savingEnd} onClick={continueEnd}>{savingEnd?'正在保存…':finishedPlan?'保存追加组':lastPlanned?'保存最后一组':'保存本组并继续'}</Button>}</div>}
    {mode!=='photo'&&<details className="score-help"><summary>录入与辅助圈说明</summary><p>点击上方成绩再输入即可修改。边框内靶外白区可记 M 并保留位置；数字改分会清除该箭坐标。压线环值请人工核对。</p><p>当前靶位 {faceStats.n} 箭，坐标 {faceStats.located}/{faceStats.n}。蓝圈表示靶内落点的80%集中范围，至少3个靶内落点后显示；多个候选群分别绘圈，数字箭不补坐标。完整分析在复盘查看。</p><p>成功录入的成绩已保存到本机，切换录入方式或模块不会清空。</p></details>}
   </>}
   {review&&end&&<><Metrics arrows={end.arrows}/><Distribution arrows={end.arrows}/><Spatial arrows={end.arrows} target={s.conditions.target} size={s.conditions.size}/></>}

@@ -1,8 +1,10 @@
 import {useRef,useState} from 'react';
 import {Link,useLocation,useNavigate,useSearchParams} from 'react-router-dom';
-import {beijingDay,deadlineInfo,locationText,onDay,overlapsPeriod,useCompetitionClock} from './OfflineCompetitionCalendar';
-import {AppIcon} from './AppIcon';
+import {beijingDay,deadlineInfo,locationText,onDay,overlapsPeriod,useCompetitionClock} from './CompetitionCalendar';
+import {bundledCompetitions} from './competition-publication';
+import {furryImage} from './avatar-local';
 import {Back,Modal,useInnerBack} from './ui';
+import {ChoiceSelect} from './ChoiceSelect';
 import type {CompetitionEvent} from './competition-calendar.types';
 
 type Scope='domestic'|'international';
@@ -54,7 +56,8 @@ function UpcomingCard({event,now,cutoff}:{event:CompetitionEvent;now:number;cuto
   const [params]=useSearchParams();
   const closed=Boolean(cutoff&&now>=cutoff.at);
   const location=locationText(event);
-  const eligibilitySummary=event.eligibilitySummary;
+  const bundled=bundledCompetitions.events.find(item=>item.id===event.id);
+  const eligibilitySummary=event.eligibilitySummary??(bundled?.eligibility===event.eligibility?bundled?.eligibilitySummary:undefined);
   const detail=new URLSearchParams(params);
   detail.set('event',event.id);
   return <article className="event-front-card" data-event={event.id}>
@@ -96,10 +99,11 @@ export function NewsCompetitionHome({events,day,keyword,onKeywordChange}:{events
   const today=beijingDay(now),currentYear=Number(today.slice(0,4));
   const years=[...new Set([currentYear,currentYear+1,...events.flatMap(e=>e.endDate?[e.year,Number(e.endDate.slice(0,4))]:[e.year])])].sort((a,b)=>a-b);
   const year=years.includes(Number(params.get('year')))?Number(params.get('year')):currentYear;
-  const month=months.includes(Number(params.get('month')))?Number(params.get('month')):Number(today.slice(5,7));
+  const rawMonth=params.get('month');
+  const month=rawMonth==='0'||months.includes(Number(rawMonth))?Number(rawMonth):Number(today.slice(5,7));
   const prefix=`${year}-${twoDigits(month)}-`;
-  const totalDays=new Date(Date.UTC(year,month,0)).getUTCDate();
-  const offset=(new Date(Date.UTC(year,month-1,1)).getUTCDay()+6)%7;
+  const totalDays=month?new Date(Date.UTC(year,month,0)).getUTCDate():0;
+  const offset=month?(new Date(Date.UTC(year,month-1,1)).getUTCDay()+6)%7:0;
   const dates=Array.from({length:totalDays},(_,index)=>index+1);
   const rawDate=params.get('date');
   const selectedDay=dates.find(value=>rawDate===prefix+twoDigits(value));
@@ -129,7 +133,7 @@ export function NewsCompetitionHome({events,day,keyword,onKeywordChange}:{events
   const clearKeyword=()=>{onKeywordChange('');searchRef.current?.focus();};
   const back=()=>{if(location.state?.fromOverview)navigate(-1);else update({view:'',query:''});};
   useInnerBack(more,back,30);
-  const monthTitle=`${month}月比赛`;
+  const periodTitle=month?`${month}月比赛`:`${year}年比赛`;
   const monthParams=new URLSearchParams(params);
   monthParams.set('view','more-events');
   monthParams.set('year',String(year));
@@ -137,27 +141,27 @@ export function NewsCompetitionHome({events,day,keyword,onKeywordChange}:{events
   monthParams.set('query',activeKeyword.trim());
   monthParams.delete('date');
   const periodFilters=<>
-    <select aria-label="年份" value={year} onChange={e=>update({year:e.target.value,month:String(month),date:''})}>{years.map(value=><option key={value} value={value}>{value}</option>)}</select>
-    <select aria-label="月份" value={month} onChange={e=>update({year:String(year),month:e.target.value,date:''})}>{months.map(value=><option key={value} value={value}>{value}</option>)}</select>
+    <ChoiceSelect aria-label="年份" value={year} onChange={e=>update({year:e.target.value,month:String(month),date:''})}>{years.map(value=><option key={value} value={value}>{value}年</option>)}</ChoiceSelect>
+    <ChoiceSelect aria-label="月份" value={month} onChange={e=>update({year:String(year),month:e.target.value,date:''})}><option value="0">全年</option>{months.map(value=><option key={value} value={value}>{value}月</option>)}</ChoiceSelect>
   </>;
   if(more){
-    const title=selectedDay?`${month}月${selectedDay}日比赛`:monthTitle;
+    const title=selectedDay?`${month}月${selectedDay}日比赛`:periodTitle;
     return <section className="event-front-more-page" aria-label={title}>
       <Back title={title} label="返回资讯首页" onBack={back}/>
-      <div className="event-date-filters event-month-list-filters" role="group" aria-label="切换比赛月份">{periodFilters}</div>
+      <div className="event-date-filters event-month-list-filters" role="group" aria-label="切换比赛年月">{periodFilters}</div>
       <div className="event-more-tools">
         <p className="event-more-context">{[`${year}年`,`共 ${upcoming.length} 场`,region?.area,region?.city,activeKeyword.trim()].filter(Boolean).join(' · ')}</p>
-        {selectedDate&&<Link to={{search:monthParams.toString()}} replace state={location.state}>查看{monthTitle}</Link>}
+        {selectedDate&&<Link to={{search:monthParams.toString()}} replace state={location.state}>查看{periodTitle}</Link>}
         {(region||terms.length>0)&&<button type="button" onClick={()=>update({region:'',scope:'',city:'',query:''})}>清除筛选</button>}
       </div>
-      {upcoming.length?<div className="event-front-more-list">{upcoming.map(({event,cutoff})=><UpcomingCard key={event.id} event={event} now={now} cutoff={cutoff}/>)}</div>:<p className="event-front-empty" role="status">{region||terms.length?'当前筛选没有匹配的比赛。':selectedDate?'这天暂无收录比赛。':'这个月暂无收录比赛。'}</p>}
+      {upcoming.length?<div className="event-front-more-list">{upcoming.map(({event,cutoff})=><UpcomingCard key={event.id} event={event} now={now} cutoff={cutoff}/>)}</div>:<p className="event-front-empty" role="status">{region||terms.length?'当前筛选没有匹配的比赛。':selectedDate?'这天暂无收录比赛。':month?'这个月暂无收录比赛。':'这一年暂无收录比赛。'}</p>}
     </section>;
   }
   return <section className="event-front-section" aria-labelledby="upcoming-events-title">
-    <div className="event-front-heading"><h2 id="upcoming-events-title">比赛速览</h2><nav className="event-front-links" aria-label="比赛栏目"><Link to="/news?view=calendar">比赛日历</Link><Link to="/news?view=calendar&entry=individual">个人报名</Link></nav></div>
+    <div className="event-front-heading"><h2 id="upcoming-events-title">比赛速览</h2><Link to="/news?view=calendar&entry=individual">个人报名</Link></div>
     <div className="event-overview">
-      <div className="event-overview-left">
-        <div className="event-overview-calendar" aria-label={`${year}年${month}月比赛日历`}>
+      <div className={'event-overview-left'+(month?'':' event-overview-year')}>
+        {month>0?<div className="event-overview-calendar" aria-label={`${year}年${month}月比赛日历`}>
           <div className="event-month-heading"><h3>{year} 年 {month} 月</h3><span>有比赛</span></div>
           <div className="event-month-week" aria-hidden="true">{week.map(value=><span key={value}>{value}</span>)}</div>
           <ol className="event-month-days" aria-label="本月日期">
@@ -171,7 +175,9 @@ export function NewsCompetitionHome({events,day,keyword,onKeywordChange}:{events
               </li>;
             })}
           </ol>
-        </div>
+        </div>:<div className="event-overview-calendar">
+          <div className="event-month-heading"><h3>{year} 年全年</h3><span>{monthRows.length} 场比赛</span></div>
+        </div>}
         <div className="news-search-field event-keyword-search" role="search" aria-label="比赛搜索">
           <input ref={searchRef} type="search" aria-label="搜索比赛" placeholder="搜比赛或地点" maxLength={80} autoComplete="off" value={keyword} onChange={event=>onKeywordChange(event.target.value)} onKeyDown={event=>{if(event.key==='Escape'&&!event.nativeEvent.isComposing)clearKeyword();}}/>
           {keyword&&<button type="button" aria-label="清空比赛搜索" onClick={clearKeyword}>×</button>}
@@ -180,21 +186,21 @@ export function NewsCompetitionHome({events,day,keyword,onKeywordChange}:{events
           <span id="event-region-label">地区检索</span>
           <button type="button" className="event-region-trigger" aria-labelledby="event-region-label event-region-value" aria-haspopup="dialog" aria-expanded={regionOpen} onClick={()=>setRegionOpen(true)}><span id="event-region-value">{region?[region.area,region.city].filter(Boolean).join(' · '):'全部地区'}</span><span aria-hidden="true">⌄</span></button>
           <span id="event-date-label">日期检索</span>
-          <div className="event-date-filters" role="group" aria-labelledby="event-date-label">
+          <div className={'event-date-filters'+(month?'':' event-month-list-filters')} role="group" aria-labelledby="event-date-label">
             {periodFilters}
-            <select aria-label="日期" value={selectedDay??''} onChange={e=>update({date:e.target.value?prefix+twoDigits(Number(e.target.value)):''})}><option value="">全月</option>{dates.map(value=><option key={value} value={value}>{value}日</option>)}</select>
+            {month>0&&<ChoiceSelect aria-label="日期" value={selectedDay??''} onChange={e=>update({date:e.target.value?prefix+twoDigits(Number(e.target.value)):''})}><option value="">全月</option>{dates.map(value=><option key={value} value={value}>{value}日</option>)}</ChoiceSelect>}
           </div>
         </div>
       </div>
       <div className="event-overview-cards" aria-label="比赛摘要">
         {upcoming.slice(0,2).map(({event,cutoff})=><UpcomingCard key={event.id} event={event} now={now} cutoff={cutoff}/>)}
         {upcoming.length<2&&<div className="event-front-mascot" role="status">
-          <AppIcon name="target"/>
+          <img src={furryImage('furry-arctic-fox')} alt="" width="84" height="84"/>
           <strong>只有这些啦</strong>
           {!upcoming.length&&<small>当前筛选没有比赛</small>}
         </div>}
       </div>
-      <Link className="event-front-more" to={{search:monthParams.toString()}} state={{fromOverview:true}}>查看{monthTitle} · {monthRows.length} 场</Link>
+      <Link className="event-front-more" to={{search:monthParams.toString()}} state={{fromOverview:true}}>查看{periodTitle} · {monthRows.length} 场</Link>
     </div>
     {regionOpen&&<RegionPicker events={events} selected={region} onSelect={chooseRegion} onClose={()=>setRegionOpen(false)}/>}
   </section>;

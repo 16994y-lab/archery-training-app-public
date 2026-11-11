@@ -1,19 +1,26 @@
-import {useEffect,useLayoutEffect,useRef,useState} from 'react';
+import React,{useCallback,useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {PullToRefresh} from 'antd-mobile';
 import {Link,useLocation,useNavigate} from 'react-router-dom';
 import {Back,Button,Panel,useInnerBack} from './ui';
-import {AppIcon} from './AppIcon';
-import {OfflineCompetitionCalendar} from './OfflineCompetitionCalendar';
-import {NewsCompetitionHome} from './NewsCompetitionHome';
+import {bundledNews,type NewsSnapshot} from './news-feed';
+import {categoryLabels,deduplicateNewsRows,newsReadingCopy,newsIsPublished,searchArticles,sourceTranslationFor} from './news-presentation';
+import {reviewedEventNews,reviewedEventStoryFor} from './reviewed-event-news';
+import {ReviewedImage} from './NewsImage';
 import {NewsArticleHeading,NewsParagraphPair,NewsSections,PressStoryRow} from './NewsArticleBody';
-import {localCompetitions,localNewsArticles,localNewsReviewedOn,type LocalNewsArticle} from './local-news-snapshot';
+import type {NewsArticle} from './news-feed';
+import {reviewedDetailFor} from './news-detail-contract';
+import bundledNewsDetails from './news-details.v1.json';
+import {CompetitionCalendar} from './CompetitionCalendar';
+import {bundledCompetitions} from './competition-publication';
+import type {CompetitionEvent} from './competition-calendar.types';
+import {NewsCompetitionHome} from './NewsCompetitionHome';
+import {LiuzhouChampionshipStory,liuzhouReportArticles,liuzhouStoryId} from './LiuzhouChampionshipStory';
+import {AppIcon} from './AppIcon';
 import './news.css';
-import './offline-news.css';
+import './news-next.css';
 
+const NEWS_NOTICE_MS=3000;
 const readingView={query:'',competitionQuery:'',scrollY:0,lastRead:null as string|null};
-const categoryLabels={赛事:'赛事',训练:'训练观察',研究:'研究选读'};
-const order=(a:LocalNewsArticle,b:LocalNewsArticle)=>b.date.localeCompare(a.date)||a.id.localeCompare(b.id);
-const normalize=(value:string)=>value.normalize('NFKC').toLowerCase().trim();
 
 function NewsHeading({calendar=false,open=false,compact=false}:{calendar?:boolean;open?:boolean;compact?:boolean}){
  return <><header className={'press-masthead'+(compact?' press-masthead-compact':'')}>
@@ -29,76 +36,85 @@ function NewsHeading({calendar=false,open=false,compact=false}:{calendar?:boolea
    <Link to="/news?view=calendar&entry=individual" aria-current={calendar&&open?'page':undefined}><AppIcon name="person"/>个人报名</Link>
   </nav>}</>;
 }
-
-export function OfflineNews({competitionDay}:{competitionDay?:string}={}){
+export function OfflineNews({detailDocument=bundledNewsDetails,competitionDay}:{detailDocument?:unknown;competitionDay?:string}={}){
  const params=new URLSearchParams(useLocation().search);
- if(params.get('view')==='calendar'||params.has('event')){
-  return <div className="news-page">{!params.get('event')&&<NewsHeading calendar open={params.get('entry')==='individual'}/>}<OfflineCompetitionCalendar events={localCompetitions} day={competitionDay}/></div>;
- }
- return <NewsFeedView competitionDay={competitionDay}/>;
+ const competitions=bundledCompetitions.events;
+ if(params.get('story')===liuzhouStoryId)return <LiuzhouChampionshipStory/>;
+ if(params.get('view')==='calendar'||params.has('event'))return <div className="news-page">{!params.get('event')&&<NewsHeading calendar open={params.get('entry')==='individual'}/>}<CompetitionCalendar events={competitions} day={competitionDay}/></div>;
+ return <NewsFeedView detailDocument={detailDocument} competitionDay={competitionDay} competitions={competitions}/>;
 }
-
-function NewsFeedView({competitionDay}:{competitionDay?:string}){
+function NewsFeedView({detailDocument,competitionDay,competitions}:{detailDocument:unknown;competitionDay?:string;competitions:readonly CompetitionEvent[]}){
  const location=useLocation(),navigate=useNavigate();
+ const snapshot:NewsSnapshot={feed:bundledNews,checkedAt:null,cached:false};
  const [query,setQuery]=useState(readingView.query);
  const [competitionQuery,setCompetitionQuery]=useState(readingView.competitionQuery);
- const [searchActive,setSearchActive]=useState(false),[notice,setNotice]=useState(false);
- const titleRef=useRef<HTMLHeadingElement>(null),searchRef=useRef<HTMLInputElement>(null);
- const noticeTimer=useRef<number|undefined>(undefined);
+ const [searchActive,setSearchActive]=useState(false);
+ const [notice,setNotice]=useState<{text:string}|null>(null);
+ const titleRef=useRef<HTMLHeadingElement>(null),searchRef=useRef<HTMLInputElement>(null),lastRead=useRef<string|null>(readingView.lastRead);
  useEffect(()=>{readingView.query=query;readingView.competitionQuery=competitionQuery;},[query,competitionQuery]);
- useEffect(()=>()=>window.clearTimeout(noticeTimer.current),[]);
- const refresh=async()=>{
-  window.clearTimeout(noticeTimer.current);
-  setNotice(true);
-  noticeTimer.current=window.setTimeout(()=>setNotice(false),3000);
- };
+ useEffect(()=>{if(!notice)return;const timer=window.setTimeout(()=>setNotice(null),NEWS_NOTICE_MS);return()=>window.clearTimeout(timer);},[notice]);
+ const refresh=async()=>{setNotice({text:'离线版显示内置精选，原文及主办方链接由你点击时打开。'});};
  const params=new URLSearchParams(location.search);
- const selectedId=params.get('id')??params.get('story'),moreEvents=params.get('view')==='more-events';
+ const selectedId=params.get('id'),moreEvents=params.get('view')==='more-events';
  const fromMeet=Boolean(location.state?.fromMeetDetail);
  const backLabel=fromMeet?'返回赛事详情':'返回资讯';
  const listPeriod=moreEvents?[params.get('year'),params.get('month'),params.get('date')].join('/'):'';
- const article=localNewsArticles.find(item=>item.id===selectedId);
+ const article=liuzhouReportArticles.find(item=>item.id===selectedId)??reviewedEventNews.find(item=>item.id===selectedId)??snapshot.feed.articles.find(item=>item.id===selectedId&&newsIsPublished(item));
  useLayoutEffect(()=>{
   if(selectedId){titleRef.current?.focus({preventScroll:true});window.scrollTo(0,0);}
   else if(moreEvents)window.scrollTo(0,0);
-  else {document.getElementById(`news-item-${readingView.lastRead}`)?.focus({preventScroll:true});window.scrollTo(0,readingView.scrollY);}
- },[selectedId,moreEvents,listPeriod]);
+  else {document.getElementById(`news-item-${lastRead.current}`)?.focus({preventScroll:true});window.scrollTo(0,readingView.scrollY);}
+ },[selectedId,article?.id,moreEvents,listPeriod]);
  const back=()=>{
   if(selectedId&&(fromMeet||location.state?.fromNewsList===selectedId)){navigate(-1);return;}
-  const next=new URLSearchParams(location.search);next.delete('id');next.delete('story');
-  navigate({pathname:location.pathname,search:next.toString()},{replace:true});
+  const params=new URLSearchParams(location.search);params.delete('id');
+  navigate({pathname:location.pathname,search:params.toString()},{replace:true});
  };
  useInnerBack(Boolean(selectedId),back,30);
- const overview=<NewsCompetitionHome events={localCompetitions} day={competitionDay} keyword={competitionQuery} onKeywordChange={setCompetitionQuery}/>;
- if(moreEvents)return <div className="news-page">{overview}</div>;
- if(selectedId&&!article)return <div className="news-page"><Back title="资讯详情" label={backLabel} onBack={back}/><Panel><h2 ref={titleRef} tabIndex={-1}>本地快照未收录这篇资讯</h2><Button onClick={back}>{backLabel}</Button></Panel></div>;
- if(article)return <div className="news-page"><Back title="资讯详情" label={backLabel} onBack={back}/><article className="news-article">
-  <NewsArticleHeading title={article.title} titleRef={titleRef} source={article.source} date={article.date}/>
-  {article.image&&<figure className="news-original-figure">
-   <img src={article.image.src} alt={article.image.alt} decoding="async"/>
-   <figcaption>{article.image.credit} · <a href={article.image.sourceUrl} target="_blank" rel="noopener noreferrer">图片出处</a> · <a href={article.image.licenseUrl} target="_blank" rel="noopener noreferrer">CC BY 4.0</a></figcaption>
-  </figure>}
-  {article.bilingual?<section className="news-reading-section news-source-translation">
-   <h2>双语导读</h2>{article.originalTitle&&<p className="news-original-title" lang="en">{article.originalTitle}</p>}
-   {article.bilingual.map(paragraph=><NewsParagraphPair key={paragraph.en} en={paragraph.en} zh={paragraph.zh}/>)}
-   <p className="news-translation-credit">英文与中文均为本地整理的导读。DVIDS 原报道标注为公有领域。</p>
-  </section>:<section className="news-reading-section"><h2>导读</h2><p className="news-article-lead">{article.summary}</p></section>}
-  {article.sections&&<NewsSections sections={article.sections.map(section=>({title:section.title,body:section.paragraphs.map(paragraph=><p key={paragraph}>{paragraph}</p>)}))}/>}
-  {article.sources&&<section className="news-reading-section"><h2>相关来源</h2><ul>{article.sources.map(source=><li key={source.url}><a href={source.url} target="_blank" rel="noopener noreferrer">{source.label} ↗</a></li>)}</ul></section>}
-  <footer className="news-article-source"><a className="news-original-link" href={article.url} target="_blank" rel="noopener noreferrer">查看原文 <span aria-hidden="true">↗</span></a></footer>
- </article></div>;
-
- const terms=normalize(query).split(/\s+/).filter(Boolean);
- const items=localNewsArticles.filter(item=>{
-  const searchable=normalize([item.title,item.summary,item.source,item.category,categoryLabels[item.category],item.originalTitle,item.bilingual?'双语导读':'',...(item.sections?.flatMap(section=>[section.title,...section.paragraphs])??[])].join(' '));
-  return terms.every(term=>searchable.includes(term));
- }).sort(order);
+ const competitionOverview=<NewsCompetitionHome events={competitions} day={competitionDay} keyword={competitionQuery} onKeywordChange={setCompetitionQuery}/>;
+ if(moreEvents)return <div className="news-page">{competitionOverview}</div>;
+ if(selectedId&&!article)return <div className="news-page"><Back title="资讯详情" label={backLabel} onBack={back}/><Panel><h2 ref={titleRef} tabIndex={-1}>这篇内容暂不可用</h2><p>可返回查看当前可阅读的内容。</p><Button onClick={back}>{backLabel}</Button></Panel></div>;
+ if(article){
+  const detail=reviewedDetailFor(article,detailDocument,snapshot.detailBaseline??snapshot.feed);
+  const copy=newsReadingCopy(article);
+  const translation=sourceTranslationFor(article);
+  const sources=reviewedEventStoryFor(article)?.sources;
+  const sourceTarget=window.Gongxingji?'_self':'_blank';
+  return <div className="news-page"><Back title="资讯详情" label={backLabel} onBack={back}/><article className="news-article">
+   <NewsArticleHeading title={copy.title} titleRef={titleRef} source={copy.sourceLabel??article.source} date={article.date}/>
+   <ReviewedImage article={article} variant="detail"/>
+   {translation?<section className="news-reading-section news-source-translation">
+    <h2>{translation.title}</h2>
+    {translation.sections.map(section=><NewsParagraphPair key={section.title} en={section.original} zh={section.text}/>)}
+    <p className="news-translation-credit">{translation.credit} <a href={translation.licenseUrl} target={window.Gongxingji?'_self':'_blank'} rel="noopener noreferrer">CC BY 4.0</a></p>
+   </section>:<>
+    <section className="news-reading-section"><h2>{copy.leadTitle}</h2><p className="news-article-lead">{copy.summary}</p></section>
+    {copy.translationPending&&<p className="news-update-message">中文导读正在整理。</p>}
+    <NewsSections navigation={copy.navigation===true} sections={copy.sections.map(section=>({title:section.title,body:section.paragraphs.map((paragraph,index)=><p key={index}>{paragraph}</p>)}))}/>
+    {detail?.quote&&<section className="news-source-excerpt"><h2>原文摘句译文</h2><p>{detail.quote.chinese}</p></section>}
+   </>}
+   <footer className="news-article-source">
+    <a className="news-original-link" href={article.url} target={sourceTarget} rel="noopener noreferrer" aria-label={`在浏览器查看${article.source}原文`}>查看原文 <span aria-hidden="true">↗</span></a>
+    {!!sources?.length&&<ul className="meet-links" aria-label="其他资料来源">{sources.map(source=><li key={source.url}><a href={source.url} target={sourceTarget} rel="noopener noreferrer">{source.label}<span aria-hidden="true"> ↗</span></a></li>)}</ul>}
+   </footer>
+  </article></div>;
+ }
+ const items=searchArticles(deduplicateNewsRows([...liuzhouReportArticles,...reviewedEventNews,...snapshot.feed.articles.filter(newsIsPublished)]),query)
+  .sort((a,b)=>b.date.localeCompare(a.date)||a.id.localeCompare(b.id));
  const clearSearch=()=>{setQuery('');searchRef.current?.focus();};
  const searchTag=(tag:string)=>{setQuery(tag);searchRef.current?.focus();};
+ const storyRow=(item:NewsArticle)=>{
+  const copy=newsReadingCopy(item);
+  const params=new URLSearchParams(location.search);params.set('id',item.id);
+  const link={id:`news-item-${item.id}`,to:{pathname:location.pathname,search:params.toString()},state:{fromNewsList:item.id},
+   onClick:()=>{lastRead.current=item.id;readingView.lastRead=item.id;readingView.scrollY=window.scrollY;}};
+  return <PressStoryRow key={item.id} title={copy.title} summary={copy.summary}
+   link={link} image={<ReviewedImage article={item} variant="card"/>}
+   meta={<>{categoryLabels[item.category]}<span>·</span><time dateTime={item.date}>{item.date}</time></>}/>;
+ };
  return <div className="news-page"><PullToRefresh onRefresh={refresh} completeText="" completeDelay={0}>
-  <button className="news-keyboard-refresh" type="button" onClick={()=>void refresh()}>检查本地资讯</button>
-  <p className="news-update-message" role="status" aria-live="polite">{notice?`正在阅读 ${localNewsReviewedOn} 的本地快照。`:''}</p>
-  <NewsHeading compact/>{overview}
+  <p className="news-update-message" role="status" aria-live="polite">{notice?.text}</p>
+  <NewsHeading compact/>{competitionOverview}
   <section className="news-reading-list" aria-label="资讯列表" onBlur={event=>{if(!event.currentTarget.contains(event.relatedTarget))setSearchActive(false);}}>
    <div className="press-section-title">
     <h2>{query.trim()?'搜索结果':'全部资讯'}</h2>
@@ -107,17 +123,11 @@ function NewsFeedView({competitionDay}:{competitionDay?:string}){
      {query&&<button type="button" aria-label="清空新闻搜索" onClick={clearSearch}>×</button>}
     </div>
    </div>
-   {(searchActive||query.trim())&&<div className="press-topics" aria-label="常用标签"><button type="button" aria-pressed={!query} onClick={clearSearch}>全部</button>{Object.values(categoryLabels).map(value=><button key={value} type="button" aria-pressed={query===value} onClick={()=>searchTag(value)} aria-label={`搜索${value}资讯`}>{value}</button>)}</div>}
+   {(searchActive||query.trim())&&<div className="press-topics" aria-label="常用标签"><button type="button" aria-pressed={!query} onClick={clearSearch}>全部</button>{(['赛事','训练','研究'] as const).map(value=><button key={value} type="button" aria-pressed={query===categoryLabels[value]} onClick={()=>searchTag(categoryLabels[value])} aria-label={`搜索${categoryLabels[value]}资讯`}>{categoryLabels[value]}</button>)}</div>}
    {query.trim()&&<p className="news-search-result" role="status" aria-live="polite">找到 {items.length} 篇相关资讯</p>}
-   {items.length?<ul className="press-list">{items.map(item=>{
-    const next=new URLSearchParams(location.search);next.set('id',item.id);
-    return <PressStoryRow key={item.id} title={item.title} summary={item.summary}
-     link={{id:`news-item-${item.id}`,to:{pathname:location.pathname,search:next.toString()},state:{fromNewsList:item.id},
-      onClick:()=>{readingView.lastRead=item.id;readingView.scrollY=window.scrollY;}}}
-     image={item.image&&<span className="news-remote-thumbnail"><img src={item.image.src} alt="" loading="lazy" decoding="async"/></span>}
-     meta={<>{item.eventId==='2026-liuzhou-university-championship'?'赛事专题':item.bilingual?'双语导读':categoryLabels[item.category]}<span>·</span><time dateTime={item.date}>{item.date}</time></>}/>;
-   })}</ul>:<Panel className="news-search-empty"><h2>没有找到相关资讯</h2><p>试试“柳州”“侧桥”或“DVIDS”，也可以清空搜索查看全部。</p><Button onClick={clearSearch}>清除筛选，查看全部</Button></Panel>}
+   {items.length>0?<ul className="press-list">{items.map(storyRow)}</ul>
+    :<Panel className="news-search-empty"><h2>没有找到相关资讯</h2><p>试试“侧桥”“瞄准”或“赛事”，也可以清空搜索查看全部。</p><Button onClick={clearSearch}>清除筛选，查看全部</Button></Panel>}
   </section>
-  <details className="news-update-details"><summary>更新情况</summary><p>当前显示 {localNewsReviewedOn} 整理的本地精选和赛历。原文及主办方链接由你点击时打开。</p></details>
+  <details className="news-update-details"><summary>更新情况</summary><p>当前显示内置精选与赛历，未连接正式资讯服务。</p><p>本批整理：{snapshot.feed.reviewedAt}。</p><p>原文与主办方链接由你点击时打开。</p></details>
  </PullToRefresh></div>;
 }

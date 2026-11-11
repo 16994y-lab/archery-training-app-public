@@ -3,8 +3,8 @@ import {Link,type To} from 'react-router-dom';
 
 type StoryLink={to:To;state?:object;onClick?:()=>void;id?:string}|{href:string};
 
-export function PressStoryRow({link,title,summary,meta,image,feature=false}:{
- link:StoryLink;title:string;summary?:string;meta:ReactNode;image?:ReactNode;feature?:boolean;
+export function PressStoryRow({link,title,summary,meta,image}:{
+ link:StoryLink;title:string;summary?:string;meta:ReactNode;image?:ReactNode;
 }){
  const external='href' in link;
  const content=<>{image}<span className="press-story-copy">
@@ -12,7 +12,7 @@ export function PressStoryRow({link,title,summary,meta,image,feature=false}:{
   {summary&&<span className="press-story-summary">{summary}</span>}
   <span className="press-dateline">{meta}</span>
  </span><span className="press-chevron" aria-hidden="true">{external?'↗':'›'}</span></>;
- const className='press-story'+(feature?' press-feature':'');
+ const className='press-story';
  return <li>{external
   ?<a className={className} href={link.href} target={window.Gongxingji?'_self':'_blank'} rel="noopener noreferrer">{content}</a>
   :<Link {...link} className={className}>{content}</Link>}</li>;

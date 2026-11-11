@@ -46,9 +46,17 @@ adb install -r android/offline-dev/build/Gongxingji-offline-dev.apk
 
 ## 配图来源及许可
 
-下列原图均未修改，分别适用所列许可。
+下列配图适用所列许可；资料图的年份、出处及调整在使用位置注明。
 
 | 文件 | 署名与出处 | 许可 |
 | --- | --- | --- |
 | `arena-carioca-3.jpg` | Carol Delmazo / Brasil2016.gov.br，[Arena Carioca 3，2016](https://commons.wikimedia.org/wiki/File:Arena_Carioca_3.jpg) | [CC BY 3.0 Brasil](https://creativecommons.org/licenses/by/3.0/br/) |
-| `plos-one-stability-study-figure-1.png` | © 2023 Shinohara 等 / PLOS ONE，[原论文图 1](https://doi.org/10.1371/journal.pone.0285223.g001) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| `plos-one-stability-study-figure-1.png`（同图在共享资讯资源中保留一份） | © 2023 Shinohara 等 / PLOS ONE，[原论文图 1](https://doi.org/10.1371/journal.pone.0285223.g001) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| `frontiers-aiming-rhythm-figure-1.webp` | Jacquot 等，2025 / Frontiers，[原论文图 1](https://www.frontiersin.org/journals/sports-and-active-living/articles/10.3389/fspor.2025.1650300/full) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| `frontiers-hand-dexterity-figure-1.webp` | Gao 等，2026 / Frontiers，[原论文图 1](https://www.frontiersin.org/journals/physiology/articles/10.3389/fphys.2026.1880932/full) | [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) |
+| `michele-frangilli-2004.jpg` | Fieldarcher.org，[Michele Frangilli，2004 年资料照](https://commons.wikimedia.org/wiki/File:Michele_Frangilli_001.jpg) | [CC BY 3.0 Netherlands](https://creativecommons.org/licenses/by/3.0/nl/) |
+| `nanjing-xuanwu-yingzhou-2014.webp` | helkonig，[南京玄武湖樱洲，2014 年资料图](https://commons.wikimedia.org/wiki/File:%E5%8D%97%E4%BA%AC%E7%8E%84%E6%AD%A6%E6%B9%96%E6%A8%B1%E6%B4%B2_-_panoramio_(1).jpg)，缩放并转为 WebP | [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/) |
+
+公开源码保留独立的离线账号、资讯及赛历适配。离线包不连接正式账号、云保存或应用更新服务。比赛计时支持本机计时；同一电脑的浏览器可另开副屏。正式版的同 Wi-Fi 原生接收服务与跨网配对不在离线包中启用。
+
+资讯页雪狐吉祥物 `furry-arctic-fox.png` 为本项目自有生成 UI 素材，本仓库随附原图。

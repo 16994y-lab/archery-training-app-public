@@ -1,35 +1,53 @@
 import React,{useEffect,useLayoutEffect,useRef,useState} from 'react';
 import {Link,useLocation,useNavigate,useSearchParams} from 'react-router-dom';
 import {ChoiceSelect} from './ChoiceSelect';
-import {Back} from './ui';
+import {Back,useInnerBack} from './ui';
 import type {CompetitionEvent,CompetitionLinkKind} from './competition-calendar.types';
+import {liuzhouStoryArticle} from './LiuzhouChampionshipStory';
+import {PressStoryRow} from './NewsArticleBody';
+import {ReviewedImage} from './NewsImage';
+import {nanjingVenuePhoto} from './news-images';
+import {bundledNews} from './news-feed';
+import {deduplicateNewsRows,newsIsPublished,newsReadingCopy} from './news-presentation';
+import {reviewedEventNews} from './reviewed-event-news';
 import './competition-calendar.css';
 
+const rioVenuePhoto=new URL('../../public/ui/arena-carioca-3.jpg',import.meta.url).href;
+const rioVenueImage={
+  src:rioVenuePhoto,alt:'2016 年拍摄的里约奥林匹克公园 Arena 3 场馆内部',
+  caption:'场馆资料图 · Arena Carioca 3（2016）',
+  credit:'Carol Delmazo / Brasil2016.gov.br · CC BY 3.0 Brasil',
+  sourceUrl:'https://commons.wikimedia.org/wiki/File:Arena_Carioca_3.jpg',
+  licenseUrl:'https://creativecommons.org/licenses/by/3.0/br/',
+};
 const week=['一','二','三','四','五','六','日'];
 const two=(n:number)=>String(n).padStart(2,'0');
-const monthDay=(day:string)=>Number(day.slice(5,7))+'月'+Number(day.slice(8,10))+'日';
-const beijingDay=(at:number)=>new Date(at+8*60*60*1000).toISOString().slice(0,10);
-const locationText=(e:CompetitionEvent)=>[...new Set([e.province,e.city].filter(Boolean))].join(' · ');
+export const monthDay=(day:string)=>Number(day.slice(5,7))+'月'+Number(day.slice(8,10))+'日';
+export const beijingDay=(at:number)=>new Date(at+8*60*60*1000).toISOString().slice(0,10);
+export const locationText=(e:CompetitionEvent)=>[...new Set([e.country??e.province,e.city].filter(Boolean))].join(' · ');
 
 // A deadline published without a time gives no grounds for declaring registration
-// closed during that day. Show the published date until the next Beijing day.
-function deadlineInfo(value:string|undefined) {
+// closed during that day. Keep the date visible through the published timezone's day.
+export function deadlineInfo({entryDeadline:value,entryDeadlineZone:zone}:CompetitionEvent) {
   const match=value?.match(/^(\d{4}-\d{2}-\d{2})(?:T([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d))?\+08:00)?$/);
   if(!match)return null;
   const [,date,hour,minute,second]=match;
-  const midnight=Date.parse(date+'T00:00:00+08:00');
+  const midnight=Date.parse(date+'T00:00:00'+(zone==='UTC'?'Z':'+08:00'));
   if(!Number.isFinite(midnight)||beijingDay(midnight)!==date)return null;
   const at=hour===undefined?midnight+86400000:midnight+(Number(hour)*3600+Number(minute)*60+Number(second??0))*1000;
   const clock=hour===undefined?'':' '+hour+':'+minute+(second&&second!=='00'?':'+second:'');
-  return {at,short:monthDay(date)+clock,full:date.slice(0,4)+'年'+monthDay(date)+clock+(clock?'（北京时间）':'')};
+  const zoneLabel=zone==='UTC'?'UTC':clock?'北京时间':'';
+  const dateAndTime=monthDay(date)+clock;
+  const short=dateAndTime+(zoneLabel?`（${zoneLabel}）`:'');
+  return {at,short,full:date.slice(0,4)+'年'+short,dateAndTime,zoneLabel};
 }
-function useCompetitionClock(events:readonly CompetitionEvent[],fixed?:string){
+export function useCompetitionClock(events:readonly CompetitionEvent[],fixed?:string){
   const [live,setLive]=useState(Date.now);
   useEffect(()=>{
     if(fixed)return;
     const nextDay=Date.parse(beijingDay(live)+'T00:00:00+08:00')+86400000;
     const next=events.reduce((first,e)=>{
-      const cutoff=deadlineInfo(e.entryDeadline)?.at;
+      const cutoff=deadlineInfo(e)?.at;
       return cutoff!==undefined&&cutoff>live?Math.min(first,cutoff):first;
     },nextDay);
     const update=()=>setLive(Date.now());
@@ -54,37 +72,79 @@ function statusOf(e:CompetitionEvent,day:string) {
   if(e.startDate&&e.startDate<=day&&e.endDate&&e.endDate>=day)return '赛期内';
   return e.startDate?'已公布开赛日':'赛期待定';
 }
-function overlapsPeriod(e:CompetitionEvent,year:number,month:number) {
+export function spectatorStatus(e:CompetitionEvent,day:string) {
+  if(e.endDate&&e.endDate<day)return '赛期已过';
+  return e.spectator?.status??'待确认';
+}
+export function overlapsPeriod(e:CompetitionEvent,year:number,month:number) {
   if(!e.startDate)return e.year===year&&(!month||e.month===month);
   const prefix=month?`${year}-${two(month)}`:String(year);
   return e.startDate.slice(0,prefix.length)<=prefix&&(e.endDate??e.startDate).slice(0,prefix.length)>=prefix;
 }
-const onDay=(e:CompetitionEvent,date:string)=>Boolean(e.startDate&&e.startDate<=date&&(e.endDate??e.startDate)>=date);
+export const onDay=(e:CompetitionEvent,date:string)=>Boolean(e.startDate&&e.startDate<=date&&(e.endDate??e.startDate)>=date);
 function changeQuery(params:URLSearchParams,changes:Record<string,string>){
   const next=new URLSearchParams(params);
   for(const [key,value] of Object.entries(changes)){if(value)next.set(key,value);else next.delete(key);}
   return next;
 }
-function SourceLinks({event,kinds}:{event:CompetitionEvent;kinds:CompetitionLinkKind[]}){
-  const links=event.links.filter(l=>kinds.includes(l.kind)&&/^https?:\/\//i.test(l.url));
+export function SourceLinks({event,kinds,omit}:{event:CompetitionEvent;kinds:CompetitionLinkKind[];omit?:ReadonlySet<string>}){
+  const links=event.links.filter(l=>kinds.includes(l.kind)&&/^https?:\/\//i.test(l.url)&&!omit?.has(l.url));
   if(!links.length)return null;
   return <ul className="meet-links">{links.map(l=><li key={l.kind+l.url}><a className={l.kind==='entry'?'meet-entry-link':undefined} href={l.url} target="_blank" rel="noopener noreferrer">{l.label}<span aria-hidden="true"> ↗</span></a></li>)}</ul>;
 }
-function EventDetail({event:e,day,now,back}:{event:CompetitionEvent;day:string;now:number;back:()=>void}){
+function EventTimeline({event,deadline}:{event:CompetitionEvent;deadline:ReturnType<typeof deadlineInfo>}){
+  const {individualEntryFrom,entryDeadline,startDate,endDate,schedule,format}=event;
+  const points=[
+    individualEntryFrom&&{date:individualEntryFrom,label:'个人报名开放',text:monthDay(individualEntryFrom)},
+    deadline&&entryDeadline&&{date:entryDeadline,label:'报名截止',text:deadline.short},
+    startDate&&{date:startDate,label:endDate===startDate?'比赛日':'开赛日',text:monthDay(startDate)},
+    endDate&&endDate!==startDate&&{date:endDate,label:'赛期末日',text:monthDay(endDate)},
+  ].filter(point=>typeof point==='object'&&point!==null).sort((a,b)=>a.date.localeCompare(b.date));
+  if(!points.length&&!schedule?.length&&!format&&!event.links.some(link=>link.kind==='schedule'))return null;
+  return <section className="meet-detail-block">
+    <h3>赛事时间轴</h3>
+    {!!points.length&&<ol className="meet-timeline">{points.map(point=><li key={point.label}>
+      <time dateTime={point.date}>{point.text}</time><strong>{point.label}</strong>
+    </li>)}</ol>}
+    {!!schedule?.length&&<><h4 className="meet-schedule-title">赛程安排</h4><ul className="meet-updates">{schedule.map(item=><li key={item}>{item}</li>)}</ul></>}
+    {format&&<p>{format}</p>}
+    <SourceLinks event={event} kinds={['schedule']}/>
+  </section>;
+}
+function EventDetail({event:e,day,now,back,backLabel}:{event:CompetitionEvent;day:string;now:number;back:()=>void;backLabel:string}){
   const title=useRef<HTMLHeadingElement>(null);
-  const deadline=deadlineInfo(e.entryDeadline);
-  const hasSchedule=Boolean(e.format||e.schedule?.length||e.links.some(l=>l.kind==='schedule'));
-  const hasCoverage=Boolean(e.result||e.reports?.length||e.links.some(l=>l.kind==='report'||l.kind==='results'));
+  const deadline=deadlineInfo(e);
+  const hasLiuzhouStory=e.id==='2026-liuzhou-university-championship';
+  const articleLinks=e.links.filter(link=>link.kind==='report'||link.kind==='results');
+  const relatedArticles=deduplicateNewsRows([
+    ...reviewedEventNews.filter(article=>article.eventId===e.id),
+    ...bundledNews.articles.filter(article=>article.category==='赛事'&&newsIsPublished(article)&&articleLinks.some(link=>link.url===article.url)),
+  ]);
+  // Keep direct downloads and other official results available alongside the station's reports.
+  const linkedReports=new Set(relatedArticles.filter(article=>!/\.pdf(?:[?#]|$)/i.test(article.url)).map(article=>article.url));
+  const hasCoverage=Boolean(e.result||e.reports?.length||articleLinks.some(link=>!linkedReports.has(link.url)));
+  const hasRelated=hasLiuzhouStory||relatedArticles.length>0;
+  const heroImage=e.id==='rio-indoor-250-2026'&&e.venue==='里约奥林匹克公园 Arena 3（Isabel Salgado 体育馆）'?rioVenueImage:
+    e.id==='national-outdoor-archery-championship-nanjing-2026'&&e.venue?.includes('玄武湖景区樱洲草坪')?nanjingVenuePhoto:undefined;
+  const sourceTarget=window.Gongxingji?'_self':'_blank';
+  const fromMeetDetail={fromMeetDetail:e.id};
   useLayoutEffect(()=>{title.current?.focus({preventScroll:true});window.scrollTo(0,0);},[e.id]);
   return <section className="meet-page">
-    <Back title="赛事详情" label="返回比赛日历" onBack={back}/>
-    <header className="meet-detail-head">
-      <p className="meet-kicker">{e.level} <span>·</span> {statusOf(e,day)}</p>
-      <h2 ref={title} tabIndex={-1}>{e.name}</h2>
-      <p className="meet-date">{dateText(e)}</p>
-      <p>{locationText(e)}{e.venue&&' · '+e.venue}</p>
-      {e.dateNote&&<small>{e.dateNote}</small>}
-    </header>
+    <Back title="赛事详情" label={backLabel} onBack={back}/>
+    <div className="meet-detail-hero">
+      {heroImage&&<figure className="meet-detail-photo">
+        <img src={heroImage.src} alt={heroImage.alt}/>
+        <figcaption>{heroImage.caption}<br/>{heroImage.credit} · <a href={heroImage.sourceUrl} target={sourceTarget} rel="noopener noreferrer">图片来源</a> · <a href={heroImage.licenseUrl} target={sourceTarget} rel="noopener noreferrer">许可说明</a> · 横幅裁切</figcaption>
+      </figure>}
+      <header className="meet-detail-head">
+        <p className="meet-kicker">{e.level} <span>·</span> {statusOf(e,day)}</p>
+        <h2 ref={title} tabIndex={-1}>{e.name}</h2>
+        <p className="meet-date">{dateText(e)}</p>
+        <p>{locationText(e)}{e.venue&&' · '+e.venue}</p>
+        {e.dateNote&&<small>{e.dateNote}</small>}
+      </header>
+    </div>
+    <EventTimeline event={e} deadline={deadline}/>
     <section className="meet-detail-block"><h3>参赛与报名</h3>
       {e.eligibility||e.entryMethod||e.entryDeadline?<dl>
         {e.eligibility&&<><dt>参赛资格</dt><dd>{e.eligibility}</dd></>}
@@ -92,18 +152,31 @@ function EventDetail({event:e,day,now,back}:{event:CompetitionEvent;day:string;n
         {e.entryDeadline&&<><dt>报名截止</dt><dd>{deadline&&now>=deadline.at&&<strong className="meet-closed-label">报名已截止 · </strong>}{deadline?.full??e.entryDeadline}</dd></>}
       </dl>:!e.entryNote&&<p>报名资格和办理方式待核实。</p>}
       {e.entryNote&&<p>{e.entryNote}</p>}
-      <SourceLinks event={e} kinds={['notice','rules','entry']}/>
+      <SourceLinks event={e} kinds={deadline&&now>=deadline.at?['notice','rules']:['notice','rules','entry']}/>
     </section>
-    {hasSchedule&&<section className="meet-detail-block"><h3>赛程安排</h3>
-      {e.format&&<p>{e.format}</p>}
-      {!!e.schedule?.length&&<ul className="meet-updates">{e.schedule.map(item=><li key={item}>{item}</li>)}</ul>}
-      <SourceLinks event={e} kinds={['schedule']}/>
+    <section className="meet-detail-block"><h3>观赛指南</h3>
+      <dl><dt>现场观赛</dt><dd>{spectatorStatus(e,day)}{e.spectator&&(!e.endDate||e.endDate>=day)&&<p>{e.spectator.admission}</p>}</dd>
+      <dt>官方转播</dt><dd>{e.spectator?.broadcast??(e.endDate&&e.endDate<day?'尚未核到官方回放。':'尚未核到官方转播安排。')}</dd></dl>
+      <SourceLinks event={e} kinds={['spectator','broadcast']}/>
+    </section>
+    {hasRelated&&<section className="event-related-news" aria-labelledby="event-related-news-title">
+      <h3 id="event-related-news-title">赛事相关资讯</h3>
+      <ul className="press-list">
+        {hasLiuzhouStory&&<PressStoryRow link={{to:'/news?story='+liuzhouStoryArticle.id,state:fromMeetDetail}} title={liuzhouStoryArticle.title} summary={liuzhouStoryArticle.summary}
+          meta={<>赛事专题<span>·</span><time dateTime={liuzhouStoryArticle.date}>{liuzhouStoryArticle.date}</time></>}/>}
+        {relatedArticles.map(article=>{
+          const copy=newsReadingCopy(article);
+          return <PressStoryRow key={article.id} link={{to:'/news?id='+article.id,state:fromMeetDetail}} title={copy.title} summary={copy.summary}
+            image={<ReviewedImage article={article} variant="card"/>}
+            meta={<>{article.source}<span>·</span><time dateTime={article.date}>{article.date}</time></>}/>;
+        })}
+      </ul>
     </section>}
-    {(hasCoverage||Boolean(e.endDate&&e.endDate<day))&&<section className="meet-detail-block"><h3>赛况与成绩</h3>
+    {(hasCoverage||Boolean(!hasRelated&&e.endDate&&e.endDate<day))&&<section className="meet-detail-block"><h3>赛况与成绩</h3>
       {e.reports?.map(note=><p key={note}>{note}</p>)}
       {e.result&&<p>{e.result}</p>}
       {!hasCoverage&&<p>暂未核到官方成绩。</p>}
-      <SourceLinks event={e} kinds={['report','results']}/>
+      <SourceLinks event={e} kinds={['report','results']} omit={linkedReports}/>
     </section>}
     <p className="meet-checked">最近核对 <time dateTime={e.checkedOn}>{e.checkedOn}</time></p>
   </section>;
@@ -129,10 +202,12 @@ export function CompetitionCalendar({events,day:fixedDay}:{events:readonly Compe
     }
   },[selectedId]);
   const update=(changes:Record<string,string>)=>setParams(changeQuery(params,changes),{replace:true});
+  const back=()=>{if(location.state?.fromMeetList===selectedId)navigate(-1);else update({event:''});};
+  useInnerBack(Boolean(selectedId),back,30);
   if(selectedId){
     const e=events.find(item=>item.id===selectedId);
-    const back=()=>{if(location.state?.fromMeetList===selectedId)navigate(-1);else update({event:''});};
-    return e?<EventDetail event={e} day={day} now={now} back={back}/>:<section className="meet-page"><Back title="赛事详情" label="返回比赛日历" onBack={back}/><p>当前赛历没有这场比赛。</p></section>;
+    const backLabel=params.get('view')==='more-events'?'返回比赛列表':location.state?.fromOverview?'返回资讯首页':'返回比赛日历';
+    return e?<EventDetail event={e} day={day} now={now} back={back} backLabel={backLabel}/>:<section className="meet-page"><Back title="赛事详情" label={backLabel} onBack={back}/><p>当前赛历没有这场比赛。</p></section>;
   }
   const prefix=`${year}-${two(month)}`;
   const inMonth=events.filter(e=>(!area||e.province===area)&&overlapsPeriod(e,year,month))
@@ -142,10 +217,10 @@ export function CompetitionCalendar({events,day:fixedDay}:{events:readonly Compe
   const selectedDate=params.get('date');
   const date=month&&selectedDate&&/^\d{4}-\d{2}-\d{2}$/.test(selectedDate)&&selectedDate.startsWith(prefix+'-')&&Number(selectedDate.slice(-2))>=1&&Number(selectedDate.slice(-2))<=totalDays&&inMonth.some(e=>onDay(e,selectedDate))?selectedDate:'';
   const rows=individual?events.filter(e=>{
-    const cutoff=deadlineInfo(e.entryDeadline);
-    return (!area||e.province===area)&&e.individualEntryFrom&&e.individualEntryFrom<=day
+    const cutoff=deadlineInfo(e);
+    return (!area||e.province===area)&&e.individualEntryFrom&&e.individualEntryFrom<=(e.entryDeadlineZone==='UTC'?new Date(now).toISOString().slice(0,10):day)
       &&cutoff&&now<cutoff.at&&(!e.endDate||e.endDate>=day)&&e.links.some(l=>l.kind==='entry');
-  }).sort((a,b)=>deadlineInfo(a.entryDeadline)!.at-deadlineInfo(b.entryDeadline)!.at):date?inMonth.filter(e=>onDay(e,date)):inMonth;
+  }).sort((a,b)=>deadlineInfo(a)!.at-deadlineInfo(b)!.at):date?inMonth.filter(e=>onDay(e,date)):inMonth;
   return <section className="meet-page" aria-label="比赛日历">
     {individual&&<div className="meet-open-intro"><h2>个人报名</h2><p>按报名截止时间排列，含跨月比赛。年龄、会员资格和剩余名额以主办方说明为准。</p></div>}
     <div className={'meet-filters'+(individual?' meet-area-only':'')}>
@@ -162,18 +237,19 @@ export function CompetitionCalendar({events,day:fixedDay}:{events:readonly Compe
         {Array.from({length:offset},(_,i)=><span key={'pad'+i} aria-hidden="true"/>)}
         {Array.from({length:totalDays},(_,i)=>{
           const n=i+1,d=prefix+'-'+two(n),count=inMonth.filter(e=>onDay(e,d)).length;
-          return count?<button type="button" className="meet-day meet-active-day" key={d} aria-label={`${month}月${n}日，${count}场赛事`} aria-pressed={date===d} aria-current={d===day?'date':undefined} onClick={()=>update({date:date===d?'':d})}>{n}<i aria-hidden="true"/></button>:<span className="meet-day" aria-current={d===day?'date':undefined} key={d}>{n}</span>;
+          return count?<button type="button" className="meet-day calendar-date" data-has-items key={d} aria-label={`${month}月${n}日，${count}场赛事`} aria-pressed={date===d} aria-current={d===day?'date':undefined} onClick={()=>update({date:date===d?'':d})}>{n}<i className="calendar-date-dot" aria-hidden="true"/></button>:<span className="meet-day calendar-date" aria-current={d===day?'date':undefined} key={d}>{n}</span>;
         })}
       </div>
     </div>}
     <div className="meet-list-heading"><h2>{individual?'报名期内':date?monthDay(date)+'的比赛':month?'本月赛程':year+'年赛程'}</h2><span role="status">{rows.length} 场</span>{!individual&&date&&<button type="button" onClick={()=>update({date:''})}>查看全月</button>}</div>
     {rows.length?<ul className="meet-event-list">{rows.map(e=>{
-      const deadline=deadlineInfo(e.entryDeadline);
+      const deadline=deadlineInfo(e);
       const showDeadline=deadline&&(e.endDate?e.endDate>=day:e.year>=nowYear);
       return <li key={e.id}>
       <Link id={'meet-'+e.id} to={{pathname:location.pathname,search:changeQuery(params,{event:e.id}).toString()}} state={{fromMeetList:e.id}} onClick={()=>{last.current={id:e.id,scroll:window.scrollY};}}>
         <span className="meet-row-meta">{e.level} · {statusOf(e,day)}</span>
         <strong>{e.name}</strong><span className="meet-row-info">{dateText(e)} · {locationText(e)}{individual&&e.venue&&' · '+e.venue}</span>
+        <span className="meet-row-info">现场观赛 · {spectatorStatus(e,day)}</span>
         {individual&&e.eligibility&&<span className="meet-row-eligibility">{e.eligibility}</span>}
         {showDeadline&&<span className={'meet-entry-state'+(now>=deadline.at?' meet-entry-closed':'')}>{now>=deadline.at?'报名已截止':'报名截止 '+deadline.short}</span>}
         <span className="meet-chevron" aria-hidden="true">›</span>

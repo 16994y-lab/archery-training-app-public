@@ -1,8 +1,10 @@
 /** Display preferences for the personal training profile. */
+import {nicknameValidationMessage} from './name-policy.mjs';
+
 export function validNickname(value:string){
- const name=value.trim();
- if(!name||Array.from(name).length>100||/[\u0000-\u001f\u007f]/.test(name))throw new Error('用户名请填写 1—100 个字，不能包含控制字符');
- return name;
+ const error=nicknameValidationMessage(value);
+ if(error)throw new Error(error);
+ return value.trim();
 }
 /** Fixed v1 derivation: display-only, not a unique account identifier. No storage or phone is read. */
 export async function defaultNickname(owner:string){
@@ -12,6 +14,12 @@ export async function defaultNickname(owner:string){
  const digest=await crypto.subtle.digest('SHA-256',bytes);
  const suffix=new DataView(digest).getUint32(0,false)%10000;
  return '打弓人'+String(suffix).padStart(4,'0');
+}
+
+/** Uses the verified, masked display value from the current account only. */
+export function nicknameFromVerifiedPhoneDisplay(display?:string):string|null{
+ const suffix=/^1[3-9]\*{5}(\d{4})$/.exec(display??'')?.[1];
+ return suffix?'打弓人'+suffix:null;
 }
 
 // New registrations use the verified phone suffix from this policy boundary
