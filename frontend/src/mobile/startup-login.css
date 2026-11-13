@@ -228,6 +228,12 @@
   .startup-account.startup-login:has(.login-layout-web),
   .startup-login .login-layout-web .login-brand {background:#fff}
   .startup-login .login-layout-web .login-brand {border-right:1px solid var(--surface-stroke)}
+  .startup-login .login-layout-web .login-brand :is(.login-brand-name,.login-brand-message,.login-brand-target) {
+    animation:login-desktop-brand-in 420ms cubic-bezier(.22,.62,.35,1) both;
+  }
+  .startup-login .login-layout-web .login-content {
+    animation:login-desktop-form-in 360ms 150ms cubic-bezier(.22,.62,.35,1) both;
+  }
   .startup-login .account-login-entry:not(.account-login-secondary) .account-login-ways {grid-template-columns:repeat(2,minmax(0,1fr));padding:0;background:none}
   .startup-login .account-login-entry:not(.account-login-secondary) .account-login-ways .button[aria-pressed=true] {display:none}
   .startup-login .account-login-entry:not(.account-login-secondary) .account-login-ways .button.adm-button {border:1px solid var(--surface-stroke);border-radius:999px}
@@ -236,8 +242,12 @@
 @keyframes login-reveal {from {opacity:0} to {opacity:1}}
 @keyframes login-brand-rise {from {transform:translateY(min(20vh,180px))} to {transform:translateY(0)}}
 @keyframes login-form-in {from {opacity:.55;transform:translateX(10px)} to {opacity:1;transform:translateX(0)}}
+@keyframes login-desktop-brand-in {from {transform:translateX(-28px)} to {transform:translateX(0)}}
+@keyframes login-desktop-form-in {from {opacity:0;transform:translateX(-24px)} to {opacity:1;transform:translateX(0)}}
 @keyframes login-dialog-in {from {opacity:0;transform:scale(.94)} to {opacity:1;transform:scale(1)}}
 @keyframes login-receipt {0%,100% {opacity:0} 8%,89% {opacity:1}}
 @media(prefers-reduced-motion:reduce){
   .startup-login .login-brand-name,.startup-login .login-content,.startup-login .account-entry-form,.login-notice-dialog,.login-notice-dialog::backdrop,.login-sms-receipt {animation:none}
+  .startup-login .login-layout-web .login-content,
+  .startup-login .login-layout-web .login-brand :is(.login-brand-name,.login-brand-message,.login-brand-target) {animation:none}
 }
