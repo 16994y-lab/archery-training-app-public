@@ -85,7 +85,13 @@ function hash(page: Page, query?: URLSearchParams) {return `#/coach/${page}${que
 function publicQuery(query: URLSearchParams) {const next=new URLSearchParams();for(const key of Object.keys(emptyFilter()))if(query.get(key))next.set(key,query.get(key)!);return next;}
 function menuQuery(page:Page,query:URLSearchParams) {if(['groups','members'].includes(page))return new URLSearchParams();const next=publicQuery(query);if(['compare','reports','overview'].includes(page))next.delete('member');if(!['trainings','notes'].includes(page))next.delete('query');return next;}
 function filterFrom(query: URLSearchParams): Filter {return Object.fromEntries(Object.keys(emptyFilter()).map(k=>[k,query.get(k)||''])) as Filter;}
-function errorCode(error: unknown) {const e=error as {status?: number; code?: string};return {status:e?.status,code:e?.code};}
+function errorCode(error: unknown) {
+  const value=error as {status?: unknown; code?: unknown}|null;
+  return {
+    status:typeof value?.status==='number'?value.status:undefined,
+    code:typeof value?.code==='string'?value.code:undefined,
+  };
+}
 const readOnlyFailures=new WeakSet<object>();
 function errorMessage(error: unknown) {
   const {status,code}=errorCode(error);
@@ -124,6 +130,20 @@ async function request<T>(path:string,method:'GET'|'POST'|'PUT'='GET',body?:unkn
     if(method==='GET'&&error&&typeof error==='object')readOnlyFailures.add(error);
     if(expected===identityKey()&&path!=='/me'&&[401,403].includes(errorCode(error).status||0))permissionLost.dispatchEvent(new Event('lost'));
     throw error;
+  }
+}
+async function readWorkspacePermissions(stillCurrent:()=>boolean):Promise<Me>{
+  try{
+    return await request<Me>('/me');
+  }catch(error){
+    const {status}=errorCode(error);
+    const transient=error instanceof TypeError
+      ||error instanceof DOMException&&['AbortError','TimeoutError'].includes(error.name)
+      ||status===502||status===504;
+    if(!transient||!stillCurrent())throw error;
+    await new Promise(resolve=>setTimeout(resolve,350));
+    if(!stillCurrent())throw error;
+    return request<Me>('/me');
   }
 }
 function Panel({title,action,children}: {title?: string;action?: React.ReactNode;children: React.ReactNode}) {return <section className="ws-card">{title&&<div className="ws-card-head"><h2>{title}</h2>{action}</div>}<div className="ws-card-body">{children}</div></section>;}
@@ -235,7 +255,22 @@ function WorkspaceApp({onUser=()=>window.location.assign('/app/')}: {onUser?:()=
  // Another tab also broadcasts same-account revalidation; discard access, not the destination.
  useEffect(()=>{const changed=()=>{generation.current++;setSnapshot(null);setChecking(false);};addEventListener('gongxingji-local-identity-changed',changed);return()=>removeEventListener('gongxingji-local-identity-changed',changed);},[]);
  useEffect(()=>{const previous=navigationIdentity.current,identity=api.identity();if(previous.owner!==null&&auth.owner!==previous.owner||previous.service!==null&&identity&&identity.service!==previous.service)leaveAdminRoute();navigationIdentity.current={owner:auth.owner,service:identity?.service??(auth.owner===previous.owner?previous.service:null)};},[auth.owner,key]);
- useEffect(()=>{const token=++generation.current;setSnapshot(null);setError('');if(auth.phase!=='ready'){setChecking(false);return;}setChecking(true);request<Me>('/me').then(value=>{if(token===generation.current&&key===identityKey())setSnapshot({key,me:value});}).catch(e=>{if(token===generation.current)setError(errorMessage(e));}).finally(()=>{if(token===generation.current)setChecking(false);});return()=>{generation.current++;};},[auth.phase,key,version]);
+ useEffect(()=>{
+  const token=++generation.current;
+  setSnapshot(null);
+  setError('');
+  if(auth.phase!=='ready'){setChecking(false);return;}
+  setChecking(true);
+  const stillCurrent=()=>token===generation.current&&key===identityKey()&&workspaceAuth.getStatus().phase==='ready';
+  void readWorkspacePermissions(stillCurrent).then(value=>{
+   if(stillCurrent())setSnapshot({key,me:value});
+  }).catch(error=>{
+   if(stillCurrent())setError(errorMessage(error));
+  }).finally(()=>{
+   if(token===generation.current)setChecking(false);
+  });
+  return()=>{generation.current++;};
+ },[auth.phase,key,version]);
   useEffect(()=>{if(current.role==='admin'&&!checking&&me&&!canAdmin){setError('当前账号没有管理权限，已回到可用工作台。');leaveAdminRoute();}},[current.role,checking,me,canAdmin]);
   async function logout(){setLogoutBusy(true);generation.current++;setSnapshot(null);leaveAdminRoute();try{await workspaceAuth.logout();}catch{setError('退出未完成，请重试。');}finally{setLogoutBusy(false);}}
   return <div className="ws-app"><aside className="ws-sidebar"><a className="ws-brand" href="#/coach"><img src={logo} alt="" width="40" height="40"/><span>弓行记<small>团队工作台</small></span></a><nav className="ws-role-nav" aria-label="工作台入口"><button className="text-button" onClick={onUser}>用户端</button><a href="#/coach" aria-current={!admin?'page':undefined}>教练端</a>{canAdmin&&<a href="#/admin" aria-current={admin?'page':undefined}>管理端</a>}</nav>{me&&<nav className="ws-main-nav" aria-label={admin?'管理导航':'教练导航'}>{admin?<a href="#/admin" className="active" aria-current="page"><Icon name="admin"/>管理业务</a>:me.roles.includes('coach')?pages.map((p,index)=><React.Fragment key={p.id}>{(index===0||index===4)&&<span className="ws-nav-label">{index===0?'团队管理':'训练与复盘'}</span>}<a href={hash(p.id,menuQuery(p.id,current.page==='session'?new URLSearchParams((current.query.get('returnTo')||'').split('?')[1]):current.query))} className={activeMenu===p.id?'active':''} aria-current={activeMenu===p.id?'page':undefined}><Icon name={p.id}/>{p.label}</a></React.Fragment>):<a href="#/coach" className="active">教练申请</a>}</nav>}<p className="ws-sidebar-foot">弓行记 · 团队工作台</p></aside><div className="ws-page"><header className="ws-topbar"><span>{admin?'管理工作台':'教练工作台'}</span><div>{auth.phoneDisplay&&<span>{auth.phoneDisplay}</span>}{auth.phase==='ready'&&<button className="text-button" disabled={logoutBusy} onClick={()=>void logout()}><Icon name="logout"/>退出</button>}</div></header><main className="ws-main" id="workspace-main">{auth.phase!=='ready'?<Panel><Empty title="请先登录账号"/><Notice error>{error||auth.message}</Notice><a className="ws-button primary" href="/app/#/account">核对账号或登录</a></Panel>:<><Notice error>{error}</Notice>{checking?<Panel><Empty title="正在核对工作台权限"/></Panel>:!me?<Panel><Empty title="暂时无法读取工作台权限"/><button onClick={()=>setVersion(v=>v+1)}>重新核对</button></Panel>:admin?<AdminIntegration key={`admin-${key}`} adminAuthorized={canAdmin} onPermissionLost={()=>permissionLost.dispatchEvent(new Event('lost'))} coachReview={<AdminWorkspace/>}/>:me.roles.includes('coach')?current.page==='announcements'?<><FirstBatchHeader eyebrow="教练工作台 / 消息" title="团队公告" description="查看面向教练的已发布公告和版本说明。"/><CoachAnnouncements/></>:<CoachWorkspace key={`coach-${key}`} current={{...current,role:'coach'}} onRoute={updateRoute}/>:<Application me={me} onRefresh={()=>setVersion(v=>v+1)}/>}</>}</main><footer className="ws-footer">弓行记 · 仅展示当前账号权限范围内的数据</footer></div></div>;

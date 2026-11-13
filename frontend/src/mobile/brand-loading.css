@@ -6,6 +6,12 @@
 .brand-loading-recovery button{min-height:48px;padding:10px 24px;border:1px solid #bbccdf;border-radius:12px;background:#fff;color:#144b83;font:inherit;cursor:pointer}
 .brand-loading-recovery button:focus-visible{outline:3px solid #2867ab;outline-offset:3px}
 .brand-loading-stalled .brand-loading-logo{animation:none}
+@media(max-width:999px){
+ .brand-loading.startup-login-loading{background:#fff;color:#20364c}
+ .startup-login-loading .brand-loading-center{gap:0}
+ .startup-login-loading .brand-loading-logo{width:62px;height:62px;margin:0 auto 4px;animation:none}
+ .startup-login-loading .brand-loading-slogan{font-size:25px;font-weight:650;letter-spacing:.07em;line-height:1.2;color:#173451;margin:0}
+}
 @keyframes brand-breathe{0%,100%{opacity:.78;transform:scale(.98)}50%{opacity:1;transform:scale(1.025)}}
 @media(prefers-reduced-motion:reduce){.brand-loading-logo{animation:none;transform:none}}
 @media(max-height:420px){.brand-loading{padding:16px}.brand-loading-logo{width:76px;height:76px}.brand-loading-center{gap:12px}.brand-loading-recovery{margin-top:12px}}

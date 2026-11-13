@@ -26,6 +26,7 @@ export function StartupAccount({children}:{children:React.ReactNode}){
   const {update}=useApp(),navigate=useNavigate(),location=useLocation();
   const nativeApp=typeof window!=='undefined'&&!!window.Gongxingji;
   const [destination,setDestination]=useState(loginDestination);
+  const [secondaryLogin,setSecondaryLogin]=useState(false);
   const chooseDestination=(value:'user'|'coach')=>{chooseLoginDestination(value);setDestination(value);};
   if(location.pathname==='/team')rememberTeamInvitation(location.search);
   const status=useSyncExternalStore(cloudSync.subscribe,cloudSync.getStatus,cloudSync.getStatus);
@@ -108,6 +109,7 @@ export function StartupAccount({children}:{children:React.ReactNode}){
   useEffect(()=>{if(pageRef.current)pageRef.current.inert=keepingPage;},[keepingPage]);
   const introStorageNotice=registrationIntroPersistence(status.owner)===false?'介绍偏好暂未存入本机，重开可能再次提示。可以继续训练。':'';
   const showIntro=registrationWelcome&&!offerPassword;
+  const showLoginScreen=!registrationWelcome&&(!status.owner||!status.authVerified&&(status.reauthenticationRequired||!status.phoneVerified));
   useEffect(()=>{if(allowed&&!awaitingAccountVerification&&!registrationWelcome&&loginDestination()==='coach'&&!workspacePath(location.pathname))navigate('/coach',{replace:true});},[allowed,awaitingAccountVerification,registrationWelcome,location.pathname,navigate]);
   // Keep an existing auth form mounted while rechecking the same identity.
   const showAccountForm=!showIntro&&!allowed&&hasChecked&&(!verifying||accountFormShown.current);
@@ -117,12 +119,12 @@ export function StartupAccount({children}:{children:React.ReactNode}){
     <Button className="account-back-link" onClick={pendingBack}>‹ {pendingSection==='deletion'?'返回账号管理':'返回验证手机'}</Button>
     {pendingSection==='deletion'?<AccountDeletionEntry key={status.owner}/>:<Panel title="账号管理"><AccountDeletionLink onClick={()=>navigate('/account?id=deletion')}/></Panel>}
   </main>;
-  if(!allowed&&!registrationWelcome&&!publicNews&&!showAccountForm&&verifying)return <BrandLoading/>;
+  if(!allowed&&!registrationWelcome&&!publicNews&&!showAccountForm&&verifying)return <BrandLoading startupLogin={showLoginScreen}/>;
   if(publicNews)return <main className="startup-account startup-public-news"><Button onClick={()=>navigate('/account',{replace:true})}>返回登录</Button><React.Suspense fallback={<BrandLoading/>}><News/></React.Suspense></main>;
   return <><div ref={pageRef} className={keepingPage?'startup-resume-page':undefined} hidden={!showPage} aria-hidden={!showPage} aria-busy={keepingPage} onClickCapture={event=>{if(keepingPage){event.preventDefault();event.stopPropagation();}}} onKeyDownCapture={event=>{if(keepingPage){event.preventDefault();event.stopPropagation();}}}>
     {allowed&&!registrationWelcome&&introStorageNotice&&<p role="status" className="account-preference-warning">{introStorageNotice}</p>}
     {renderedOwner.current&&!registrationWelcome?<React.Fragment key={renderedOwner.current}>{children}</React.Fragment>:null}
-  </div>{keepingPage&&<p className="startup-resume-status" role="status" aria-live="polite">正在连接…</p>}{(!allowed||registrationWelcome)&&!keepingPage&&<main className={showIntro?'startup-intro':'startup-account'} aria-busy={verifying}>
+  </div>{keepingPage&&<p className="startup-resume-status" role="status" aria-live="polite">正在连接…</p>}{(!allowed||registrationWelcome)&&!keepingPage&&<main className={showIntro?'startup-intro':showLoginScreen?'startup-account startup-login':'startup-account'} aria-busy={verifying}>
     {showIntro?<IntroScreens onDone={finishIntro} onSkip={finishIntro} onExistingAccount={finishIntro} context="registered" notice={introStorageNotice}/>:registrationWelcome?<>
     <header className="page-title"><img className="auth-brand-logo" src={brandLogo} alt="" width="72" height="72"/><h1>注册已完成</h1><p>现在可以开始记录训练</p></header>
     {introStorageNotice&&<p role="status" className="account-preference-warning">{introStorageNotice}</p>}<Panel className="account-access account-card" title="设置登录密码（可选）"><p>以后可用手机号或已绑定邮箱和密码登录，也可继续使用短信验证码。</p>
@@ -130,11 +132,11 @@ export function StartupAccount({children}:{children:React.ReactNode}){
      {settingPassword?<form ref={passwordForm} onSubmit={event=>{event.preventDefault();void savePassword();}}><p className="caption">{PASSWORD_RULE}</p><PasswordField label="登录密码" value={password} onChange={setPassword} disabled={passwordBusy} autoComplete="new-password"/><PasswordField label="再次输入密码" value={confirm} onChange={setConfirm} disabled={passwordBusy} autoComplete="new-password"/><Button kind="primary" className="wide" type="submit" disabled={passwordBusy||!password||!confirm}>保存密码</Button></form>:<Button kind="primary" className="wide" onClick={()=>setSettingPassword(true)}>立即设置</Button>}<Button className="wide" disabled={passwordBusy} onClick={skipPassword}>稍后再说</Button>
     </Panel>
     </>:<>
-    <DesktopLoginLayout destination={destination} onDestination={chooseDestination}>
+    <DesktopLoginLayout destination={destination} onDestination={chooseDestination} secondaryLogin={secondaryLogin}>
     <div style={{position:'relative'}}>
       {showAccountForm&&<fieldset disabled={verifying} style={{border:0,margin:0,padding:0,minWidth:0}}>
         {error&&!status.reauthenticationRequired&&<Panel title="登录状态尚未确认"><p role="alert">{error}</p><Button disabled={status.busy} onClick={()=>void check()}>重新连接</Button></Panel>}
-        <CloudPanel key={status.owner??'signed-out'} startup/>
+        <CloudPanel key={status.owner??'signed-out'} startup onSecondaryLogin={setSecondaryLogin}/>
         {canManagePending&&<Button className="account-text-link" onClick={()=>navigate('/account?id=management')}>账号管理</Button>}
       </fieldset>}
       {verifying&&<div className={`startup-opening${showAccountForm?' startup-opening-overlay':''}`}>

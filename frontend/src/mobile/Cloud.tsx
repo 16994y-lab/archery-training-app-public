@@ -104,7 +104,7 @@ function ConflictItem({item,value,onChange}:{item:CloudConflict;value?:'local'|'
 }
 
 /** Full account flow; mounting it does not itself bind or upload the local archive. */
-export function CloudPanel({onBack,startup=false,section}:{onBack?:()=>void;startup?:boolean;section?:string}={}){
+export function CloudPanel({onBack,startup=false,section,onSecondaryLogin}:{onBack?:()=>void;startup?:boolean;section?:string;onSecondaryLogin?:(active:boolean)=>void}={}){
   const {data,update,open,tell,ask}=useApp(),status=useSyncExternalStore(cloudSync.subscribe,cloudSync.getStatus,cloudSync.getStatus);
   const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[newPassword,setNewPassword]=useState(''),[confirmPassword,setConfirmPassword]=useState(''),[code,setCode]=useState(''),[verifyType,setVerifyType]=useState<'signup'|'recovery'>('recovery');
   const [testRoute,setTestRoute]=useState<'phone'|'email'|'legacy'>('phone');
@@ -147,7 +147,7 @@ export function CloudPanel({onBack,startup=false,section}:{onBack?:()=>void;star
     const choice=await ask(switching?'切换本机训练账号':'绑定本机训练资料',switching?`当前资料属于 ${maskEmail(status.boundEmail)}。切换时会在本机隔离保留该账号全部资料，再载入 ${maskEmail(status.email)} 的本机隔离档案或云资料；不会把原账号资料上传给新账号。`:`将本机的记录、计划、器材、靶面、日历、目标和个人训练资料绑定到 ${maskEmail(status.email)}，之后与该账号双向同步。照片和视频文件不上传。首次合并若同项资料不同，会逐项请你选择。`,['取消',switching?'隔离保存并切换':'确认绑定']);
     if(choice!==1)return;await act(async()=>{await cloudSync.bind();await cloudSync.sync();});
   }
-  if(communityTestOnly)return <AccountAccess startup={startup} onBack={onBack} section={section}/>;
+  if(communityTestOnly)return <AccountAccess startup={startup} onBack={onBack} section={section} onSecondaryLogin={onSecondaryLogin}/>;
 
   if(status.recoveryEmail)return <Panel title="设置新密码"><p>已验证 {maskEmail(status.recoveryEmail)}，原账号与训练资料保留。</p><p className="caption">{PASSWORD_RULE}</p><Field label="设置新密码"><input type="password" value={newPassword} onChange={e=>setNewPassword(e.target.value)}/></Field><Field label="确认新密码"><input type="password" value={confirmPassword} onChange={e=>setConfirmPassword(e.target.value)}/></Field><Button disabled={status.busy} onClick={()=>void act(async()=>{if(newPassword!==confirmPassword)throw new Error('两次输入的密码不一致');await cloudSync.updatePassword(newPassword);setNewPassword('');setConfirmPassword('');})}>保存新密码</Button><Button disabled={status.busy} onClick={()=>cloudSync.cancelRecovery()}>取消找回</Button></Panel>;
 

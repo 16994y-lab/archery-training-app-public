@@ -9,7 +9,7 @@ import {mainlandPhone,otpLength} from './api';
 import {phoneOtpReady,existingEmailOtpLoginReady,manualBackupReady,emailEnrollmentReady,accountDeletionReady} from './release-mode';
 import {EmailRegistration} from './EmailRegistration';
 import {ManualBackupPanel} from './ManualBackupPanel';
-import {Back,Button,Field,Panel,useApp} from './ui';
+import {Back,Button,Field,Panel,useApp,useInnerBack} from './ui';
 import {EmailSecurity,EmailPasswordRecovery} from './EmailSecurity';
 import {AccountChannelAccess} from './AccountChannelAccess';
 import {CloudSavePanels} from './CloudSavePanels';
@@ -17,23 +17,30 @@ import {PhonePasswordRecovery} from './PhonePasswordRecovery';
 import {PasswordField} from './PasswordField';
 import {PASSWORD_RULE,requireNewPassword} from './password-policy';
 import {maskEmail} from './account-display';
-import {UsageNotice} from './UsageNotice';
+import {AccountLoginNotice,AccountLoginNoticeDialog,type LoginNoticeRequest} from './AccountLoginNotice';
 import './account-access.css';
 import {RegistrationInvitationFlow,registrationRewardsReady} from './registration-invitation';
 import {invitationPhoneReady,readInvitationChoice,rememberInvitationCode,restoreInvitationPhone,finishInvitationChoice} from './registration-invitation-choice';
 
 function PhoneEntry({value,onChange,disabled,password=false}:{value:string;onChange:(value:string)=>void;disabled:boolean;password?:boolean}){
- const id=useId();return <div className="field"><label htmlFor={id}>手机号</label><span className="account-phone-field"><span className="account-country" aria-hidden="true">+86</span><MainlandPhoneInput id={id} aria-label="中国大陆 +86 手机号" autoComplete={password?'username':'tel-national'} placeholder="11 位手机号" value={value} disabled={disabled} onValueChange={onChange}/></span></div>;
+ const id=useId();return <div className="field account-phone-input"><label htmlFor={id}>手机号</label><span className="account-phone-field"><span className="account-country" aria-hidden="true">+86</span><MainlandPhoneInput id={id} aria-label="中国大陆 +86 手机号" autoComplete={password?'username':'tel-national'} placeholder="11 位手机号" value={value} disabled={disabled} onValueChange={onChange}/></span></div>;
 }
 
 /** A pending email identity may only verify its own phone or sign out. */
-export function AccountAccess({startup=false,section,onBack}:{startup?:boolean;section?:string;onBack?:()=>void}){
+export function AccountAccess({startup=false,section,onBack,onSecondaryLogin}:{startup?:boolean;section?:string;onBack?:()=>void;onSecondaryLogin?:(active:boolean)=>void}){
  const {open}=useApp(),status=useSyncExternalStore(cloudSync.subscribe,cloudSync.getStatus,cloudSync.getStatus);
  const accountService=cloudSync.enrollmentService();
  const verifiedAccount=!!status.owner&&status.authVerified;
  const unifiedLogin=!status.authVerified&&(status.reauthenticationRequired===true||!!status.owner&&!status.phoneVerified);
  const loginEntry=!status.owner||unifiedLogin;
+ const startupLogin=startup&&loginEntry;
  const [route,setRoute]=useState<'phone'|'email'|'email-otp'|'phone-password'>('phone'),[mode,setMode]=useState<'login'|'register'>('login');
+ const [acceptedNotice,setAcceptedNotice]=useState(false),[noticeRequest,setNoticeRequest]=useState<LoginNoticeRequest|null>(null);
+ const afterNotice=(action:()=>void)=>{
+  if(!loginEntry||acceptedNotice){action();return;}
+  setNoticeRequest({continueLogin:action});
+ };
+ useEffect(()=>{setAcceptedNotice(false);setNoticeRequest(null);},[loginEntry,status.owner,accountService]);
  const [reconnecting,setReconnecting]=useState(false);
  const [phone,setPhone]=useState(''),[email,setEmail]=useState(''),[password,setPassword]=useState(''),[confirm,setConfirm]=useState(''),[code,setCode]=useState(''),[destination,setDestination]=useState(''),[error,setError]=useState(''),[tick,setTick]=useState(0);
  const [reset,setReset]=useState(false),[working,setWorking]=useState(false);
@@ -73,6 +80,11 @@ export function AccountAccess({startup=false,section,onBack}:{startup?:boolean;s
  const emailRoute=route==='email'||route==='email-otp',emailDigits=otpLength('email');
  const verifyingOriginal=!unifiedLogin&&reconnecting&&!!status.owner&&status.phoneVerified===true&&!status.authVerified;
  useEffect(()=>{if(seconds>0){const t=setTimeout(()=>setTick(tick+1),1000);return()=>clearTimeout(t);}},[seconds,tick]);
+ useEffect(()=>{
+  if(!startupLogin||!smsNotice)return;
+  const timeout=setTimeout(()=>setSmsNotice(''),2400);
+  return ()=>clearTimeout(timeout);
+ },[startupLogin,smsNotice]);
  useEffect(()=>{smsEpoch.current++;smsInFlight.current=null;setSmsWorking(false);setInvitationWorking(false);setSmsNotice('');pendingSmsFocus.current=false;setPassword('');setConfirm('');setCode('');setDestination('');setReset(false);setRecoveryChoices(false);setPhoneRecovery(false);setEmailRecovery(false);setError('');setBindingNotice('');setSkipInvitation(false);setResumeInvitation(false);setCanRestartInvitation(false);setInvitationMessage('');},[status.owner,status.authVerified,accountService]);
  useEffect(()=>{
   let active=true;
@@ -89,6 +101,12 @@ export function AccountAccess({startup=false,section,onBack}:{startup?:boolean;s
  const clearEntry=()=>{invalidateSms();if(emailVerificationInFlight.current)cloudSync.cancelPendingOtpLogin();pendingSmsFocus.current=false;cloudSync.cancelRegistrationPresentation();setDestination('');setCode('');setPassword('');setConfirm('');setError('');setRecoveryChoices(false);setPhoneRecovery(false);};
  const changeRoute=(value:'phone'|'email'|'email-otp'|'phone-password')=>{clearEntry();setMode('login');setRoute(value);};
  const changeMode=(value:'login'|'register')=>{clearEntry();setMode(value);if(value==='register'&&route==='phone-password')setRoute('phone');if(value==='register'&&route==='email-otp')setRoute('email');};
+ const secondaryLogin=startupLogin&&route!=='phone';
+ useEffect(()=>{
+  onSecondaryLogin?.(secondaryLogin);
+  return ()=>onSecondaryLogin?.(false);
+ },[onSecondaryLogin,secondaryLogin]);
+ useInnerBack(secondaryLogin&&!phoneRecovery&&!emailRecovery,()=>{if(!busy)changeRoute('phone');},95);
  const send=()=>void (async()=>{
   if(smsInFlight.current!==null||busy)return;
   const attempt=++smsEpoch.current,service=cloudSync.enrollmentService(),owner=cloudSync.getStatus().owner,verified=cloudSync.getStatus().authVerified;
@@ -128,10 +146,10 @@ export function AccountAccess({startup=false,section,onBack}:{startup?:boolean;s
  // The visible code field also accepts an already received SMS. It never sends
  // implicitly, and both paths still use the same real verification boundary.
  const verify=(choice?:'participate'|'decline')=>void act(async()=>{
-  invalidateSms();
   if(!phoneOtpReady)throw new Error('短信验证尚未开放');
   const target=mainlandPhone(destination||phone),token=code.trim(),service=accountService;
   if(!/^\d{6}$/.test(token))throw new Error('请输入 6 位验证码');
+  invalidateSms();
   const finishEntry=registrationRewardsReady&&!status.owner&&!pending&&!verifyingOriginal;
   const revision=finishEntry?readInvitationChoice(service).revision:undefined;
   let originalRequest:string|null=null;
@@ -175,23 +193,27 @@ export function AccountAccess({startup=false,section,onBack}:{startup?:boolean;s
   <Button type="button" className="account-forgot" aria-expanded={recoveryChoices} aria-controls={recoveryChoices?recoveryChoicesId:undefined} disabled={busy} onClick={()=>{setRecoveryChoices(!recoveryChoices);setPassword('');setConfirm('');setCode('');}}>忘记密码？</Button>
   {recoveryChoices&&<div id={recoveryChoicesId} className="account-recovery-choices" role="group" aria-label="选择找回方式">
    <p>选择已经验证的安全渠道</p>
-   <Button type="button" disabled={busy} onClick={()=>{clearEntry();setPhoneRecovery(true);}}>使用手机验证码找回</Button>
-   <Button type="button" disabled={busy} onClick={()=>{clearEntry();setEmailRecovery(true);}}>使用邮箱验证码找回密码</Button>
+   <Button type="button" disabled={busy} onClick={()=>afterNotice(()=>{clearEntry();setPhoneRecovery(true);})}>使用手机验证码找回</Button>
+   <Button type="button" disabled={busy} onClick={()=>afterNotice(()=>{clearEntry();setEmailRecovery(true);})}>使用邮箱验证码找回密码</Button>
    <p className="caption">邮箱找回需要先在账号安全中完成邮箱验证。</p>
   </div>}
  </div>;
- return <section className={hub?"account-access account-security":"account-access"}>
+ const loginMethods=loginEntry&&<div className="account-tabs account-login-ways" role="group" aria-label="登录方式">
+  <Button type="button" aria-pressed={route==='phone'} aria-label={route==='phone'?'验证码登录':'返回验证码登录'} disabled={busy} onClick={()=>{if(route!=='phone')changeRoute('phone');}}>验证码登录</Button>
+  <Button type="button" aria-pressed={emailRoute} disabled={busy} onClick={()=>{if(!emailRoute)changeRoute('email');}}>邮箱登录</Button>
+  <Button type="button" aria-pressed={route==='phone-password'} disabled={busy} onClick={()=>{if(route!=='phone-password')changeRoute('phone-password');}}>使用密码登录</Button>
+ </div>;
+ const phoneLoginReady=!!(destination||phone.trim())&&code.length===6;
+ const loginNotice=loginEntry&&mode==='login'&&<AccountLoginNotice accepted={acceptedNotice} onAccept={setAcceptedNotice} onRead={()=>setNoticeRequest({})}/>;
+ return <section className={hub?"account-access account-security":startupLogin?`account-access account-login-entry${secondaryLogin?' account-login-secondary':''}`:"account-access"}>
   {hub?<Back title="账号安全" onBack={back} label="返回账号中心"/>:!startup&&status.localAllowed&&!unifiedLogin&&<Button className="account-back-link" onClick={back}>‹ 返回</Button>}
-  <Panel className="account-card" title={unifiedLogin?'登录弓行记':pending?'验证手机，完成注册':status.owner&&!unifiedLogin?'账号与登录':emailRoute?'邮箱登录':route==='phone-password'?'手机号密码登录':'首次注册或登录'}>
+  {secondaryLogin&&<button type="button" className="login-route-back" aria-label="返回登录首页" disabled={busy} onClick={()=>changeRoute('phone')}>‹</button>}
+  <Panel className="account-card" title={pending?'验证手机，完成注册':emailRoute?'邮箱登录':route==='phone-password'?'手机号密码登录':unifiedLogin?'登录弓行记':status.owner?'账号与登录':startupLogin?undefined:'首次注册或登录'}>
    {loginEntry&&<>
     {unifiedLogin&&<p role="status">请重新登录，继续使用账号服务。已有训练资料保留。</p>}
-    {!status.owner&&!emailRoute&&route==='phone'&&<p className="caption">未注册手机号验证后创建账号，已注册手机号验证后登录。</p>}
-    <div className="account-tabs account-login-ways" role="group" aria-label="登录方式">
-     <Button type="button" aria-pressed={route==='phone'} aria-label={route==='phone'?'验证码登录':'返回验证码登录'} disabled={busy} onClick={()=>{if(route!=='phone')changeRoute('phone');}}>验证码登录</Button>
-     <Button type="button" aria-pressed={route==='phone-password'} disabled={busy} onClick={()=>{if(route!=='phone-password')changeRoute('phone-password');}}>使用密码登录</Button>
-     <Button type="button" aria-pressed={emailRoute} disabled={busy} onClick={()=>{if(!emailRoute)changeRoute('email');}}>邮箱登录</Button>
-    </div>
-    {emailRoute&&emailEnrollmentReady&&<div className="account-mode" role="group" aria-label="邮箱登录或注册"><Button type="button" aria-pressed={mode==='login'} disabled={busy} onClick={()=>changeMode('login')}>登录</Button><Button type="button" aria-pressed={mode==='register'} disabled={busy} onClick={()=>changeMode('register')}>首次注册</Button></div>}
+    {!startupLogin&&!status.owner&&route==='phone'&&<p className="caption">新手机号验证后自动注册。</p>}
+    {!startupLogin&&loginMethods}
+    {emailRoute&&emailEnrollmentReady&&<div className="account-mode" role="group" aria-label="邮箱登录或注册"><Button type="button" aria-pressed={mode==='login'} disabled={busy} onClick={()=>changeMode('login')}>登录</Button><Button type="button" aria-pressed={mode==='register'} disabled={busy} onClick={()=>afterNotice(()=>changeMode('register'))}>首次注册</Button></div>}
     {mode==='login'&&emailRoute&&existingEmailOtpLoginReady&&<div className="account-secondary"><span>{route==='email-otp'?'验证码登录':'密码登录'}</span><Button type="button" disabled={busy} onClick={()=>changeRoute(route==='email-otp'?'email':'email-otp')}>{route==='email-otp'?'使用密码':'使用邮箱验证码'}</Button></div>}
    </>}
    {error&&<p role="alert" className="account-error">{error}</p>}
@@ -210,40 +232,60 @@ export function AccountAccess({startup=false,section,onBack}:{startup?:boolean;s
    </>:<>
     {verifyingOriginal&&<><p>请验证原账号手机号。已有登录和训练资料保留，验证为其它账号时不会采用。</p><Button type="button" disabled={busy} onClick={()=>{clearEntry();setReconnecting(false);}}>取消重新验证</Button></>}
     {pending&&<><p className="account-step">第 2 步 · 验证手机</p><p>验证当前账号的本人手机号后，即可开始训练。</p><p className="caption">手机号已属于其他账号时，请使用原账号登录。</p></>}
-    {!pending&&route==='email'&&mode==='register'?(emailEnrollmentReady?<EmailRegistration/>:<p role="status">邮箱验证码注册正在接入，可先使用手机号注册。</p>):<form className="account-entry-form" onSubmit={event=>{event.preventDefault();if(busy)return;if(pending||route==='phone'){if(phoneOtpReady&&(destination||phone.trim())&&code.length===6)verify();}else if(route==='phone-password'){if(phone.trim()&&password)submitPhonePassword();}else if(route==='email-otp'){if(destination&&code.length===emailDigits)verifyEmailLogin();else if(!destination&&email.trim()&&seconds===0&&existingEmailOtpLoginReady)sendEmailLogin();}else if(email.trim()&&password)submitEmail();}}>
+    {!pending&&route==='email'&&mode==='register'?(emailEnrollmentReady?<EmailRegistration/>:<p role="status">邮箱验证码注册正在接入，可先使用手机号注册。</p>):<form key={route} className="account-entry-form" onSubmit={event=>{
+      event.preventDefault();if(busy)return;
+      if(pending){if(phoneOtpReady&&phoneLoginReady)verify();}
+      else if(route==='phone'){if(phoneOtpReady&&(startupLogin||phoneLoginReady))afterNotice(()=>verify());}
+      else if(route==='phone-password'){if(phone.trim()&&password)afterNotice(()=>submitPhonePassword());}
+      else if(route==='email-otp'){
+       if(destination&&code.length===emailDigits)afterNotice(()=>verifyEmailLogin());
+       else if(!destination&&email.trim()&&seconds===0&&existingEmailOtpLoginReady)afterNotice(sendEmailLogin);
+      }else if(email.trim()&&password)afterNotice(()=>submitEmail());
+    }}>
     {pending||route==='phone'?<>
      <PhoneEntry value={phone} onChange={value=>{invalidateSms();setSkipInvitation(false);setPhone(value);setError('');}} disabled={busy||invitationLocked||!!destination}/>
 
-     <div className="field account-sms-field"><label htmlFor={smsCodeId}>验证码</label><div className="account-code-entry"><input id={smsCodeId} ref={smsCode} aria-label="6 位短信验证码" inputMode="numeric" type="text" autoComplete="one-time-code" placeholder="输入 6 位验证码" maxLength={6} value={code} disabled={busy} onChange={e=>setCode(e.target.value.replace(/\D/g,''))}/><Button type="button" className="account-sms-send" disabled={busy||invitationLocked||!(destination||phone.trim())||seconds>0||!phoneOtpReady} onClick={send}>{sendingSms?'正在申请…':seconds>0?`${seconds} 秒后重发`:destination?'重新获取':'获取验证码'}</Button></div></div>
-     {registrationRewardsReady&&!pending&&!verifyingOriginal&&!status.owner&&<details className="review-data-details"><summary>注册邀请码（可选）</summary><Field label="邀请码"><input ref={invitationInput} value={invitationCode} maxLength={32} autoComplete="off" spellCheck={false} disabled={busy||invitationLocked||!!destination||skipInvitation||!invitationPhoneReady(phone)} onChange={event=>editInvitation(event.target.value)}/></Field><p className="caption">填过邀请码后，获取验证码会先核对本次邀请。清空输入后可重新填写，或勾选本次不使用邀请码。</p><label className="check"><input type="checkbox" checked={skipInvitation} disabled={busy||invitationLocked||!!destination} onChange={event=>setSkipInvitation(event.target.checked)}/>本次不使用邀请码，保留原进度</label><Button type="button" disabled={busy||invitationLocked} onClick={readInvitation}>读取已保存的邀请进度</Button>{canRestartInvitation&&<Button type="button" disabled={busy||invitationLocked||!!destination||skipInvitation} onClick={restartInvitation}>{invitationWorking?'正在准备…':'重新准备邀请码'}</Button>}{invitationMessage&&<p role="status">{invitationMessage}</p>}</details>}
-     <p className="caption account-code-hint">验证码有效期以服务核验为准，已收到可直接填写。换设备或重新打开页面仍需遵守同一号码的发送间隔。</p>
+     <div className="field account-sms-field"><label htmlFor={smsCodeId}>验证码</label><div className="account-code-entry"><input id={smsCodeId} ref={smsCode} aria-label="6 位短信验证码" inputMode="numeric" type="text" autoComplete="one-time-code" placeholder="输入 6 位验证码" maxLength={6} value={code} disabled={busy} onChange={e=>setCode(e.target.value.replace(/\D/g,''))}/><Button type="button" className="account-sms-send" disabled={busy||invitationLocked||!(destination||phone.trim())||seconds>0||!phoneOtpReady} onClick={()=>afterNotice(send)}>{sendingSms?'正在申请…':seconds>0?`${seconds} 秒后重发`:destination?'重新获取':'获取验证码'}</Button></div></div>
+     {!startupLogin&&<p className="caption account-code-hint">验证码有效期以服务核验为准，已收到可直接填写。换设备或重新打开页面仍需遵守同一号码的发送间隔。</p>}
      {sendingSms&&<p role="status">{loginEntry?'正在发送，请稍候，可切换密码登录':'正在发送，请稍候'}</p>}
-     {smsNotice&&<p role="status">{smsNotice}</p>}
+     {smsNotice&&<p role="status" className={startupLogin?'login-sms-receipt':undefined}>{smsNotice}</p>}
      {destination&&<Button type="button" className="account-text-link account-change-phone" disabled={busy} onClick={()=>{invalidateSms();setDestination('');setCode('');setError('');}}>更换手机号</Button>}
-     {pending||verifyingOriginal?<Button type="submit" kind="primary" className="wide" disabled={busy||!phoneOtpReady||!(destination||phone.trim())||code.length!==6}>{pending?'验证手机并进入训练':verifyingOriginal?'验证原账号并进入训练':'首次注册或登录'}</Button>:<ContributionLoginActions disabled={busy||!phoneOtpReady||!(destination||phone.trim())||code.length!==6} label={pending?'验证手机并进入训练':verifyingOriginal?'验证原账号并进入训练':'首次注册或登录'} onLogin={verify}/>}
+     {pending||verifyingOriginal?<Button type="submit" kind="primary" className="wide" disabled={busy||!phoneOtpReady||!phoneLoginReady}>{pending?'验证手机并进入训练':'验证原账号并进入训练'}</Button>:<ContributionLoginActions compact={startupLogin} disabled={busy||!phoneOtpReady||!startupLogin&&!phoneLoginReady} label={startupLogin?(status.owner?'登录':'登录或注册'):'首次注册或登录'} onLogin={choice=>afterNotice(()=>verify(choice))}/>}
      {!phoneOtpReady&&<p role="status">短信接线正在验收，发送尚未开放。</p>}
     </>:route==='phone-password'?<>
      <PhoneEntry value={phone} onChange={setPhone} disabled={busy} password/>
      <PasswordField key="phone-login-password" label="密码" value={password} onChange={setPassword} disabled={busy} autoComplete="current-password"/>
      {recoveryControl}
      <p className="caption">使用已验证的手机号和登录密码。尚未设密，可先用短信登录后设置。</p>
-     <ContributionLoginActions disabled={busy||!phone.trim()||!password} label="使用手机号和密码登录" onLogin={submitPhonePassword}/>
+     <ContributionLoginActions compact={startupLogin} disabled={busy||!phone.trim()||!password} label="使用手机号和密码登录" onLogin={choice=>afterNotice(()=>submitPhonePassword(choice))}/>
     </>:route==='email-otp'?<>
      <p className="caption">使用原账号已验证的邮箱登录，无需修改密码。首次使用请先完成手机号注册。</p>
-     {!destination?<><Field label="已验证邮箱"><input type="email" autoComplete="username" inputMode="email" autoCapitalize="none" spellCheck={false} maxLength={254} value={email} disabled={busy} onChange={e=>setEmail(e.target.value)}/></Field><Button type="submit" kind="primary" className="wide" disabled={busy||!email.trim()||seconds>0||!existingEmailOtpLoginReady}>{seconds>0?`${seconds} 秒后可发送`:'发送邮箱登录验证码'}</Button></>:<><Field label={`${emailDigits} 位邮箱验证码`}><input ref={smsCode} type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={emailDigits} value={code} disabled={busy} onChange={e=>setCode(e.target.value.replace(/\D/g,''))}/></Field><ContributionLoginActions disabled={busy||code.length!==emailDigits} label="验证并进入训练" onLogin={verifyEmailLogin}/><Button type="button" disabled={busy} onClick={clearEntry}>返回填写邮箱</Button></>}
+     {!destination?<><Field label="已验证邮箱"><input type="email" autoComplete="username" inputMode="email" autoCapitalize="none" spellCheck={false} maxLength={254} value={email} disabled={busy} onChange={e=>setEmail(e.target.value)}/></Field><Button type="submit" kind="primary" className="wide" disabled={busy||!email.trim()||seconds>0||!existingEmailOtpLoginReady}>{seconds>0?`${seconds} 秒后可发送`:'发送邮箱登录验证码'}</Button></>:<><Field label={`${emailDigits} 位邮箱验证码`}><input ref={smsCode} type="text" inputMode="numeric" autoComplete="one-time-code" maxLength={emailDigits} value={code} disabled={busy} onChange={e=>setCode(e.target.value.replace(/\D/g,''))}/></Field><ContributionLoginActions compact={startupLogin} disabled={busy||code.length!==emailDigits} label="验证并进入训练" onLogin={choice=>afterNotice(()=>verifyEmailLogin(choice))}/><Button type="button" disabled={busy} onClick={clearEntry}>返回填写邮箱</Button></>}
      {recoveryControl}
     </>:<>
      <Field label="邮箱"><input type="email" autoComplete="username" inputMode="email" autoCapitalize="none" spellCheck={false} value={email} disabled={busy} onChange={e=>setEmail(e.target.value)}/></Field>
      <PasswordField key={mode+'-password'} label="密码" value={password} onChange={setPassword} disabled={busy} autoComplete={mode==='register'?'new-password':'current-password'}/>
      {recoveryControl}
      <p className="caption">使用已绑定邮箱和密码登录。尚未设密可返回手机号验证码入口。</p>
-     <ContributionLoginActions disabled={busy||!email.trim()||!password} label="使用邮箱密码登录" onLogin={submitEmail}/>
+     <ContributionLoginActions compact={startupLogin} disabled={busy||!email.trim()||!password} label="使用邮箱密码登录" onLogin={choice=>afterNotice(()=>submitEmail(choice))}/>
     </>}
     </form>}
     {pending&&<Button disabled={busy} onClick={()=>void act(()=>cloudSync.logout())}>退出此账号</Button>}
    </>}
-   {loginEntry&&<UsageNotice/>}
+   {startupLogin&&loginMethods}
+   {registrationRewardsReady&&route==='phone'&&!status.owner&&<details className="review-data-details account-invitation"><summary>注册邀请码（可选）</summary>
+    <Field label="邀请码"><input ref={invitationInput} value={invitationCode} maxLength={32} autoComplete="off" spellCheck={false} disabled={busy||invitationLocked||!!destination||skipInvitation||!invitationPhoneReady(phone)} onChange={event=>editInvitation(event.target.value)}/></Field>
+    <p className="caption">获取验证码前会先核对邀请码。若要跳过邀请，请勾选本次不使用邀请码。</p>
+    <label className="check"><input type="checkbox" checked={skipInvitation} disabled={busy||invitationLocked||!!destination} onChange={event=>setSkipInvitation(event.target.checked)}/>本次不使用邀请码，保留原进度</label>
+    <Button type="button" disabled={busy||invitationLocked} onClick={()=>afterNotice(readInvitation)}>读取已保存的邀请进度</Button>
+    {canRestartInvitation&&<Button type="button" disabled={busy||invitationLocked||!!destination||skipInvitation} onClick={()=>afterNotice(restartInvitation)}>{invitationWorking?'正在准备…':'重新准备邀请码'}</Button>}
+    {invitationMessage&&<p role="status">{invitationMessage}</p>}
+   </details>}
+   {loginNotice}
   </Panel>
+  {noticeRequest&&<AccountLoginNoticeDialog request={noticeRequest} onClose={()=>setNoticeRequest(null)} onAgree={()=>{
+   setAcceptedNotice(true);setNoticeRequest(null);if(!busy)noticeRequest.continueLogin?.();
+  }}/>}
   {security&&<><EmailSecurity key={status.owner+':'+status.email}/><AccountChannelAccess/>
    {emailEnrollmentReady&&<Button disabled={busy} onClick={()=>void act(()=>cloudSync.resumeCompletedRegistration())}>核对未完成的首次注册介绍</Button>}
    <Panel title="当前设备"><p className="caption">退出后，本机已保存的训练保留在当前账号下。</p><Button disabled={busy} onClick={()=>void act(()=>cloudSync.logout())}>退出登录</Button></Panel>
