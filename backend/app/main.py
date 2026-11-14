@@ -33,6 +33,9 @@ app.include_router(score_backup_router)
 app.include_router(community_router)
 app.include_router(private_media_router)
 app.include_router(media_archive_router)
+if os.getenv("GONGXINGJI_ONLINE_TIMER_DISPLAY") == "1":
+    from app.timer_display import create_timer_display_router
+    app.include_router(create_timer_display_router(SessionLocal))
 app.add_middleware(CORSMiddleware, allow_origins=os.getenv("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173").split(","), allow_methods=["*"], allow_headers=["*"])
 
 

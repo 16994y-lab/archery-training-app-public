@@ -59,11 +59,12 @@ export function PhotoWorkspace({session,face,onBack,onDirtyChange}:{session:Sess
  const profile=photoTargetProfile(target,activeFace),supported=profile!==null,radiusRatio=profile?.radiusRatio??1;
  const [photo,setPhoto]=useState<LocalPhoto|null>(null),[geometry,setGeometry]=useState<AutoFace|null>(null),[candidates,setCandidates]=useState<Candidate[]>([]);
  const nextEndIssue=end?photoNextEndIssue(session,end.id,candidates.length):'当前分组已变化，请返回成绩页核对。';
- const [phase,setPhase]=useState<'guide'|'processing'|'review'|'error'>('guide'),[busy,setBusy]=useState(false),[uncertain,setUncertain]=useState(false),[reviewOpened,setReviewOpened]=useState(false),[scanStep,setScanStep]=useState(0);
+ const [phase,setPhase]=useState<'guide'|'processing'|'review'|'error'>('guide'),[busy,setBusy]=useState(false),[uncertain,setUncertain]=useState(false),[scanStep,setScanStep]=useState(0);
  const [manualReview,setManualReview]=useState(false);
  const sourceFile=useRef<File|null>(null),preparingManual=useRef(false);
  const [error,setError]=useState(''),[notice,setNotice]=useState(''),[selected,setSelected]=useState<string|null>(null),[editingPoint,setEditingPoint]=useState(false),[adding,setAdding]=useState(false),[orderMode,setOrderMode]=useState<'score-desc'|'custom'>('score-desc'),[nudgeStep,setNudgeStep]=useState<1|4>(1);
- const [mapping,setMapping]=useState({dx:0,dy:0,scale:1}),[saveCoordinates,setSaveCoordinates]=useState(false),[inlineLayout,setInlineLayout]=useState<'photo'|'target'>('photo'),[compareFullscreen,setCompareFullscreen]=useState(false),[compareDisplayNote,setCompareDisplayNote]=useState(''),[fullscreenToolsOpen,setFullscreenToolsOpen]=useState(true);
+ const [mapping,setMapping]=useState({dx:0,dy:0,scale:1}),[saveCoordinates,setSaveCoordinates]=useState(false),[inlineLayout,setInlineLayout]=useState<'photo'|'target'>('target'),[compareFullscreen,setCompareFullscreen]=useState(false),[compareDisplayNote,setCompareDisplayNote]=useState(''),[fullscreenToolsOpen,setFullscreenToolsOpen]=useState(true);
+ const [actualPhotoOpened,setActualPhotoOpened]=useState(false);
  const [scoreOverrides,setScoreOverrides]=useState<Record<string,string>>({});
  const [manualPoints,setManualPoints]=useState<Record<string,{x:number;y:number}>>({}),[markingTarget,setMarkingTarget]=useState<string|null>(null);
  const [capturing,setCapturing]=useState(false),[captureNote,setCaptureNote]=useState('');
@@ -119,7 +120,7 @@ export function PhotoWorkspace({session,face,onBack,onDirtyChange}:{session:Sess
   const permit=photoContributions.beginLoad();contribution.current?.dispose();contribution.current=null;const ticket=++generation.current;const contributionIdentity=photoContributions.captureContextKey();reportContribution(permit?'preparing':'not-enabled',ticket,contributionIdentity);abort.current?.abort();const controller=new AbortController();abort.current=controller;
   let inferenceStarted=false;
   let draft:PhotoDiagnosticDraft={schema:'gongxingji-photo-diagnostic-v1',batchId:uid(),appVersion:APP_VERSION,startedAt:new Date().toISOString(),target:{id:target.id,name:target.name,face:activeFace},capture,input:{mime:file.type,bytes:file.size,sha256:null,fileNameIncluded:false},viewport:{width:window.innerWidth,height:window.innerHeight,devicePixelRatio:window.devicePixelRatio||1,orientation:screen.orientation?.type??null}};
-   diagnosticActions.current={pointVisits:0,pointNudges:0,adds:0,deletes:0,scoreOverrides:0,mappingAdjustments:0,fullscreenEntries:0,saveAttempts:0};setBusy(true);setManualReview(false);setError('');setNotice('正在读取照片…');setScanStep(0);setPhase('processing');setPhoto(null);setGeometry(null);setCandidates([]);setSelected(null);setEditingPoint(false);setAdding(false);setReviewOpened(false);setInlineLayout('photo');setMapping({dx:0,dy:0,scale:1});setSaveCoordinates(false);saveReceipt.current=null;setScoreOverrides({});setManualPoints({});setMarkingTarget(null);setDiagnostic(draft);setLastReceipt(null);
+   diagnosticActions.current={pointVisits:0,pointNudges:0,adds:0,deletes:0,scoreOverrides:0,mappingAdjustments:0,fullscreenEntries:0,saveAttempts:0};setBusy(true);setManualReview(false);setError('');setNotice('正在读取照片…');setScanStep(0);setPhase('processing');setPhoto(null);setGeometry(null);setCandidates([]);setSelected(null);setEditingPoint(false);setAdding(false);setActualPhotoOpened(false);setInlineLayout('target');setMapping({dx:0,dy:0,scale:1});setSaveCoordinates(false);saveReceipt.current=null;setScoreOverrides({});setManualPoints({});setMarkingTarget(null);setDiagnostic(draft);setLastReceipt(null);
   // Replacement was explicitly confirmed above; release its image before decoding another.
   livePhoto.current?.dispose();livePhoto.current=null;sourceFile.current=null;
   try{
@@ -158,7 +159,7 @@ export function PhotoWorkspace({session,face,onBack,onDirtyChange}:{session:Sess
     setManualReview(true);
    }
    setCandidates(found);setSelected(found[0]?.id??null);setDiagnostic(draft);
-    setPhase('review');setOrderMode(located.ok?'score-desc':'custom');setNotice('');setInlineLayout('photo');
+    setPhase('review');setOrderMode(located.ok?'score-desc':'custom');setNotice('');
   }catch(e){if(alive.current&&ticket===generation.current){recordPhotoStage(controller.signal.aborted?'CANCELLED':'PHOTO_FAILED');contribution.current?.dispose('invalid-data');contribution.current=null;reportContribution('invalid-data',ticket,contributionIdentity);const message=controller.signal.aborted?'已取消识别。请重新选图，或退出后使用手动记分。':(e as Error).message;draft={...draft,processingStages:snapshotPhotoStages(),failure:message,failureStage:controller.signal.aborted?'cancelled':inferenceStarted?'inference':draft.image?'target-location':'image'};setDiagnostic(draft);setPhase('error');setError(message);setNotice('没有把失败当作零箭结果，也没有保存成绩。');}}
   finally{if(alive.current&&ticket===generation.current)setBusy(false);}
  }
@@ -175,7 +176,7 @@ export function PhotoWorkspace({session,face,onBack,onDirtyChange}:{session:Sess
    setGeometry(null);setMapping({dx:0,dy:0,scale:1});setSaveCoordinates(false);setManualPoints({});setMarkingTarget(null);
    setCandidates([]);setSelected(null);setScoreOverrides({});setOrderMode('custom');setAdding(false);setEditingPoint(false);
    setDiagnostic(draft=>draft?{...draft,reviewMode:'manual-photo',manualFallbackFrom:draft.failureStage==='cancelled'?'cancelled':draft.failureStage==='inference'?'inference-failed':'target-location-failed',manualPreview:{width:next.canvas.width,height:next.canvas.height}}:draft);
-   setManualReview(true);setPhase('review');setNotice('');
+   setManualReview(true);setPhase('review');setNotice('');setInlineLayout('target');setActualPhotoOpened(false);
   }catch(reason){if(alive.current&&ticket===generation.current){setError(controller.signal.aborted?'已取消准备；当前照片仍保留。':'清晰预览暂未就绪，当前照片仍保留。可重新准备，或换一张照片。');setNotice('没有保存成绩。');}}
   finally{preparingManual.current=false;if(alive.current&&ticket===generation.current)setBusy(false);}
  }
@@ -188,12 +189,33 @@ export function PhotoWorkspace({session,face,onBack,onDirtyChange}:{session:Sess
  async function close(){if(submitting.current||!alive.current)return;const ticket=generation.current;if(photo&&await ask('退出照片录入？',uncertain?'保存状态尚未核实，请先返回本组成绩检查，避免重复导入。':'未确认候选不会进入成绩；已有正式成绩保留，照片会从本机内存释放。',['继续核对','退出照片录入'])!==1)return;if(!alive.current||ticket!==generation.current)return;abort.current?.abort();onBack();}
   function selectCandidate(id:string){diagnosticActions.current.pointVisits++;setSelected(id);setEditingPoint(true);setAdding(false);setMarkingTarget(null);}
   function toggleAdding(){if(frozen)return;setAdding(!adding);setEditingPoint(false);setMarkingTarget(null);}
+  function selectInlineView(view:'photo'|'target'){
+   if(view==='photo')setActualPhotoOpened(true);
+   if(inlineLayout===view)return;
+   setInlineLayout(view);
+   setAdding(false);
+   setMarkingTarget(null);
+  }
+  function toggleInlineAdding(){
+   if(frozen)return;
+   selectInlineView('photo');
+   toggleAdding();
+  }
   function addPoint(point:{x:number;y:number}){if(frozen||phase!=='review'||!adding||!inUnit(point))return;if(candidates.length>=256){setError('候选过多，请重新拍摄或退出后使用手动记分。');return;}diagnosticActions.current.adds++;const id=uid();recordCorrection('add-point',[...candidates,{id,point,reviewed:false}]);setCandidates(v=>[...v,{id,point,reviewed:false}]);setSelected(id);setEditingPoint(true);setMarkingTarget(null);setError('');}
   function nudgeSelected(dx:number,dy:number){if(!photo||!selected||!editingPoint||frozen)return;diagnosticActions.current.pointNudges++;const points={...manualPoints};delete points[selected];recordCorrection('move-point',candidates.map(candidate=>candidate.id===selected?{...candidate,point:nudgePhotoPoint(candidate.point,dx*nudgeStep,dy*nudgeStep,photo.canvas.width,photo.canvas.height)}:candidate),scoreOverrides,points);setCandidates(items=>items.map(candidate=>candidate.id===selected?{...candidate,point:nudgePhotoPoint(candidate.point,dx*nudgeStep,dy*nudgeStep,photo.canvas.width,photo.canvas.height)}:candidate));setManualPoints(current=>{const next={...current};delete next[selected];return next;});setMarkingTarget(null);setError('');}
  function chooseOrder(next:'score-desc'|'custom'){if(next===orderMode)return;if(next==='custom')setCandidates(orderedCandidates);setOrderMode(next);}
  function moveSelected(offset:number){if(!selected||orderMode!=='custom')return;setCandidates(items=>{const from=items.findIndex(candidate=>candidate.id===selected);return moveArrayItem(items,from,from+offset);});}
   function selectAdjacent(offset:-1|1){const next=adjacentCandidateId(orderedCandidates.map(candidate=>candidate.id),selected,offset);if(next){diagnosticActions.current.pointVisits++;setSelected(next);setEditingPoint(true);setAdding(false);setMarkingTarget(null);}}
-   async function enterSplitCompare(editCandidateId?:string){diagnosticActions.current.fullscreenEntries++;returnFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;setReviewOpened(true);setAdding(false);setEditingPoint(Boolean(editCandidateId));if(editCandidateId)setSelected(editCandidateId);setFullscreenToolsOpen(true);setCompareFullscreen(true);const browserFullscreen=await enterReviewDisplay(compareStage.current);if(alive.current)setCompareDisplayNote(manualReview?'左侧照片可标记；右侧仅作靶面参考，无映射落点。':browserFullscreen?'左侧实际照片，右侧实验映射；两图可同步缩放。':'已进入横屏左右对照；左侧实际照片，右侧实验映射。');}
+   async function enterSplitCompare(){
+    diagnosticActions.current.fullscreenEntries++;
+    returnFocus.current=document.activeElement instanceof HTMLElement?document.activeElement:null;
+    setAdding(false);setEditingPoint(false);setMarkingTarget(null);setFullscreenToolsOpen(true);setCompareFullscreen(true);
+    const browserFullscreen=await enterReviewDisplay(compareStage.current);
+    if(!alive.current)return;
+    const description=manualReview?'左侧照片可标记，右侧为靶面参考。':'左侧照片、右侧靶面映射；两图可同步缩放。';
+    const needsRotation=!window.Gongxingji?.setReviewMode&&!(browserFullscreen&&window.innerWidth>window.innerHeight);
+    setCompareDisplayNote(needsRotation?description+' 可横置设备查看。':description);
+   }
   async function exitSplitCompare(){setCompareFullscreen(false);setCompareDisplayNote('');setAdding(false);setEditingPoint(false);setMarkingTarget(null);await leaveReviewDisplay();requestAnimationFrame(()=>{
    const original=returnFocus.current;
    const trigger=original?.isConnected?original:compareStage.current?.querySelector<HTMLButtonElement>('.photo-compare-open');
@@ -202,7 +224,17 @@ export function PhotoWorkspace({session,face,onBack,onDirtyChange}:{session:Sess
   function removeSelected(){if(!selected||frozen||phase!=='review')return;diagnosticActions.current.deletes++;const index=candidates.findIndex(candidate=>candidate.id===selected),next=candidates.filter(candidate=>candidate.id!==selected);recordCorrection('remove-point',next);setCandidates(next);setSelected(next[Math.min(Math.max(0,index),Math.max(0,next.length-1))]?.id??null);setEditingPoint(false);setScoreOverrides(current=>{const copy={...current};delete copy[selected];return copy;});setManualPoints(current=>{const copy={...current};delete copy[selected];return copy;});setMarkingTarget(null);setError('');}
   function overrideSelected(code:string){if(!selected||frozen||phase!=='review'||!target.allowed_score_codes.includes(code))return;diagnosticActions.current.scoreOverrides++;const points={...manualPoints};delete points[selected];recordCorrection('set-score',candidates,{...scoreOverrides,[selected]:code},points);setScoreOverrides(current=>({...current,[selected]:code}));setManualPoints(current=>{const copy={...current};delete copy[selected];return copy;});setMarkingTarget(null);setError('');}
   function restoreSelectedScore(){if(!selected||frozen||phase!=='review')return;const overrides={...scoreOverrides},points={...manualPoints};delete overrides[selected];delete points[selected];recordCorrection('restore-score',candidates,overrides,points);setScoreOverrides(current=>{const copy={...current};delete copy[selected];return copy;});setManualPoints(current=>{const copy={...current};delete copy[selected];return copy;});setMarkingTarget(null);setError('');}
-  function beginManualPosition(){if(manualReview||!reviewGeometry||!selected||frozen)return;setMarkingTarget(selected);setAdding(false);setError('');if(!compareFullscreen)void enterSplitCompare(selected);}
+  function beginManualPosition(){
+   if(manualReview||!reviewGeometry||!selected||frozen)return;
+   setMarkingTarget(selected);setAdding(false);setError('');
+   if(compareFullscreen)return;
+   setInlineLayout('target');
+   requestAnimationFrame(()=>{
+    const surface=compareStage.current?.querySelector<SVGSVGElement>('figure.media-compare-target svg');
+    surface?.scrollIntoView({block:'center',inline:'nearest'});
+    surface?.focus({preventScroll:true});
+   });
+  }
   function confirmManualPosition(point:{x:number;y:number}){const candidate=candidates.find(item=>item.id===markingTarget);if(manualReview||!reviewGeometry||!candidate||frozen)return;const code=codeOf(candidate);if(!code){setError('先核对并选择此点的环值，再确认靶面位置。');return;}try{const verified=confirmedPhotoTargetPoint(target,code,point);recordCorrection('set-target-point',candidates,scoreOverrides,{...manualPoints,[candidate.id]:verified});setManualPoints(current=>({...current,[candidate.id]:verified}));setMarkingTarget(null);setError('');setNotice('本点靶面位置已由你手动确认；其余候选仍按各自保存方式处理。');}catch(reason){setError(reason instanceof Error?reason.message:'靶面位置无法确认');}}
  async function expandCapacity(){
   if(!end||frozen||candidates.length<=remaining)return;const required=end.arrows.length+candidates.length,ticket=generation.current;
@@ -284,11 +316,32 @@ export function PhotoWorkspace({session,face,onBack,onDirtyChange}:{session:Sess
   {(diagnostic||lastReceipt)&&!(photo&&(manualReview||reviewGeometry)&&phase==='review')&&<details className="photo-diagnostic"><summary>真机测试记录（可选）</summary><p>仅导出版本、照片 SHA-256 摘要、处理尺寸、对焦/语音结果、自动几何、候选修改、映射调整和保存状态；不含照片、文件名、训练身份，也不会上传。</p><Button disabled={busy&&!diagnostic?.failure} onClick={()=>exportReceipt(lastReceipt??receipt(phase==='error'?'failed':'review'))}>{lastReceipt?'导出刚才已保存记录':'导出当前诊断记录'}</Button>{(lastReceipt??(diagnostic&&receipt(phase==='error'?'failed':'review')))?.input.sha256===null&&<small>当前环境无法计算照片摘要，其余记录仍可导出。</small>}</details>}
   {photo&&phase==='error'&&<Panel title="照片仍在，未保存成绩"><img className="manual-photo-failed-preview" src={photo.url} alt="本次未完成识别的照片"/><Button kind="primary" disabled={frozen} data-guide-target="photo-manual" onClick={()=>void beginManualReview()}>看照片手动录分</Button><p className="caption">由你逐箭核对，不重新运行识别。照片仅在当前页面暂存。</p></Panel>}
   {photo&&(manualReview||reviewGeometry)&&phase==='review'&&<Panel title={photoCandidatesOnly?'照片箭点核对':manualReview?'按照片人工核对':'识别结果核对'}>
-     <div className="photo-review-summary" data-guide-target="photo-review" role="status" data-candidate-count={candidates.length}><div><b>{photoCandidatesOnly?`待核对 ${candidates.length} 个照片箭点`:manualReview?`已标记 ${candidates.length} 箭`:`发现 ${candidates.length} 个候选`}</b><span>{manualReview?'左图标记，再逐箭选环值；右图仅作参考。':<>靶面手动定位 {manualCount}/{candidates.length} 点 · {reviewOpened?'已查看左右对照':inlineLayout==='target'?'正在查看映射参考':'已显示标记照片'}</>}</span></div><p>{photoCandidatesOnly?photoCandidateSourceNotice(diagnostic?.inference?.initialCandidates??[],candidates):manualReview?'自动识别未完成，不生成靶面落点；确认环值后保存。':manualCount?`其中 ${manualCount} 点已逐个在靶面定位；未定位点仍按所选方式保存。`:photoSaveModeNotice(saveCoordinates)}</p></div>
+    <div className="photo-review-summary" role="status" data-candidate-count={candidates.length}>
+     <div><b>{photoCandidatesOnly?`待核对 ${candidates.length} 个照片箭点`:manualReview?`已标记 ${candidates.length} 箭`:`发现 ${candidates.length} 个候选`}</b>
+      <span>{manualReview?'逐箭核对环值':`靶面手动定位 ${manualCount}/${candidates.length} 点`}</span>
+     </div>
+     <p>{photoCandidatesOnly?photoCandidateSourceNotice(diagnostic?.inference?.initialCandidates??[],candidates):manualReview?'自动识别未完成，不生成靶面落点；确认环值后保存。':manualCount?`其中 ${manualCount} 点已逐个在靶面定位；未定位点仍按所选方式保存。`:photoSaveModeNotice(saveCoordinates)}</p>
+    </div>
     {photoCandidatesOnly&&diagnostic?.targetLocationIssue==='ambiguous-target'&&<p role="alert">主靶不唯一，照片候选可能来自不同靶位；请删除其他靶位、旧箭或其他组的点。</p>}
     {photoCandidatesOnly&&diagnostic?.previewUnavailable&&<p role="status">清晰预览暂未生成，已保留当前照片和候选；看不清的箭请更换照片，勿猜测环值。</p>}
     <div ref={compareStage} className={`photo-compare-stage${compareFullscreen?' photo-compare-fullscreen':''}${compareFullscreen&&!fullscreenToolsOpen?' photo-tools-collapsed':''}`} role={compareFullscreen?'dialog':undefined} aria-modal={compareFullscreen||undefined} aria-label={compareFullscreen?(manualReview?'全屏实际照片与靶面参考左右对照':'全屏实际照片与映射参考左右对照'):undefined}>
-     {!compareFullscreen?<div className="photo-result-view"><div className="photo-result-controls" role="group" aria-label="照片核对视图">{manualReview?<Button disabled={frozen} kind={adding?'selected':undefined} aria-pressed={adding} data-guide-target={!adding&&!candidates.length?'photo-missing-point':undefined} onClick={toggleAdding}>{adding?'完成标记':'标记一箭'}</Button>:<><Button kind={inlineLayout==='photo'?'selected':''} aria-pressed={inlineLayout==='photo'} onClick={()=>setInlineLayout('photo')}>实际照片</Button><Button kind={inlineLayout==='target'?'selected':''} aria-pressed={inlineLayout==='target'} onClick={()=>setInlineLayout('target')}>映射参考 <small>实验</small></Button></>}<Button kind="primary" className="photo-compare-open" data-guide-target={!manualReview&&!candidates.length?'photo-missing-point':undefined} onClick={()=>void enterSplitCompare()}>全屏对照</Button></div><p className="photo-mapping-note">{manualReview?'在左侧照片点选箭位，按下方环值逐箭核对。可打开全屏放大；不会写入右侧靶面坐标。':inlineLayout==='photo'?'点选候选，在下方核对环值；需要移动或补点时打开全屏对照。':'映射可能偏移；压线仍以实际照片人工判断。'}</p><PhotoComparison photo={photo} geometry={reviewGeometry} radiusRatio={radiusRatio} target={target} candidates={candidates} selected={selected} adding={manualReview&&adding} frozen={frozen} layout={manualReview?'split':inlineLayout} showAlignment={false} showZoomControls={manualReview} onSelect={selectCandidate} onAdd={addPoint} manualPoints={confirmedManualPoints} markingCandidateId={markingTarget} onTargetPoint={confirmManualPosition}/></div>:<><header className="photo-fullscreen-toolbar"><div className="photo-fullscreen-title"><b>{manualReview?'实际照片与靶面参考':'实际照片与映射对照'}</b><span>{markingTarget?'请点右侧靶面确认选中点位置；环值须一致。':compareDisplayNote||'正在打开左右对照…'}</span></div><Button className="photo-fullscreen-toggle" aria-expanded={fullscreenToolsOpen} onClick={()=>setFullscreenToolsOpen(value=>{const next=!value;if(!next){setAdding(false);setEditingPoint(false);setMarkingTarget(null);}return next;})}>{fullscreenToolsOpen?'收起工具':'展开工具'}</Button><Button kind="primary" onClick={()=>void exitSplitCompare()}>退出全屏</Button></header><PhotoComparison photo={photo} geometry={reviewGeometry} radiusRatio={radiusRatio} target={target} candidates={candidates} selected={editingPoint?selected:null} adding={adding} frozen={frozen} layout="split" showAlignment={false} onSelect={selectCandidate} onAdd={addPoint} manualPoints={confirmedManualPoints} markingCandidateId={markingTarget} onTargetPoint={confirmManualPosition}/></>}
+     {!compareFullscreen?<div className="photo-result-view" data-guide-photo-view={inlineLayout}>
+      <div className="photo-result-controls" role="group" aria-label="照片核对视图">
+       <Button kind={inlineLayout==='target'?'selected':''} aria-pressed={inlineLayout==='target'} onClick={()=>selectInlineView('target')}>靶面</Button>
+       <Button kind={inlineLayout==='photo'?'selected':''} aria-pressed={inlineLayout==='photo'} data-guide-target={!actualPhotoOpened?'photo-review':undefined} onClick={()=>selectInlineView('photo')}>实际照片</Button>
+       <Button className="photo-compare-open" onClick={()=>void enterSplitCompare()}>横屏放大</Button>
+      </div>
+      {actualPhotoOpened&&<div className="photo-inline-actions">
+       <Button disabled={frozen} kind={adding?'selected':''} aria-pressed={adding} data-guide-target={!adding&&!candidates.length?'photo-missing-point':undefined} onClick={toggleInlineAdding}>
+        {adding?(manualReview?'完成标记':'完成补点'):(manualReview?'标记一箭':'补漏点')}
+       </Button>
+       {adding&&<span role="status">{manualReview?'点照片标记箭位，再选环值。':'点实际照片补上漏点，再核对环值。'}</span>}
+      </div>}
+      {inlineLayout==='target'&&<p className="photo-mapping-note" role="status">
+       {markingTarget?'点靶面确认选中点的位置，须与已核对环值一致。':manualReview?'当前靶面供参考。切换到实际照片核对箭位和环值。':'落点为映射参考，压线请切到实际照片核对。'}
+      </p>}
+      <PhotoComparison photo={photo} geometry={reviewGeometry} radiusRatio={radiusRatio} target={target} candidates={candidates} selected={selected} adding={inlineLayout==='photo'&&adding} frozen={frozen} layout={inlineLayout} showAlignment={false} showZoomControls={inlineLayout==='photo'} onSelect={selectCandidate} onAdd={addPoint} manualPoints={confirmedManualPoints} markingCandidateId={markingTarget} onTargetPoint={confirmManualPosition}/>
+     </div>:<><header className="photo-fullscreen-toolbar"><div className="photo-fullscreen-title"><b>{manualReview?'实际照片与靶面参考':'实际照片与映射对照'}</b><span>{markingTarget?'请点右侧靶面确认选中点位置；环值须一致。':compareDisplayNote||'正在打开左右对照…'}</span></div><Button className="photo-fullscreen-toggle" aria-expanded={fullscreenToolsOpen} onClick={()=>setFullscreenToolsOpen(value=>{const next=!value;if(!next){setAdding(false);setEditingPoint(false);setMarkingTarget(null);}return next;})}>{fullscreenToolsOpen?'收起工具':'展开工具'}</Button><Button kind="primary" onClick={()=>void exitSplitCompare()}>退出全屏</Button></header><PhotoComparison photo={photo} geometry={reviewGeometry} radiusRatio={radiusRatio} target={target} candidates={candidates} selected={editingPoint?selected:null} adding={adding} frozen={frozen} layout="split" showAlignment={false} onSelect={selectCandidate} onAdd={addPoint} manualPoints={confirmedManualPoints} markingCandidateId={markingTarget} onTargetPoint={confirmManualPosition}/></>}
      {compareFullscreen&&<>
       {fullscreenToolsOpen&&editingPoint&&selectedCandidate&&!adding&&!markingTarget&&<PhotoReviewNudge disabled={frozen} step={nudgeStep} onStep={setNudgeStep} onNudge={nudgeSelected}/>}
       <footer className="photo-fullscreen-editbar" aria-label="全屏落点编辑">
@@ -308,7 +361,7 @@ export function PhotoWorkspace({session,face,onBack,onDirtyChange}:{session:Sess
       </footer>
      </>}
    </div>
-   <div className="photo-score-review"><b>{manualReview?'人工环值 · 逐箭选择':'候选环值 · 点选核对'}</b><div className="auto-photo-scores" aria-label="候选参考环值和保存顺序">{orderedCandidates.map((c,index)=><Button key={c.id} disabled={frozen} aria-pressed={editingPoint&&selected===c.id} kind={editingPoint&&selected===c.id?'selected':''} onClick={()=>selectCandidate(c.id)}>{index+1} · {label(c)}</Button>)}</div>{!compareFullscreen&&selectedCandidate&&<div className="photo-inline-score-editor" role="group" aria-label="选中候选核对"><label>第 {selectedOrderIndex+1} 点 · 环值<ChoiceSelect key={selectedCandidate.id} className="photo-ring-trigger" aria-label="选中候选环值" value={codeOf(selectedCandidate)??''} disabled={frozen} onChange={event=>overrideSelected(event.target.value)}><option value="" disabled>选择环值</option>{target.allowed_score_codes.map(code=><option key={code} value={code}>{code==='M'?'M · 脱靶':code==='X'?'X · 内十环':code+' 环'}</option>)}</ChoiceSelect></label><div className="photo-inline-score-actions">{!manualReview&&scoreOverrides[selectedCandidate.id]&&<Button disabled={frozen} onClick={restoreSelectedScore}>恢复识别环值</Button>}<Button disabled={frozen} onClick={removeSelected}>删除错点</Button></div><p role="status">{scoreOverrides[selectedCandidate.id]?'已更正候选，确认加入后才保存到本组。':'请对照照片核对；修改不会立即写入本组。'}</p></div>}<p className="caption">{manualReview?'未选环值不能保存，未知箭不要记成 M。序号是保存顺序。':'自动环值供参考；压线请按照片核对。序号是保存顺序，修改后会在这里更新。'}</p>{!manualReview&&<><Button disabled={!selectedCandidate||frozen} onClick={beginManualPosition}>{selectedCandidate&&manualPointOf(selectedCandidate)?'重标选中点靶面位置':'在靶面确认选中点位置'}</Button><p className="caption">在右侧靶面逐点点击才会标为人工定位；未定位候选仍可只存环值。自动映射点只是参考。</p></>}</div>
+   <div className="photo-score-review"><b>{manualReview?'人工环值 · 逐箭选择':'候选环值 · 点选核对'}</b><div className="auto-photo-scores" aria-label="候选参考环值和保存顺序">{orderedCandidates.map((c,index)=><Button key={c.id} disabled={frozen} aria-pressed={editingPoint&&selected===c.id} kind={editingPoint&&selected===c.id?'selected':''} onClick={()=>selectCandidate(c.id)}>{index+1} · {label(c)}</Button>)}</div>{!compareFullscreen&&selectedCandidate&&<div className="photo-inline-score-editor" role="group" aria-label="选中候选核对"><label>第 {selectedOrderIndex+1} 点 · 环值<ChoiceSelect key={selectedCandidate.id} className="photo-ring-trigger" aria-label="选中候选环值" value={codeOf(selectedCandidate)??''} disabled={frozen} onChange={event=>overrideSelected(event.target.value)}><option value="" disabled>选择环值</option>{target.allowed_score_codes.map(code=><option key={code} value={code}>{code==='M'?'M · 脱靶':code==='X'?'X · 内十环':code+' 环'}</option>)}</ChoiceSelect></label><div className="photo-inline-score-actions">{!manualReview&&scoreOverrides[selectedCandidate.id]&&<Button disabled={frozen} onClick={restoreSelectedScore}>恢复识别环值</Button>}<Button disabled={frozen} onClick={removeSelected}>删除错点</Button></div><p role="status">{scoreOverrides[selectedCandidate.id]?'已更正候选，确认加入后才保存到本组。':'请对照照片核对；修改不会立即写入本组。'}</p></div>}<p className="caption">{manualReview?'未选环值不能保存，未知箭不要记成 M。序号是保存顺序。':'自动环值供参考；压线请按照片核对。序号是保存顺序，修改后会在这里更新。'}</p>{!manualReview&&<><Button disabled={!selectedCandidate||frozen} onClick={beginManualPosition}>{selectedCandidate&&manualPointOf(selectedCandidate)?'重标选中点靶面位置':'在靶面确认选中点位置'}</Button><p className="caption">在靶面逐点确认位置。其余候选可只存环值。</p></>}</div>
     {candidates.some(c=>outside(c)&&!recordable(c))&&<p role="status">有点按自动映射离靶较远：未逐点在靶面定位时仅保存无坐标 M；误点请删除。</p>}
     {uncertain&&<div className="photo-save-retry" role="alert"><Button kind="primary" onClick={()=>void retryBatch()}>重试保存这批</Button><span>重试使用同一批标识，不会重复加入。</span></div>}
    {candidates.length>remaining&&<div className="photo-capacity-alert" role="alert"><p>候选比本组剩余位置多 {candidates.length-remaining} 个。请选择保存方式；尚未改动正式成绩。</p>{!manualReview&&Boolean(end?.arrows.length)&&<Button disabled={frozen||!!nextEndIssue||!candidatesSaveable} onClick={()=>void save('next')}>保存上一组，候选加入下一组</Button>}<Button disabled={frozen} onClick={()=>void expandCapacity()}>扩大本组至 {(end?.arrows.length??0)+candidates.length} 箭</Button><span>{nextEndIssue&&end?.arrows.length?nextEndIssue:'若其中有误点，可选中删除后再保存。'}</span></div>}

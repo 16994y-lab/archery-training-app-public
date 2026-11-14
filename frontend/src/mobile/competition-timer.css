@@ -32,19 +32,29 @@
 .competition-cast-options h3, .competition-cast-options p { margin:0; }
 .competition-cast-options label { display:grid; gap:4px; }
 .competition-cast-options input { width:100%; padding:10px; border:1px solid var(--gx-line,#d7e3f0); border-radius:10px; font-size:14px; }
+.timer-pair-scanner, .timer-pair-scanner form { display:grid; gap:10px; }
+.timer-pair-scanner video { width:100%; max-height:42dvh; border-radius:12px; background:#101c30; }
+.timer-online-pair, .competition-timer-remote { width:100%; max-width:none; }
+.timer-online-pair { min-height:100dvh; display:grid; place-items:center; padding:24px; background:#101c30; color:#fff; }
+.timer-online-pair section { width:min(100%,640px); display:grid; justify-items:center; gap:14px; text-align:center; }
+.timer-online-pair p, .timer-online-pair h1 { margin:0; }
+.timer-online-pair h1 { color:inherit; }
+.timer-online-pair img { width:min(70vw,320px); height:auto; border-radius:12px; }
+.timer-online-pair code { overflow-wrap:anywhere; }
+.timer-online-display { position:relative; }
+.timer-online-hint { position:absolute; right:16px; bottom:12px; margin:0; color:#fff; background:#101c30; padding:6px 10px; border-radius:6px; }
+.timer-connection-label { align-self:center; font-weight:700; }
 .competition-timer-display .button { min-height:44px; }
 .competition-timer-time { align-self:center; font-size:clamp(48px,17vw,130px); line-height:1; font-weight:800; font-variant-numeric:tabular-nums; letter-spacing:.015em; }
 .competition-timer-stage { color:var(--timer-accent); font-size:clamp(18px,4vw,30px); font-weight:700; }
 .competition-timer-audio { color:var(--timer-accent); margin:0; }
 .competition-timer-dialog { position:fixed; inset:0; width:100%; max-width:none; height:100%; max-height:none; margin:0; border:0; padding:0; background:#101c30; color:#fff; }
 .competition-timer-screen { min-height:100%; display:grid; background:#101c30; }
+.competition-timer-remote { min-height:100dvh; padding:0; }
+.training-shortcuts > .training-timer-link {grid-column:1 / -1}
 .competition-timer-screen .competition-timer-display { min-height:100%; border-radius:0; padding:clamp(12px,3vw,36px); }
 .competition-timer-screen .competition-timer-time { font-size:clamp(48px,min(26vw,43vh),400px); }
 .competition-timer-screen .competition-timer-stage { font-size:clamp(20px,min(5vw,10vh),74px); }
 @media(min-width:680px) {
  .competition-timer-options { grid-template-columns:repeat(3,minmax(0,1fr)); }
 }
-
-.training-shortcuts > .training-timer-link {grid-column:1 / -1}
-
-.competition-timer-remote { width:100%; max-width:none; min-height:100dvh; padding:0; }

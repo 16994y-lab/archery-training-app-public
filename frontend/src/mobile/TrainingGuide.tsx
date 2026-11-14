@@ -17,8 +17,10 @@ const labels={
  'number-input':{number:7,title:'数字录入',hint:'点这一箭的环值。X、10 和 M 分别选对应按键。'},
  'photo-mode':{number:8,title:'照片录入',hint:'点「照片录入」，用靶面照片记录下一箭。'},
  'photo-import':{number:8,title:'导入靶面照片',hint:'拍摄本组靶面，或从相册选择一张清晰照片。'},
- 'photo-review':{number:8,title:'核对照片环值',hint:'对照实际照片核对候选。删掉误点、核对环值，再确认加入。'},
- 'photo-missing-point':{number:8,title:'补记漏掉的一箭',hint:'若照片上确实有漏检的箭，打开「全屏对照」后用「补漏点」。人工核对时可直接标记。'},
+ 'camera-reopen':{number:8,title:'重新开启相机',hint:'如果刚在系统弹窗点了允许，点「重新开启相机」继续。也可以从相册选图。'},
+ 'camera-shutter':{number:8,title:'拍下本组靶面',hint:'对准主靶，等画面清晰后点「拍摄照片」。'},
+ 'photo-review':{number:8,title:'查看实际照片',hint:'当前显示大靶。点「实际照片」核对这一组的箭，必要时再点「横屏放大」。'},
+ 'photo-missing-point':{number:8,title:'补记漏掉的一箭',hint:'照片上确实有漏记的箭时，点高亮的按钮，然后在实际照片上标记。'},
  'photo-unsupported':{number:8,title:'当前靶型不支持照片录入',hint:'可以跳过引导并继续手动记分。想练习照片录入时，请用支持的靶型另开训练。'},
  'photo-confirm':{number:8,title:'确认照片成绩',hint:'确认环值和箭数准确后，把成绩加入本组。'},
  'photo-manual':{number:8,title:'手动核对照片',hint:'可以手动标记照片上的箭，选择实际环值后确认。'},
@@ -33,7 +35,7 @@ const targetOrder:Partial<Record<GuideTarget,GuideTarget[]>>={
  'choose-target':['choose-target-option','choose-target'],
  'target-input':['target-input','target-mode'],
  'number-input':['number-input','number-mode'],
- 'photo-import':['photo-unsupported','photo-manual','photo-confirm','photo-missing-point','photo-review','photo-import','photo-mode'],
+ 'photo-import':['camera-reopen','camera-shutter','photo-unsupported','photo-manual','photo-review','photo-confirm','photo-missing-point','photo-import','photo-mode'],
 };
 
 const sessionKey=(owner:string)=>'gongxingji-training-guide-session-v1:'+owner;
@@ -105,45 +107,54 @@ export function useTrainingGuide(owner:string|null,allowed:boolean,scene:string,
 }
 
 export function TrainingGuide({step,paused,onSkip}:{step:GuideStep|SetupGuideStep|null;paused:boolean;onSkip:()=>void}){
- const [spot,setSpot]=useState<{step:GuideTarget;marker:GuideTarget;x:number;y:number;width:number;height:number;floor:number;inDialog:boolean}|null>(null);
+ const [spot,setSpot]=useState<{step:GuideTarget;marker:GuideTarget;x:number;y:number;width:number;height:number;floor:number;inDialog:boolean;outsideRight:number;overlayRoot:Element}|null>(null);
  const [cardSize,setCardSize]=useState({width:0,height:0});
  const [card,setCard]=useState<HTMLElement|null>(null);
 
  useLayoutEffect(()=>{
   if(!step||paused){setSpot(null);return;}
-  let frame=0,anchor:Element|null=null,alive=true,settleUntil=performance.now()+450;
+  let frame=0,anchor:Element|null=null,alive=true,settleUntil=0;
   const markers=targetOrder[step]??[step];
   const measure=()=>{
    if(!alive)return;
    const dialogs=Array.from(document.querySelectorAll('[role="dialog"][aria-modal="true"],dialog[open]')).filter(node=>node.getClientRects().length);
    const dialog=dialogs[dialogs.length-1];
    const root=dialog??document.querySelector('main.gx-page');
+   const overlayRoot=document.fullscreenElement??document.body;
    const marker=markers.find(name=>root?.querySelector(`[data-guide-target="${name}"]`)?.getClientRects().length);
    const target=marker&&root?.querySelector(`[data-guide-target="${marker}"]`);
-   if(!target||!marker){setSpot(null);return;}
+   if(!target||!marker){anchor=null;setSpot(null);return;}
    const viewport=window.visualViewport?.height??window.innerHeight;
    const footer=document.querySelector('.app-tabbar')?.getBoundingClientRect();
    const floor=!dialog&&footer&&footer.height>0?Math.min(viewport,footer.top):viewport;
+   const reviewingPhoto=marker==='photo-confirm'&&root?.querySelector('[data-guide-photo-view="photo"]');
    let rect=target.getBoundingClientRect();
    if(anchor!==target){
     anchor=target;
-    settleUntil=performance.now()+450;
+    settleUntil=performance.now()+500;
    }
-   if(performance.now()<settleUntil&&(rect.top<12||rect.bottom>floor-16)&&rect.height<floor-30){
+   if(!reviewingPhoto&&performance.now()<settleUntil&&(!dialog||rect.top<floor)&&
+    (rect.top<12||rect.bottom>floor-16)&&rect.height<floor-30){
     target.scrollIntoView({block:'center',inline:'nearest',behavior:'instant'});
     rect=target.getBoundingClientRect();
    }
    const {left:x,top:y,width,height}=rect;
-   setSpot(previous=>previous?.step===step&&previous.marker===marker&&previous.x===x&&previous.y===y&&previous.width===width&&previous.height===height&&previous.floor===floor&&previous.inDialog===!!dialog?previous:{step,marker,x,y,width,height,floor,inDialog:!!dialog});
+   if(performance.now()<settleUntil)frame=requestAnimationFrame(measure);
+   if(y+height<=0||y>=floor||reviewingPhoto&&(y<0||y+height>floor)){setSpot(null);return;}
+   const row=['camera-reopen','camera-shutter','photo-review','photo-confirm','photo-missing-point'].includes(marker)?target.parentElement:null;
+   const rowRect=row?.getBoundingClientRect();
+   const outsideRight=rowRect?rowRect.right:x+width;
+   setSpot(previous=>previous?.step===step&&previous.marker===marker&&previous.x===x&&previous.y===y&&previous.width===width&&previous.height===height&&previous.floor===floor&&previous.inDialog===!!dialog&&previous.outsideRight===outsideRight&&previous.overlayRoot===overlayRoot?previous:{step,marker,x,y,width,height,floor,inDialog:!!dialog,outsideRight,overlayRoot});
   };
   const schedule=()=>{cancelAnimationFrame(frame);frame=requestAnimationFrame(measure);};
   const main=document.querySelector('main.gx-page');
   const changes=new MutationObserver(schedule);
-  changes.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['data-guide-target']});
+  changes.observe(document.body,{childList:true,subtree:true,attributes:true,attributeFilter:['data-guide-target','disabled','aria-modal']});
   const resize=new ResizeObserver(schedule);
   if(main)resize.observe(main);
   window.addEventListener('scroll',schedule,true);
   window.addEventListener('resize',schedule);
+  document.addEventListener('fullscreenchange',schedule);
   window.visualViewport?.addEventListener('resize',schedule);
   // Wait for the page's normal navigation scroll restoration before focusing the control.
   frame=requestAnimationFrame(schedule);
@@ -152,6 +163,7 @@ export function TrainingGuide({step,paused,onSkip}:{step:GuideStep|SetupGuideSte
    alive=false;cancelAnimationFrame(frame);window.clearTimeout(settled);changes.disconnect();resize.disconnect();
    window.removeEventListener('scroll',schedule,true);
    window.removeEventListener('resize',schedule);
+   document.removeEventListener('fullscreenchange',schedule);
    window.visualViewport?.removeEventListener('resize',schedule);
   };
  },[step,paused]);
@@ -170,9 +182,10 @@ export function TrainingGuide({step,paused,onSkip}:{step:GuideStep|SetupGuideSte
  const usableBottom=spot.floor-margin;
  const below=spot.y+spot.height+gap;
  const above=spot.y-cardSize.height-gap;
- const top=below+cardSize.height<=usableBottom?below:Math.max(margin,above);
  const width=cardSize.width||Math.min(300,window.innerWidth-2*margin);
- const left=Math.max(margin,Math.min(spot.x+(spot.width-width)/2,window.innerWidth-width-margin));
+ const beside=above<margin&&below+cardSize.height>usableBottom&&spot.outsideRight+gap+width<=window.innerWidth-margin;
+ const top=beside?Math.max(margin,Math.min(spot.y,usableBottom-cardSize.height)):below+cardSize.height<=usableBottom?below:Math.max(margin,above);
+ const left=beside?spot.outsideRight+gap:Math.max(margin,Math.min(spot.x+(spot.width-width)/2,window.innerWidth-width-margin));
  return createPortal(<div className="training-guide-layer" data-in-dialog={spot.inDialog||undefined}>
   <div className="training-guide-window" aria-hidden="true" style={{left:spot.x-5,top:spot.y-5,width:spot.width+10,height:spot.height+10}}/>
   <aside ref={setCard} className="training-guide-card" data-guide-step={spot.marker} aria-label="实操引导" style={{left,top}}>
@@ -182,5 +195,5 @@ export function TrainingGuide({step,paused,onSkip}:{step:GuideStep|SetupGuideSte
    </div>
    <p key={spot.marker} role="status">{content.hint}</p>
   </aside>
- </div>,document.body);
+ </div>,spot.overlayRoot);
 }

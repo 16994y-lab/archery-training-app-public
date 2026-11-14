@@ -238,5 +238,8 @@ function StartConfiguration({plan,guided,blocked,onCancel,onSkipGuide,onStart}:{
 }
 if(!offlineAndroid)window.addEventListener('hashchange',redirectAuthReturn);
 const displayKey=competitionDisplayKey(location.hash);
-if(displayKey)createRoot(document.getElementById('root')!).render(<CompetitionDisplay displayKey={displayKey}/>);
+if(!offlineAndroid&&!window.Gongxingji&&location.hash==='#/timer-display')void import('./OnlineCompetitionDisplay').then(({OnlineCompetitionDisplay})=>{
+ createRoot(document.getElementById('root')!).render(<ErrorBoundary><ConfigProvider><OnlineCompetitionDisplay/></ConfigProvider></ErrorBoundary>);
+});
+else if(displayKey)createRoot(document.getElementById('root')!).render(<CompetitionDisplay displayKey={displayKey}/>);
 else if(offlineAndroid||!redirectAuthReturn()) createRoot(document.getElementById('root')!).render(<ErrorBoundary><ConfigProvider><HashRouter><App/></HashRouter></ConfigProvider></ErrorBoundary>);

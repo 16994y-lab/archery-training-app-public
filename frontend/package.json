@@ -11,13 +11,14 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "npm run build:legacy && npm run build:workspace",
+    "build": "npm run build:legacy && npm run build:mobile && npm run build:workspace && node ../scripts/package-web-next.cjs && node ../scripts/package-team-workspace.cjs",
     "preview": "vite preview",
     "check:mobile": "tsc -p tsconfig.mobile.json --noEmit",
-    "build:android-offline": "npm run check:mobile && vite build --config vite.android-offline.config.ts",
+    "build:mobile": "npm run check:mobile && vite build --config vite.mobile.config.ts",
     "build:legacy": "tsc -b && vite build",
     "check:workspace": "tsc -p tsconfig.workspace.json --noEmit",
-    "build:workspace": "npm run check:workspace && vite build --config vite.workspace.config.ts"
+    "build:workspace": "npm run check:workspace && vite build --config vite.workspace.config.ts",
+    "build:team-web": "npm run build:mobile && npm run build:workspace && node ../scripts/package-web-next.cjs && node ../scripts/package-team-workspace.cjs"
   },
   "dependencies": {
     "antd-mobile": "5.42.3",
@@ -26,7 +27,9 @@
     "react-dom": "^18.3.1",
     "react-router-dom": "7.18.3",
     "@use-gesture/react": "10.3.0",
-    "fflate": "0.8.3"
+    "fflate": "0.8.3",
+    "jsqr": "1.4.0",
+    "qrcode-generator": "1.4.4"
   },
   "devDependencies": {
     "@types/react": "^18.3.3",

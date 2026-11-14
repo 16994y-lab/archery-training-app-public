@@ -68,7 +68,9 @@
 .photo-result-view { display: grid; gap: 8px; }
 .photo-result-controls { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
 .photo-result-controls .button { min-width: 0; min-height: 44px; padding: 6px 3px; font-size: 12px; }
-.photo-result-controls small { font-size: 9px; opacity: .72; }
+.photo-inline-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; color: var(--ui-muted,#52697e); font-size: 12px; }
+.photo-inline-actions .button { min-height: 44px; border-radius: 10px; padding: 6px 12px; }
+.photo-inline-actions + .media-zoom-tools { margin-block-start: 0; }
 .photo-mapping-note { margin: 0; color: #60778b; font-size: 11px; line-height: 1.4; }
 .photo-review-summary { display: grid; gap: 3px; margin-bottom: 7px; padding: 8px 10px; border: 1px solid var(--surface-stroke,#bfd2e5); border-radius: 14px; background: var(--surface-soft,#f5f9fd); box-shadow: var(--card-shadow,0 4px 16px #164b8305); }
 .photo-review-summary>div { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }

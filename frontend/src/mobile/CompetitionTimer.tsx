@@ -2,8 +2,12 @@ import {useEffect,useMemo,useRef,useState} from 'react';
 import {Back,Button,Modal,Panel,useInnerBack} from './ui';
 import {ChoiceSelect} from './ChoiceSelect';
 import {advancedView,startAdvanced,updateAdvanced,type AdvancedMode,type AdvancedTiming,type Side} from './advanced-timing-engine';
-import {createTimerSound,type TimerSignal as SoundKind} from './timer-sound';
 import {displayChannelName,type CompetitionDisplayFrame} from './CompetitionDisplay';
+import {createTimerSound,type TimerSignal as SoundKind} from './timer-sound';
+import {timerDisplayAvailable,timerDisplayWebsite,type OnlineTimerFrame,type TimerSignal} from './online-timer-display';
+import {useOnlineTimerDisplay} from './use-online-timer-display';
+import {TimerPairScanner} from './TimerPairScanner';
+import {offlineAndroid} from './release-mode';
 import './competition-timer.css';
 
 const presets=[
@@ -34,14 +38,25 @@ export function CompetitionTimer({onBack}:{onBack:()=>void}){
  const [mode,setMode]=useState<'standard'|AdvancedMode>('standard'),[firstSide,setFirstSide]=useState<Side>('A');
  const [match,setMatch]=useState<AdvancedTiming|null>(null),[clock,setClock]=useState(0);
  const [projection,setProjection]=useState(false),[soundError,setSoundError]=useState(false),[phoneSound,setPhoneSound]=useState(true);
- const [browserReceiver,setBrowserReceiver]=useState('');
  const [displayKey,setDisplayKey]=useState<string|null>(null),[displayBlocked,setDisplayBlocked]=useState(false);
+ const [browserReceiver,setBrowserReceiver]=useState('');
  const [castMenu,setCastMenu]=useState(false),[browserDisplay,setBrowserDisplay]=useState(''),[castMessage,setCastMessage]=useState('');
+ const [onlineAvailable,setOnlineAvailable]=useState<boolean|null>(null);
  const countdown=useRef<Countdown|null>(null);
  const matchRef=useRef<AdvancedTiming|null>(null);
  const sound=useMemo(createTimerSound,[]);
  const phoneSoundRef=useRef(true);
- const latestSignal=useRef<{at:number}|null>(null);
+ const latestSignal=useRef<{value:TimerSignal;at:number}|null>(null),signalId=useRef(0);
+ const onlineFrame=useRef<{frame:OnlineTimerFrame;cueExpiresAt:number}|null>(null);
+ const online=useOnlineTimerDisplay(onlineFrame);
+ const onlineActive=['waiting','connected','retrying'].includes(online.state);
+ useEffect(()=>{
+  if(!castMenu||offlineAndroid||window.Gongxingji)return;
+  let current=true;
+  setOnlineAvailable(null);
+  void timerDisplayAvailable().then(ready=>{if(current)setOnlineAvailable(ready);});
+  return ()=>{current=false;};
+ },[castMenu]);
  const dialog=useRef<HTMLDialogElement>(null),screen=useRef<HTMLDivElement>(null);
  const browserAddress=useRef<HTMLInputElement>(null);
  const nativeProjection=useRef(false),browserFullscreen=useRef(false);
@@ -55,7 +70,7 @@ export function CompetitionTimer({onBack}:{onBack:()=>void}){
  const valid=Number.isInteger(arrows)&&arrows>=1&&arrows<=72&&Number.isInteger(duration)&&duration>=1&&duration<=600;
 
  function emitSignal(kind:SoundKind,gesture=false){
-  const event={at:performance.now()};
+  const event={value:{id:String(++signalId.current),kind},at:performance.now()};
   latestSignal.current=event;
   if(!phoneSoundRef.current)return;
   if(gesture){
@@ -145,7 +160,7 @@ export function CompetitionTimer({onBack}:{onBack:()=>void}){
  },[active,advanced,duration]);
 
  useEffect(()=>{
-  if(!(active||projection||browserDisplay)||!navigator.wakeLock)return;
+  if(!(active||projection||browserDisplay||onlineActive)||!navigator.wakeLock)return;
   let alive=true,pending=false,lock:WakeLockSentinel|undefined;
   async function keepAwake(){
    if(document.hidden||pending||(lock&&!lock.released))return;
@@ -160,7 +175,7 @@ export function CompetitionTimer({onBack}:{onBack:()=>void}){
   void keepAwake();
   document.addEventListener('visibilitychange',keepAwake);
   return ()=>{alive=false;document.removeEventListener('visibilitychange',keepAwake);void lock?.release().catch(()=>{});};
- },[active,projection,browserDisplay]);
+ },[active,projection,browserDisplay,onlineActive]);
 
  function closeProjection(){
   browserFullscreen.current=false;
@@ -210,12 +225,15 @@ export function CompetitionTimer({onBack}:{onBack:()=>void}){
  displayFrame.current={stage,label:stageLabel,clocks:advanced&&matchView&&stage!=='prepare'?
   (['A','B'] as const).map(side=>({name:side+' 方',time:formatTime(matchView.seconds[side]),active:side===matchView.activeSide})):
   [{name:'剩余时间',time:formatTime(advanced?matchView?.prepareSeconds??10:shown),active:false}]};
+ const cue=latestSignal.current;
+ onlineFrame.current={frame:{...displayFrame.current,signal:cue?.value??null},cueExpiresAt:cue?cue.at+1400:0};
  useEffect(()=>{
   if(!displayKey)return;
   const channel=new BroadcastChannel(displayChannelName(displayKey));
   const timer=window.setInterval(()=>channel.postMessage(displayFrame.current),250);
   return ()=>{window.clearInterval(timer);channel.close();};
  },[displayKey]);
+
  useEffect(()=>{
   if(!browserDisplay||!android)return;
   const expired=()=>{
@@ -272,7 +290,6 @@ export function CompetitionTimer({onBack}:{onBack:()=>void}){
   popup.location.replace(address.href);
   setDisplayKey(key);setDisplayBlocked(false);
  }
-
  function display(big:boolean){
   return <div className="competition-timer-display" data-stage={stage}>
    <div className="competition-timer-display-head">
@@ -293,6 +310,7 @@ export function CompetitionTimer({onBack}:{onBack:()=>void}){
     {active?<>{advanced&&stage==='shoot'&&<Button kind="primary" onClick={()=>advanceMatch('confirm')}>确认已发射一箭</Button>}<Button onClick={stop}>停止发射</Button></>:stage==='stopped'?<Button kind="primary" onClick={score}>计分取箭</Button>:<Button kind="primary" onClick={start} disabled={!advanced&&!valid}>{stage==='scoring'?'开始下一组':'开始准备'}</Button>}
    </div>
    {soundError&&<p className="competition-timer-audio">声音不可用，请查看屏幕状态。</p>}
+   {!big&&online.state!=='idle'&&<p className="competition-timer-cast-help" role="status">{online.state==='connected'?'在线大屏已连接。':online.message||'正在连接在线大屏。'}</p>}
    {!big&&browserDisplay&&<p className="competition-timer-cast-help" role="status">浏览器大屏已开启。投影大屏菜单内可查看地址或关闭。</p>}
   </div>;
  }
@@ -331,6 +349,18 @@ export function CompetitionTimer({onBack}:{onBack:()=>void}){
    <div className="competition-cast-options">
     {!android&&'BroadcastChannel' in window&&typeof crypto.randomUUID==='function'&&<Button onClick={openSecondaryDisplay}>打开电脑副屏</Button>}
     {displayBlocked&&<p role="status">浏览器拦截了副屏窗口，请允许弹出窗口后重试。</p>}
+    {!offlineAndroid&&!window.Gongxingji&&onlineAvailable===null&&!onlineActive&&<p role="status">正在检查在线大屏…</p>}
+    {!offlineAndroid&&!window.Gongxingji&&onlineAvailable===false&&!onlineActive&&<p role="status">在线大屏暂不可用。可使用本机或同 Wi-Fi 投影。</p>}
+    {(onlineAvailable||onlineActive)&&<>
+    <h3>扫码连接在线大屏</h3>
+    <p>电脑接投影仪，在浏览器打开固定网页。手机和电脑都能上网即可。</p>
+    <p><code>{timerDisplayWebsite}</code></p>
+    {online.state==='waiting'||online.state==='connected'||online.state==='retrying'?<>
+     <p role="status">{online.state==='connected'?'在线大屏已连接。':online.message||'正在连接在线大屏。'}</p>
+     <Button onClick={online.disconnect}>断开在线大屏</Button>
+    </>:<TimerPairScanner onCode={code=>void online.connect(code)} busy={online.state==='pairing'}/>}
+    {online.state==='idle'&&online.message&&<p role="status">{online.message}</p>}
+    </>}
     {android?.startTimerBrowserDisplay&&<>
      <h3>同 Wi-Fi 浏览器大屏</h3>
      <p>手机保持在计时页。用电视浏览器，或用连接投影仪的电脑浏览器，打开下方完整的 http 地址。</p>

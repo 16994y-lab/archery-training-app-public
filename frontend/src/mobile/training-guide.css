@@ -5,7 +5,7 @@
   pointer-events: none;
   overflow: hidden;
 }
-.training-guide-layer[data-in-dialog] {z-index: 1101}
+.training-guide-layer[data-in-dialog] {z-index: 1610}
 .training-guide-window {
   position: fixed;
   border: 2px solid #8bb6ff;
