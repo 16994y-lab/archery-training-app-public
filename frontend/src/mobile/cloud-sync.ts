@@ -723,8 +723,9 @@ export class CloudSync {
     this.cancelRegistrationPresentation();
     if(fresh&&session)this.markCompletedRegistration(session.owner);
     await this.grantLocalAccess();
+    this.pending=null;this.emit({authVerified:true});this.ready();
     if(fresh&&session)await this.initializeRegistrationName(api,session.owner);
-    this.pending=null;this.emit({authVerified:true});this.ready();await this.clearCompletedEnrollment();
+    await this.clearCompletedEnrollment();
   });}
   startPhoneBinding(phone:string){const api=this.otpClient(),target=mainlandPhone(phone);return this.requestOtp('phone',target,async()=>{await api.startPhoneBinding(target);return {outcome:'accepted',message:'手机绑定验证码请求已受理，请以实际收到为准。'};});}
   verifyPhoneBinding(phone:string,code:string){return this.run(async()=>{this.cancelRegistrationPresentation();await this.client().verifyPhoneBinding(phone,code);await this.grantLocalAccess();await this.clearCompletedEnrollment(true);this.emit({authVerified:true});this.ready();});}

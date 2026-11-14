@@ -1,0 +1,341 @@
+.startup-login .login-layout:not(.login-layout-web) {
+ display:block;
+ width:100%;
+ max-width:none;
+ min-height:0;
+ border:0;
+ border-radius:0;
+}
+
+.startup-login .login-layout:not(.login-layout-web)>.login-brand {display:none}
+.startup-login .login-layout:not(.login-layout-web)>.login-content {animation:none}
+
+@media(max-width:999px) {
+ .startup-account.startup-login[aria-busy] {
+  display:block;
+  width:100%;
+  max-width:none;
+  padding:0;
+  background:#fff;
+ }
+ .startup-login .login-layout {
+  display:block;
+  width:100%;
+  max-width:none;
+ }
+ .startup-login .login-layout>.login-brand {display:none}
+ .startup-login .login-layout>.login-content {animation:none}
+}
+
+.step-login.account-access {
+ max-width:none;
+ color:#1b3351;
+}
+
+.step-login-stage {
+ position:relative;
+ isolation:isolate;
+ overflow:hidden;
+ width:min(100%,480px);
+ min-height:100vh;
+ min-height:100dvh;
+ margin:auto;
+ background:#fff;
+}
+
+.step-login-screen {
+ box-sizing:border-box;
+ position:relative;
+ z-index:3;
+ display:flex;
+ min-height:inherit;
+ padding:max(0px,env(safe-area-inset-top)) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+ background:#fff;
+}
+
+.step-login-screen[data-screen="leaving"] {
+ position:absolute;
+ inset:0;
+ pointer-events:none;
+ overflow:hidden;
+}
+
+.step-login-screen[data-screen="leaving"][data-direction="forward"]::after {
+ content:"";
+ position:absolute;
+ inset:0;
+ background:#162d4c46;
+}
+
+.step-login-screen[data-animate="true"] {
+ animation-duration:335ms;
+ animation-timing-function:cubic-bezier(.22,.75,.24,1);
+ animation-fill-mode:both;
+}
+
+.step-login-screen[data-animate="true"][data-screen="active"][data-direction="forward"],
+.step-login-screen[data-animate="true"][data-screen="leaving"][data-direction="back"] {
+ box-shadow:-10px 0 25px #1b335126;
+}
+
+.step-login-screen[data-animate="true"][data-screen="active"][data-direction="forward"] {animation-name:step-login-slide-in}
+.step-login-screen[data-screen="leaving"][data-direction="forward"] {z-index:1;animation-name:step-login-under-out}
+.step-login-screen[data-animate="true"][data-screen="active"][data-direction="back"] {z-index:1;animation-name:step-login-under-in}
+.step-login-screen[data-screen="leaving"][data-direction="back"] {z-index:4;animation-name:step-login-slide-out}
+
+@keyframes step-login-slide-in {
+ from {transform:translateX(100%);border-radius:28px 0 0 28px}
+ to {transform:none;border-radius:0}
+}
+
+@keyframes step-login-slide-out {
+ from {transform:none;border-radius:0}
+ to {transform:translateX(100%);border-radius:28px 0 0 28px}
+}
+
+@keyframes step-login-under-out {to {transform:translateX(-12%)}}
+@keyframes step-login-under-in {from {transform:translateX(-12%)}}
+
+.step-login-content {
+ box-sizing:border-box;
+ display:flex;
+ flex:1;
+ flex-direction:column;
+ min-width:0;
+ padding:0;
+ margin:0;
+ border:0;
+}
+
+.step-login-brand {
+ display:flex;
+ align-items:center;
+ gap:8px;
+ color:#183f66;
+ font-size:14px;
+ font-weight:750;
+}
+
+.step-login-brand img {width:29px;height:29px;object-fit:contain}
+
+.step-login-welcome {
+ position:relative;
+ overflow:hidden;
+ min-height:233px;
+ padding:clamp(36px,11vh,88px) 30px 0;
+}
+
+.step-login-welcome:after {
+ content:"";
+ position:absolute;
+ right:-43px;
+ top:23%;
+ width:115px;
+ height:115px;
+ border:1px solid #e1eaf6;
+ border-radius:50%;
+ box-shadow:0 0 0 14px #fbfdff,0 0 0 15px #eaf1f9,0 0 0 29px #fbfdff,0 0 0 30px #eff4fb;
+ pointer-events:none;
+}
+
+.step-login-welcome .step-login-brand img {
+ width:38px;
+ height:38px;
+ padding:3px;
+ border-radius:50%;
+ background:#eaf2fc;
+}
+
+.step-login-welcome h1 {
+ position:relative;
+ z-index:1;
+ margin:19px 0 0;
+ font-size:clamp(28px,8.3vw,36px);
+ font-weight:850;
+ line-height:1.16;
+ letter-spacing:-.06em;
+}
+
+.step-login-actions {
+ display:grid;
+ gap:10px;
+ margin:auto 28px;
+ padding-bottom:2vh;
+}
+
+.step-login-alternates {display:grid;grid-template-columns:1fr 1fr;gap:8px}
+
+.step-login :is(.step-login-actions,.step-login-fields) .button.adm-button {
+ min-width:0;
+ min-height:48px;
+ padding:9px 12px;
+ border:1px solid #d7e2ed;
+ border-radius:999px;
+ font-size:14px;
+ box-shadow:none;
+}
+
+.step-login :is(.step-login-actions,.step-login-fields) .button.primary.adm-button:not(:disabled) {
+ border-color:transparent;
+ background:var(--brand-gradient);
+ color:white;
+}
+
+.step-login :is(.step-login-actions,.step-login-fields) .button.primary.adm-button:disabled {
+ color:#536d91;
+ background:#e8eef9;
+ border-color:#e1e9f6;
+ opacity:1;
+}
+
+.step-login .step-login-alternates .button.adm-button {min-height:44px}
+.step-login-notice {padding:10px 16px 16px}
+.step-login-notice .login-notice {justify-content:center}
+.startup-login .step-login-notice .login-notice button {color:#295e9e}
+.step-login-header {padding:12px 16px 4px}
+
+.step-login-back {
+ display:grid;
+ place-items:center;
+ width:44px;
+ height:44px;
+ border:0;
+ border-radius:50%;
+ background:transparent;
+ color:inherit;
+}
+
+.step-login-back::before {
+ content:"";
+ display:block;
+ width:11px;
+ height:11px;
+ border:solid currentColor;
+ border-width:0 0 2px 2px;
+ transform:translateX(2px) rotate(45deg);
+}
+
+.step-login-body {padding:13px 29px 30px}
+.step-login-body h1 {margin:7px 0 0;font-size:25px;letter-spacing:-.04em;text-align:center}
+.step-login-destination {margin:12px 0 0;color:var(--ui-muted);font-size:13px;text-align:center}
+
+.step-login .step-login-fields {
+ display:grid;
+ gap:11px;
+ margin-top:39px;
+}
+
+.step-login .step-login-fields .field {margin:0}
+.step-login .step-login-fields>.primary {margin-top:14px}
+.step-login-fields .account-invitation {margin:0}
+
+.step-login .step-login-fields :is(.account-phone-input,.account-sms-field)>label {
+ position:absolute;
+ width:1px;
+ height:1px;
+ clip-path:inset(50%);
+ overflow:hidden;
+ white-space:nowrap;
+}
+
+.step-login-fields :is(.account-phone-field,.account-code-entry,.account-password) {
+ border:1px solid #d7e2ed;
+ border-radius:999px;
+ background:#f4f7fc;
+}
+
+.step-login-fields .account-country {border-color:#d7e2ed}
+.step-login-fields .password-visibility {border-radius:0 999px 999px 0}
+.step-login .step-login-fields .field input {min-height:48px;border-radius:999px}
+.step-login-fields .account-code-entry input {text-align:center;letter-spacing:.21em;font-variant-numeric:tabular-nums}
+.step-login-fields .account-code-entry input::placeholder {letter-spacing:.03em}
+.step-login-fields .contribution-login-actions {margin:0}
+.step-login-fields .account-error {margin:0}
+.step-login-send-note {margin:0;font-size:13px;line-height:1.45;color:var(--ui-muted)}
+
+.step-login-text {
+ justify-self:center;
+ min-height:44px;
+ border:0;
+ background:none;
+ color:#295e9e;
+ font:inherit;
+ font-size:13px;
+ text-decoration:underline;
+ text-underline-offset:3px;
+}
+
+.step-login-text:disabled {color:var(--ui-muted);opacity:1;text-decoration:none}
+.step-login :is(.step-login-text,.step-login-back):focus-visible {outline:2px solid #295e9e;outline-offset:2px}
+
+.step-login-splash {
+ position:absolute;
+ inset:0;
+ z-index:8;
+ overflow:hidden;
+ isolation:isolate;
+ padding:17% 11% 0;
+ background:#f4f7fc;
+ pointer-events:none;
+ animation:step-login-splash-exit 430ms cubic-bezier(.45,0,.25,1) 1030ms both;
+}
+
+.step-login-splash::before,.step-login-splash::after {
+ content:"";
+ position:absolute;
+ z-index:-1;
+ left:-16%;
+ right:-15%;
+ bottom:-15%;
+ height:43%;
+ border-radius:50% 55% 0 0;
+ background:#eaf1fc;
+ transform:rotate(-11deg);
+}
+
+.step-login-splash::after {
+ left:22%;
+ right:-35%;
+ bottom:-21%;
+ background:#dbe8f9;
+ transform:rotate(17deg);
+}
+
+.step-login-splash-copy {
+ font-size:clamp(49px,14vw,67px);
+ font-weight:900;
+ line-height:.96;
+ letter-spacing:-.075em;
+}
+
+.step-login-splash-copy span {display:block;animation:step-login-copy-in 370ms ease-out both}
+.step-login-splash-copy span+span {margin-left:22%;animation-delay:90ms}
+.step-login-splash .step-login-brand {position:absolute;left:11%;bottom:8%}
+
+.step-login-arrow,.step-login-arrow-trail {
+ position:absolute;
+ animation:step-login-arrow-fly 1020ms cubic-bezier(.16,.7,.22,1) both;
+}
+
+.step-login-arrow {width:69%;top:53%;left:12%;filter:drop-shadow(0 5px 5px #1b335131)}
+.step-login-arrow-trail {width:61%;height:2px;top:58%;left:-5%;background:linear-gradient(90deg,transparent,#84a6ce)}
+
+@keyframes step-login-arrow-fly {
+ from {opacity:.48;transform:translate(-32%,125px) rotate(-28deg)}
+ 64% {opacity:1;transform:translate(12%,-22px) rotate(-28deg)}
+ to {opacity:1;transform:translate(21%,-52px) rotate(-28deg)}
+}
+
+@keyframes step-login-copy-in {from {opacity:0;transform:translateY(12px)}}
+@keyframes step-login-splash-exit {to {opacity:0;visibility:hidden;transform:translateY(-6%)}}
+
+@media(max-height:640px) {
+ .step-login-welcome {min-height:170px;padding-top:33px}
+ .step-login-body {padding-top:0}
+ .step-login .step-login-fields {margin-top:24px}
+}
+
+@media(prefers-reduced-motion:reduce) {
+ .step-login-splash,.step-login-screen[data-screen="leaving"] {display:none}
+ .step-login-screen[data-animate="true"] {animation:none;box-shadow:none}
+}

@@ -1,0 +1,43 @@
+.training-guide-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  pointer-events: none;
+  overflow: hidden;
+}
+.training-guide-layer[data-in-dialog] {z-index: 1101}
+.training-guide-window {
+  position: fixed;
+  border: 2px solid #8bb6ff;
+  border-radius: 16px;
+  box-shadow: 0 0 0 150vmax rgb(17 35 63 / 46%), 0 0 15px rgb(57 103 218 / 55%);
+}
+.training-guide-card {
+  position: fixed;
+  width: min(300px, calc(100vw - 24px));
+  padding: 7px 12px 12px;
+  border: 1px solid #d6e3f5;
+  border-radius: 16px;
+  background: #fff;
+  color: #173653;
+  box-shadow: 0 10px 30px rgb(16 42 80 / 20%);
+  pointer-events: auto;
+}
+.training-guide-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 5px;
+}
+.training-guide-heading strong {font-size: 15px}
+.training-guide-heading button {
+  flex: none;
+  min-height: 44px;
+  padding: 0 5px;
+  border: 0;
+  background: transparent;
+  color: #385c91;
+  font: inherit;
+  font-size: 13px;
+}
+.training-guide-card p {margin: 0;font-size: 14px;line-height: 1.5}

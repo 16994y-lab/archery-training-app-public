@@ -37,6 +37,8 @@ import {MyTeam} from './MyTeam';
 import {rememberTeamInvitation,teamInvitationRoute} from './team-invitation';
 import { BrandLoading } from './BrandLoading';
 import { IntroScreens } from './IntroScreens';
+import { TrainingGuide, useTrainingGuide, type SetupGuideStep } from './TrainingGuide';
+import { useSubpageMotion } from './use-subpage-motion';
 import { cloudSync } from './cloud-sync';
 import { communityTestOnly, offlineAndroid, videoCoachReady } from './release-mode';
 import './mobile.css';
@@ -45,6 +47,7 @@ import './scoring-layout.css';
 import './modern.css';
 import './global-ui-increment.css';
 import './app-theme.css';
+import './subpage-motion.css';
 import {FirstBatchHeader} from './FirstBatchHeader';
 
 class ErrorBoundary extends React.Component<{children:React.ReactNode},{error:string|null}>{state={error:null as string|null};static getDerivedStateFromError(error:Error){return {error:error.message};}render(){if(this.state.error)return <main><h1>页面无法继续显示</h1><p>已保存的训练没有清空，请重新打开。</p><p>{this.state.error}</p><Button onClick={()=>window.location.reload()}>重新打开</Button></main>;return this.props.children;}}
@@ -59,20 +62,25 @@ const News=offlineAndroid
 function App(){
  const [data,setData]=useState<Data>(initialData),[loaded,setLoaded]=useState(false),[loadError,setLoadError]=useState(''),[busy,setBusy]=useState(false),[saveError,setSaveError]=useState('');
  const lock=useRef(false),[question,setQuestion]=useState<{title:string;body:string;choices:string[];primaryChoice?:number}|null>(null),answer=useRef<((n:number)=>void)|null>(null);
- const [config,setConfig]=useState<{plan:Plan|null;activeId:string|null;epoch:number;requestId:string;scheduleId?:string}|null>(null),[initialPlan,setInitialPlan]=useState<Plan|undefined>();
+ const [config,setConfig]=useState<{plan:Plan|null;activeId:string|null;epoch:number;requestId:string;scheduleId?:string;guided:boolean}|null>(null),[initialPlan,setInitialPlan]=useState<Plan|undefined>();
  const configRef=useRef(config);configRef.current=config;
  const setCurrentConfig=(next:typeof config)=>{configRef.current=next;setConfig(next);};
  const startReceipt=useRef<{requestId:string;sessionId:string;epoch:number}|null>(null),startFlight=useRef(false),beginFlight=useRef(false),resumeFlight=useRef(false);
  const location=useLocation(),navigate=useNavigate(),navType=useNavigationType(),requestedRoute=location.pathname.slice(1)||'training';const route={name:!offlineAndroid&&!window.Gongxingji&&workspacePath(location.pathname)?'workspace':routes.includes(requestedRoute)&&(requestedRoute!=='motion'||videoCoachReady||offlineAndroid)?requestedRoute:'training',id:new URLSearchParams(location.search).get('id')??undefined};
  const accountStatus=useSyncExternalStore(cloudSync.subscribe,cloudSync.getStatus,cloudSync.getStatus);
+ const pageRef=useRef<HTMLElement>(null);
+ const scene=config?'start':route.name;
+ useSubpageMotion(pageRef,scene);
  const showPrivateNotices=!communityTestOnly||accountStatus.localAllowed===true;
  const returnFocus=useRef(new Map<string,string>());
  const positions=useRef(new Map<string,number>());const positionKey=useRef(location.key);
  const {toast,tell,clearToast}=useToast();
+ const guide=useTrainingGuide(accountStatus.owner,accountStatus.localAllowed===true,scene,data,()=>tell('训练已保存，可以在「复盘」查看'));
  const renderedEpoch=repository.accountEpoch(),renderedOwner=accountStatus.owner;
  const update=useCallback(async(change:(d:Data)=>void)=>{if(cloudSync.isAccountDeletionFrozen()){tell('账号注销正在核对，暂不能修改资料');return false;}if(renderedEpoch!==repository.accountEpoch()||renderedOwner!==cloudSync.getStatus().owner){tell('账号已切换，旧页面修改未保存');return false;}if(communityTestOnly&&!cloudSync.getStatus().localAllowed){tell('请联网登录后使用自己的本机资料');return false;}if(lock.current){tell('正在保存，请稍候再操作');return false;}lock.current=true;setBusy(true);try{const next=await repository.mutate(change);setData(next);setSaveError('');if(!offlineAndroid)cloudSync.localSaved();return true;}catch(e){const message=(e as Error).message;if(repository.pending)setSaveError(message);tell(message);return false;}finally{lock.current=false;setBusy(false);}},[tell,renderedEpoch,renderedOwner]);
  const updateRef=useRef(update);updateRef.current=update;
- const finishStart=useCallback((saved:Data)=>{const receipt=startReceipt.current,current=configRef.current;if(!receipt||!current||receipt.requestId!==current.requestId||receipt.epoch!==repository.accountEpoch()||saved.activeId!==receipt.sessionId||!saved.sessions.some(s=>s.id===receipt.sessionId&&s.status==='active'))return false;startReceipt.current=null;setCurrentConfig(null);navigate('/score');return true;},[navigate]);
+ const recordGuideStart=useRef(guide.recordStart);recordGuideStart.current=guide.recordStart;
+ const finishStart=useCallback((saved:Data)=>{const receipt=startReceipt.current,current=configRef.current;if(!receipt||!current||receipt.requestId!==current.requestId||receipt.epoch!==repository.accountEpoch()||saved.activeId!==receipt.sessionId||!saved.sessions.some(s=>s.id===receipt.sessionId&&s.status==='active'))return false;startReceipt.current=null;if(current.guided)recordGuideStart.current(receipt.sessionId);setCurrentConfig(null);navigate('/score');return true;},[navigate]);
  const retryPendingSave=useCallback(async()=>{if(cloudSync.isAccountDeletionFrozen()){tell('账号注销正在核对，暂不能修改资料');return false;}if(communityTestOnly&&!cloudSync.getStatus().localAllowed){tell('请联网登录本机资料所属的原账号');return false;}if(lock.current){tell('正在保存，请稍候再操作');return false;}if(!repository.pending){tell('没有等待重试的本机保存');return false;}lock.current=true;setBusy(true);try{const next=await repository.retry();setData(next);setSaveError('');if(!offlineAndroid)cloudSync.localSaved();tell(finishStart(next)?'训练已保存，可以继续记分':'重试保存成功');return true;}catch(e){const message=(e as Error).message;setSaveError(message);tell(message);return false;}finally{lock.current=false;setBusy(false);}},[tell,finishStart]);
  const ask=useCallback((title:string,body:string,choices:string[],primaryChoice?:number)=>new Promise<number>(resolve=>{if(answer.current){resolve(0);return;}answer.current=resolve;setQuestion({title,body,choices,primaryChoice});}),[]);
  const choose=(n:number)=>{const resolve=answer.current;answer.current=null;setQuestion(null);resolve?.(n);};
@@ -133,7 +141,8 @@ function App(){
   try{if(!sameAccount()||!await guard())return;if(!sameAccount()){tell('账号已切换，请重新选择训练');return;}const activeId=repository.data.activeId,active=repository.data.sessions.find(s=>s.id===activeId);
    if(active&&!keepCurrent){const choice=await ask('已有当前训练',`${active.date} · ${active.name}，已录 ${active.ends.reduce((n,e)=>n+e.arrows.length,0)} 箭。新开训练是另一场；当前训练会保留为草稿。`,['取消','保留草稿并新开训练','继续当前训练']);if(choice===0)return;if(choice===2){open('score');return;}}
    if(!sameAccount()||repository.data.activeId!==activeId){tell('当前训练已变化，请重新选择');return;}
-   startReceipt.current=null;startFlight.current=false;setCurrentConfig({plan:plan?copy(plan):null,activeId,epoch,requestId:uid(),scheduleId});window.scrollTo(0,0);
+   const guided=guide.step==='new-training'&&!plan&&!scheduleId;
+   startReceipt.current=null;startFlight.current=false;setCurrentConfig({plan:plan?copy(plan):null,activeId,epoch,requestId:uid(),scheduleId,guided});window.scrollTo(0,0);
   }finally{beginFlight.current=false;}
  };
 
@@ -182,12 +191,12 @@ function App(){
  case 'account':content=offlineAndroid?<OfflineFeature feature="account" onBack={goBack}/>:<CloudPanel section={route.id} onBack={goBack}/>;break;
  case 'data':content=offlineAndroid?<OfflineDataManagement onBack={goBack}/>:<DataManagement onBack={goBack}/>;break;
  case 'about':content=offlineAndroid?<OfflineAbout onBack={goBack}/>:<About onBack={goBack}/>;break;
- case 'guide':content=offlineAndroid?<OfflineUserGuide onBack={goBack}/>:<UserGuide onBack={goBack}/>;break;
+ case 'guide':content=offlineAndroid?<OfflineUserGuide onBack={goBack}/>:<UserGuide onBack={goBack} onPractice={accountStatus.localAllowed===true?()=>{void(async()=>{if(!await guard())return;guide.replay();navigate('/training');})();}:undefined}/>;break;
  case 'intro':content=offlineAndroid?<OfflineUserGuide onBack={goBack}/>:<IntroScreens revisit onDone={goBack} onSkip={goBack} onExistingAccount={goBack}/>;break;
  case 'promotion':content=offlineAndroid?<OfflineAbout onBack={goBack}/>:<PromotionEntry onBack={goBack}/>;break;
  default:content=<TrainingHome onStart={begin} onEdit={editPlan}/>;
  }
- if(config)content=<StartConfiguration key={config.requestId} plan={config.plan} blocked={busy||!!repository.pending} onCancel={cancelConfig} onStart={async(c,arrows,half)=>{
+ if(config)content=<StartConfiguration key={config.requestId} plan={config.plan} guided={config.guided} blocked={busy||!!repository.pending} onCancel={cancelConfig} onSkipGuide={()=>{guide.close();setCurrentConfig({...config,guided:false});}} onStart={async(c,arrows,half)=>{
   if(startFlight.current||lock.current||repository.pending)return;if(startReceipt.current&&finishStart(repository.data))return;
   startFlight.current=true;
   const saved=await update(d=>{
@@ -201,9 +210,32 @@ function App(){
 
  const section=['history-all','insights','detail','reflection','report','group','trends','compare'].includes(route.name)?'history':['team','settings','personal','support','feedback','rewards','announcements','equipment-list','equipment','accessories','accessory','goals','goal','targets','target','account','legacy-account','data','about','guide','intro','promotion'].includes(route.name)?'profile':['plans','plan-detail','plan','program','programs','calendar','drafts','motion','competition-timer'].includes(route.name)?'training':route.name==='community'?'news':route.name;
  const compactScoring=route.name==='score'&&!config&&Boolean(data.activeId);
- return <AppCtx.Provider value={{data,update,retryPendingSave,hasPendingSave:()=>lock.current||repository.pending!==null,readSaveState:()=>({data:repository.data,pending:repository.pending}),open,ask,tell}}><DeletionBoundary>{!offlineAndroid&&<ContributionCoordinator/>}<AccountBoundary>{route.name==='workspace'?content:<DesktopUserShell route={route.name} section={section} open={open} enabled={!offlineAndroid&&!window.Gongxingji&&!config&&route.name!=='intro'}>{saveError&&<aside role="alert" className="save-error"><b>尚未保存：{saveError}</b><p>当前待保存内容仍保留，请先重试。</p><Button onClick={()=>void retryPendingSave()}>重试保存</Button><Button onClick={()=>{try{exportText('gongxingji-unsaved-backup.json',JSON.stringify(repository.pending,null,2),'application/json');tell('已请求保存，以系统完成提示为准');}catch(e){tell(e instanceof Error?e.message:'导出失败，待保存内容仍保留');}}}>导出待保存内容</Button><Button onClick={()=>void reloadSaved()}>重新读取已保存记录</Button></aside>}{!offlineAndroid&&<CloudRestoreNotice/>}<main tabIndex={-1} data-route={config?'start':route.name} className={['gx-page',busy?'saving':'',compactScoring?'scoring-main':''].filter(Boolean).join(' ')} aria-busy={busy}>{content}</main>{!config&&route.name!=='intro'&&<BottomNavigation section={section} open={open}/>}</DesktopUserShell>}{showPrivateNotices&&toast&&<AppToast notice={toast}/>}{showPrivateNotices&&question&&<Modal title={question.title} onClose={()=>choose(0)}><p>{question.body}</p><div className="modal-actions">{question.choices.map((choice,i)=><Button key={i} kind={question.primaryChoice===undefined?(i?'primary':''):i===question.primaryChoice?'primary':''} onClick={()=>choose(i)}>{choice}</Button>)}</div></Modal>}</AccountBoundary></DeletionBoundary></AppCtx.Provider>;
+ return <AppCtx.Provider value={{data,update,retryPendingSave,hasPendingSave:()=>lock.current||repository.pending!==null,readSaveState:()=>({data:repository.data,pending:repository.pending}),open,ask,tell}}><DeletionBoundary>{!offlineAndroid&&<ContributionCoordinator/>}<AccountBoundary>{route.name==='workspace'?content:<DesktopUserShell route={route.name} section={section} open={open} enabled={!offlineAndroid&&!window.Gongxingji&&!config&&route.name!=='intro'}>{saveError&&<aside role="alert" className="save-error"><b>尚未保存：{saveError}</b><p>当前待保存内容仍保留，请先重试。</p><Button onClick={()=>void retryPendingSave()}>重试保存</Button><Button onClick={()=>{try{exportText('gongxingji-unsaved-backup.json',JSON.stringify(repository.pending,null,2),'application/json');tell('已请求保存，以系统完成提示为准');}catch(e){tell(e instanceof Error?e.message:'导出失败，待保存内容仍保留');}}}>导出待保存内容</Button><Button onClick={()=>void reloadSaved()}>重新读取已保存记录</Button></aside>}{!offlineAndroid&&<CloudRestoreNotice/>}<main ref={pageRef} tabIndex={-1} data-route={scene} className={['gx-page',busy?'saving':'',compactScoring?'scoring-main':''].filter(Boolean).join(' ')} aria-busy={busy}>{content}</main>{!config&&route.name!=='intro'&&<BottomNavigation section={section} open={open}/>}</DesktopUserShell>}{showPrivateNotices&&toast&&<AppToast notice={toast}/>}{showPrivateNotices&&question&&<Modal title={question.title} onClose={()=>choose(0)}><p>{question.body}</p><div className="modal-actions">{question.choices.map((choice,i)=><Button key={i} kind={question.primaryChoice===undefined?(i?'primary':''):i===question.primaryChoice?'primary':''} onClick={()=>choose(i)}>{choice}</Button>)}</div></Modal>}<TrainingGuide step={guide.step} paused={!!question||!!saveError} onSkip={guide.close}/></AccountBoundary></DeletionBoundary></AppCtx.Provider>;
 }
-function StartConfiguration({plan,blocked,onCancel,onStart}:{plan:Plan|null;blocked:boolean;onCancel:()=>void;onStart:(c:ReturnType<typeof defaultConditions>,n:number,half:number|null)=>Promise<void>}) {const {data}=useApp();const [c,setC]=useState(()=>copy(plan?.conditions??{...defaultConditions(),bow:data.profile.bow})),[n,setN]=useState(plan?.blocks.find(b=>b.kind==='score')?.arrows??6),[split,setSplit]=useState(false),[half,setHalf]=useState(6);return <><Back title={plan?'新开计划训练':'新开训练'} onBack={onCancel}/><p>{plan?`${plan.name} · 每次执行保存独立记录`:'无需填写总组数，选择靶型、尺寸或未知、距离即可开始。'}</p><fieldset className="start-configuration-fields" disabled={blocked}><Panel title="训练条件"><ConditionsForm value={c} onChange={setC}/></Panel>{!plan&&<Panel title="组数与箭数"><Field label="当前组箭数（之后仍可调整）"><NumberInput min={1} max={300} value={n} onValue={setN}/></Field><Collapse><Collapse.Panel key="half" title="半场设置（可选）"><div className="list-row"><span>明确区分上下半场</span><Switch checked={split} onChange={setSplit}/></div>{split&&<Field label="上半场组数"><NumberInput min={1} max={500} value={half} onValue={setHalf}/></Field>}<p className="caption">不分半场也可训练；只设置边界，不要求总组数。</p></Collapse.Panel></Collapse></Panel>}</fieldset><div className="page-actions start-configuration-actions"><Button kind="primary" className="wide" disabled={blocked} onClick={()=>onStart(c,n,split?half:null)}>开始这场训练</Button><Button className="wide" disabled={blocked} onClick={onCancel}>取消配置，保留原记录</Button></div></>;}
+function StartConfiguration({plan,guided,blocked,onCancel,onSkipGuide,onStart}:{plan:Plan|null;guided:boolean;blocked:boolean;onCancel:()=>void;onSkipGuide:()=>void;onStart:(c:ReturnType<typeof defaultConditions>,n:number,half:number|null)=>Promise<void>}) {
+ const {data}=useApp();
+ const [c,setC]=useState(()=>copy(plan?.conditions??{...defaultConditions(),bow:data.profile.bow}));
+ const [n,setN]=useState(plan?.blocks.find(b=>b.kind==='score')?.arrows??(guided?3:6));
+ const [split,setSplit]=useState(false),[half,setHalf]=useState(6);
+ const [guideStep,setGuideStep]=useState<SetupGuideStep>('choose-target');
+ const chooseCondition=(choice:'target'|'size'|'distance')=>{
+  if(!guided)return;
+  if(choice==='target')setGuideStep('choose-size');
+  if(choice==='size'&&guideStep==='choose-size')setGuideStep('choose-distance');
+  if(choice==='distance'&&guideStep==='choose-distance')setGuideStep('start-training');
+ };
+ const cannotStart=blocked||(guided&&guideStep!=='start-training');
+ return <>
+  <Back title={plan?'新开计划训练':'新开训练'} onBack={onCancel}/>
+  <p>{plan?`${plan.name} · 每次执行保存独立记录`:'无需填写总组数，选择靶型、尺寸或未知、距离即可开始。'}</p>
+  <fieldset className="start-configuration-fields" disabled={blocked}>
+   <Panel title="训练条件"><ConditionsForm value={c} onChange={setC} guideStep={guided?guideStep:undefined} onGuideChoice={chooseCondition}/></Panel>
+   {!plan&&<Panel title="组数与箭数"><Field label="当前组箭数（之后仍可调整）"><NumberInput min={1} max={300} value={n} onValue={setN}/></Field><Collapse><Collapse.Panel key="half" title="半场设置（可选）"><div className="list-row"><span>明确区分上下半场</span><Switch checked={split} onChange={setSplit}/></div>{split&&<Field label="上半场组数"><NumberInput min={1} max={500} value={half} onValue={setHalf}/></Field>}<p className="caption">不分半场也可训练；只设置边界，不要求总组数。</p></Collapse.Panel></Collapse></Panel>}
+  </fieldset>
+  <div className="page-actions start-configuration-actions"><Button kind="primary" className="wide" disabled={cannotStart} data-guide-target="start-training" onClick={()=>onStart(c,n,split?half:null)}>开始这场训练</Button><Button className="wide" disabled={blocked} onClick={onCancel}>取消配置，保留原记录</Button></div>
+  {guided&&<TrainingGuide step={guideStep} paused={blocked} onSkip={onSkipGuide}/>}
+ </>;
+}
 if(!offlineAndroid)window.addEventListener('hashchange',redirectAuthReturn);
 const displayKey=competitionDisplayKey(location.hash);
 if(displayKey)createRoot(document.getElementById('root')!).render(<CompetitionDisplay displayKey={displayKey}/>);

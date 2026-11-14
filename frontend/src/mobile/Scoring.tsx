@@ -39,7 +39,7 @@ function ScoreTarget({showSpread,setShowSpread,...props}:React.ComponentProps<ty
   <div className="score-target-grid">
    <label className="check score-spread"><input type="checkbox" checked={showSpread} onChange={e=>setShowSpread(e.target.checked)}/>辅助圈</label>
    <Button className="score-fullscreen" onClick={()=>setFull(!full)}>{full?'退出全屏':'全屏'}</Button>
-   <TargetFace {...props}/>
+   <TargetFace {...props} guideTarget="target-input"/>
   </div>
   {full&&<p className="caption">双指或按钮缩放，放大后拖动查看；键盘 + / - 缩放、方向键移动、0 还原。轻点录入。</p>}
  </div>;
@@ -99,7 +99,7 @@ export function Scoring({sessionId,review=false,onBack,endIndex}:{sessionId:stri
  return <div className="score-workbench">
   <div className="score-heading">
    {review?<Back title={`修改第 ${s.currentEnd+1} 组`} onBack={onBack!}/>:<h1>{s.name}</h1>}
-   <div className="score-heading-actions"><Button disabled={photoDirty} onClick={()=>setExtras('more')}>更多</Button>{!review&&<Button disabled={photoDirty} onClick={()=>void endTraining()}>结束训练</Button>}</div>
+   <div className="score-heading-actions"><Button disabled={photoDirty} onClick={()=>setExtras('more')}>更多</Button>{!review&&<Button disabled={photoDirty} data-guide-target="finish-training" onClick={()=>void endTraining()}>结束训练</Button>}</div>
   </div>
   <div className="score-session-facts" aria-label="本场训练条件"><span>{s.conditions.distance} 米</span><span>{s.conditions.size?`${s.conditions.size} cm`:'尺寸未知'} · {s.conditions.target.name}</span><time dateTime={s.started}>{sessionTimeLabel(s)} 开始</time></div>
   {review&&<p className="notice">选中已有箭后修改，箭数不增加。数字改分会清除该箭原坐标，所有统计随保存重算。</p>}
@@ -141,21 +141,21 @@ export function Scoring({sessionId,review=false,onBack,endIndex}:{sessionId:stri
    </section>
    {editing&&<div className="edit-banner"><b>正在修改选中箭，不会新增</b><Button onClick={()=>setSelected(null)}>取消选中</Button></div>}
    <div className="score-entry-modes" role="group" aria-label="录入方式">
-    <Button aria-pressed={mode==='target'} className={mode==='target'?'selected':''} aria-controls={entryId} onClick={()=>void chooseMode('target')}>点靶录入</Button>
-    <Button aria-pressed={mode==='number'} className={mode==='number'?'selected':''} aria-controls={entryId} onClick={()=>void chooseMode('number')}>数字录入</Button>
-    {!review&&<Button aria-pressed={mode==='photo'} className={mode==='photo'?'selected':''} disabled={editing||end.confirmed} aria-controls={entryId} onClick={()=>void chooseMode('photo')}>照片录入<span className="score-beta">测试版</span></Button>}
+    <Button aria-pressed={mode==='target'} className={mode==='target'?'selected':''} aria-controls={entryId} data-guide-target="target-mode" onClick={()=>void chooseMode('target')}>点靶录入</Button>
+    <Button aria-pressed={mode==='number'} className={mode==='number'?'selected':''} aria-controls={entryId} data-guide-target="number-mode" onClick={()=>void chooseMode('number')}>数字录入</Button>
+    {!review&&<Button aria-pressed={mode==='photo'} className={mode==='photo'?'selected':''} disabled={editing||end.confirmed} aria-controls={entryId} data-guide-target="photo-mode" onClick={()=>void chooseMode('photo')}>照片录入<span className="score-beta">测试版</span></Button>}
    </div>
    <section id={entryId} className={`score-entry-panel ${mode==='photo'?'score-entry-photo':''}`} aria-label={mode==='target'?'点靶录入区':mode==='number'?'数字录入区':'照片录入区'}>
     {mode==='photo'?<PhotoEntry key={`${s.id}:${end.id}:${face}`} session={s} face={face} onBack={()=>setMode('target')} onDirtyChange={setPhotoDirty}/>:<>
      <LayoutPicker target={s.conditions.target} face={face} setFace={setFace}/>
      <p className="score-entry-hint" role="status">{editing?(mode==='number'?'选择环值修改此箭；数字改分会清除原坐标。':'轻点靶面调整此箭的位置；双指缩放不记箭。'):cannotAdd?'本组已录完。点击上方成绩可修改，或保存后继续。':mode==='target'?'轻点记一箭；双指缩放，放大后拖动查看。':'轻点环值记一箭；数字录入不生成落点。'}</p>
      {mode==='number'
-      ?<div className="numeric-pad" aria-label="分值输入">{s.conditions.target.allowed_score_codes.map(code=>{const style=scoreKeyColors(s.conditions.target,code);return <button key={code} data-code={code} disabled={!editing&&cannotAdd} onClick={()=>record(code)} style={style} className={code==='M'?'miss':style?`score-ring${code==='X'?' score-x':''}`:''}>{code}</button>;})}</div>
+      ?<div className="numeric-pad" data-guide-target="number-input" aria-label="分值输入">{s.conditions.target.allowed_score_codes.map(code=>{const style=scoreKeyColors(s.conditions.target,code);return <button key={code} data-code={code} disabled={!editing&&cannotAdd} onClick={()=>record(code)} style={style} className={code==='M'?'miss':style?`score-ring${code==='X'?' score-x':''}`:''}>{code}</button>;})}</div>
       :<ScoreTarget showSpread={showSpread} setShowSpread={setShowSpread} zoomable resetKey={`${s.id}:${end.id}`} target={s.conditions.target} arrows={end.arrows} face={face} selected={selected} overlay={showSpread?<ScoringCircles stats={faceStats}/>:null} onTap={!editing&&cannotAdd?undefined:(x,y)=>record(scoreAt(s.conditions.target,x,y),{x,y})}/>
      }
     </>}
    </section>
-   {!review&&<div className="score-primary-actions" data-docked={mode==='number'&&cannotAdd&&!editing||undefined}><Button className="score-undo" disabled={photoDirty||!end.arrows.length||end.confirmed} onClick={async()=>{if(await change(q=>{q.ends[q.currentEnd].arrows.pop();q.revision++;}))setSelected(null);}}>撤销上一箭</Button>{end.confirmed?(finishedPlan?<span className="badge">本组已保存</span>:<Button kind="primary" disabled={photoDirty} onClick={()=>change(advance)}>继续下一项 →</Button>):<Button kind="primary" disabled={photoDirty||!end.arrows.length||savingEnd} onClick={continueEnd}>{savingEnd?'正在保存…':finishedPlan?'保存追加组':lastPlanned?'保存最后一组':'保存本组并继续'}</Button>}</div>}
+   {!review&&<div className="score-primary-actions" data-docked={mode==='number'&&cannotAdd&&!editing||undefined}><Button className="score-undo" disabled={photoDirty||!end.arrows.length||end.confirmed} onClick={async()=>{if(await change(q=>{q.ends[q.currentEnd].arrows.pop();q.revision++;}))setSelected(null);}}>撤销上一箭</Button>{end.confirmed?(finishedPlan?<span className="badge">本组已保存</span>:<Button kind="primary" disabled={photoDirty} onClick={()=>change(advance)}>继续下一项 →</Button>):<Button kind="primary" disabled={photoDirty||!end.arrows.length||savingEnd} data-guide-target="save-group" onClick={continueEnd}>{savingEnd?'正在保存…':finishedPlan?'保存追加组':lastPlanned?'保存最后一组':'保存本组并继续'}</Button>}</div>}
    {mode!=='photo'&&<details className="score-help"><summary>录入与辅助圈说明</summary><p>点击上方成绩再输入即可修改。边框内靶外白区可记 M 并保留位置；数字改分会清除该箭坐标。压线环值请人工核对。</p><p>当前靶位 {faceStats.n} 箭，坐标 {faceStats.located}/{faceStats.n}。蓝圈表示靶内落点的80%集中范围，至少3个靶内落点后显示；多个候选群分别绘圈，数字箭不补坐标。完整分析在复盘查看。</p><p>成功录入的成绩已保存到本机，切换录入方式或模块不会清空。</p></details>}
   </>}
   {review&&end&&<><Metrics arrows={end.arrows}/><Distribution arrows={end.arrows}/><Spatial arrows={end.arrows} target={s.conditions.target} size={s.conditions.size}/></>}

@@ -11,9 +11,8 @@ import {isReviewRoute} from './review-navigation';
 import {rememberTeamInvitation,teamInvitationRoute} from './team-invitation';
 import {repository} from './store';
 import {Button,Panel,useApp,useInnerBack} from './ui';
-import {IntroScreens} from './IntroScreens';
 import {BrandLoading} from './BrandLoading';
-import {hasPendingRegistrationIntro,registrationIntroPersistence,registrationIntroStage,advanceRegistrationIntro,finishRegistrationIntro} from './intro-preference';
+import {hasPendingRegistrationIntro,registrationIntroPersistence,registrationIntroStage,advanceRegistrationIntro} from './intro-preference';
 import {PasswordField} from './PasswordField';
 import {PASSWORD_RULE,requireNewPassword} from './password-policy';
 import './account-access.css';
@@ -34,11 +33,17 @@ export function StartupAccount({children}:{children:React.ReactNode}){
   const [,refreshIntro]=useState(0),[password,setPassword]=useState(''),[confirm,setConfirm]=useState(''),[passwordBusy,setPasswordBusy]=useState(false),[passwordError,setPasswordError]=useState(''),[settingPassword,setSettingPassword]=useState(false);
   const passwordFlight=useRef(false),passwordForm=useRef<HTMLFormElement>(null);
   useEffect(()=>{if(settingPassword)passwordForm.current?.querySelector<HTMLInputElement>('input')?.focus();},[settingPassword]);
-  const finishIntro=()=>{if(status.owner)finishRegistrationIntro(status.owner);refreshIntro(v=>v+1);};
   useEffect(()=>{const changed=()=>refreshIntro(v=>v+1);window.addEventListener('gongxingji-registration-intro',changed);return()=>window.removeEventListener('gongxingji-registration-intro',changed);},[]);
   useEffect(()=>{setPassword('');setConfirm('');setPasswordError('');setSettingPassword(false);},[status.owner]);
-  const skipPassword=()=>{setPassword('');setConfirm('');setPasswordError('');if(status.owner&&cloudSync.getStatus().owner===status.owner){advanceRegistrationIntro(status.owner);refreshIntro(v=>v+1);}};
-  const savePassword=async()=>{if(passwordFlight.current)return;const owner=status.owner;passwordFlight.current=true;setPasswordBusy(true);setPasswordError('');try{requireNewPassword(password);if(password!==confirm)throw new Error('两次输入的密码不一致');if(!owner||cloudSync.getStatus().owner!==owner)throw new Error('账号已变化，请重新确认');const secret=password;setPassword('');setConfirm('');await cloudSync.updatePassword(secret);if(cloudSync.getStatus().owner===owner){advanceRegistrationIntro(owner);refreshIntro(v=>v+1);}}catch(e){if(alive.current&&cloudSync.getStatus().owner===owner)setPasswordError(e instanceof Error?e.message:'密码未能保存，可稍后设置');}finally{passwordFlight.current=false;setPasswordBusy(false);}};
+  const enterTrainingGuide=(owner:string)=>{
+    advanceRegistrationIntro(owner);
+    refreshIntro(v=>v+1);
+    window.dispatchEvent(new Event('gongxingji-registration-intro'));
+    chooseLoginDestination('user');
+    navigate('/training',{replace:true});
+  };
+  const skipPassword=()=>{setPassword('');setConfirm('');setPasswordError('');if(status.owner&&cloudSync.getStatus().owner===status.owner)enterTrainingGuide(status.owner);};
+  const savePassword=async()=>{if(passwordFlight.current)return;const owner=status.owner;passwordFlight.current=true;setPasswordBusy(true);setPasswordError('');try{requireNewPassword(password);if(password!==confirm)throw new Error('两次输入的密码不一致');if(!owner||cloudSync.getStatus().owner!==owner)throw new Error('账号已变化，请重新确认');const secret=password;setPassword('');setConfirm('');await cloudSync.updatePassword(secret);if(cloudSync.getStatus().owner===owner)enterTrainingGuide(owner);}catch(e){if(alive.current&&cloudSync.getStatus().owner===owner)setPasswordError(e instanceof Error?e.message:'密码未能保存，可稍后设置');}finally{passwordFlight.current=false;setPasswordBusy(false);}};
   const [checking,setChecking]=useState(true),[checkCount,setCheckCount]=useState(0),[checkFailed,setCheckFailed]=useState(false),[error,setError]=useState('');
   const lastOwner=useRef<string|null>(null),renderedOwner=useRef<string|null>(null),resumeOwner=useRef<string|null>(null),pageRef=useRef<HTMLDivElement>(null),alive=useRef(true),checkPending=useRef(false),accountFormShown=useRef(false);
   const bootAccountKey=useRef(repository.accountKey()),acceptedOnce=useRef(false),loginPresented=useRef(false);
@@ -90,12 +95,12 @@ export function StartupAccount({children}:{children:React.ReactNode}){
       // Explicit login, registration and every later account transition still reset.
       const preserveDestination=!acceptedOnce.current&&!loginPresented.current&&!!bootAccountKey.current&&bootAccountKey.current===repository.accountKey()&&!hasPendingRegistrationIntro(status.owner)&&(isReviewRoute(location.pathname.slice(1))||!nativeApp&&workspacePath(location.pathname));
       acceptedOnce.current=true;lastOwner.current=status.owner;
-      if(!preserveDestination)navigate(loginLanding(teamInvitationRoute()||'/training'),{replace:true});
+      if(!preserveDestination)navigate(registrationIntroStage(status.owner)==='intro'?'/training':loginLanding(teamInvitationRoute()||'/training'),{replace:true});
     }
     if(!status.owner&&lastOwner.current){lastOwner.current=null;navigate(nativeApp?'/account':'/',{replace:true});}
   },[allowed,awaitingAccountVerification,unifiedLogin,nativeApp,status.owner,navigate,location.pathname]);
   const offerPassword=registrationIntroStage(status.owner)==='password';
-  const registrationWelcome=allowed&&hasPendingRegistrationIntro(status.owner)&&(!offerPassword||status.authVerified);
+  const registrationWelcome=allowed&&offerPassword&&status.authVerified;
   const keepingPage=false;
   const publicNews=!allowed&&!keepingPage&&!registrationWelcome&&location.pathname==='/news';
   useInnerBack(publicNews,()=>navigate(new URLSearchParams(location.search).has('id')?'/news':'/account',{replace:true}),20);
@@ -108,11 +113,10 @@ export function StartupAccount({children}:{children:React.ReactNode}){
   const showPage=(allowed&&!registrationWelcome)||keepingPage;
   useEffect(()=>{if(pageRef.current)pageRef.current.inert=keepingPage;},[keepingPage]);
   const introStorageNotice=registrationIntroPersistence(status.owner)===false?'介绍偏好暂未存入本机，重开可能再次提示。可以继续训练。':'';
-  const showIntro=registrationWelcome&&!offerPassword;
   const showLoginScreen=!registrationWelcome&&(!status.owner||!status.authVerified&&(status.reauthenticationRequired||!status.phoneVerified));
   useEffect(()=>{if(allowed&&!awaitingAccountVerification&&!registrationWelcome&&loginDestination()==='coach'&&!workspacePath(location.pathname))navigate('/coach',{replace:true});},[allowed,awaitingAccountVerification,registrationWelcome,location.pathname,navigate]);
   // Keep an existing auth form mounted while rechecking the same identity.
-  const showAccountForm=!showIntro&&!allowed&&hasChecked&&(!verifying||accountFormShown.current);
+  const showAccountForm=!allowed&&hasChecked&&(!verifying||accountFormShown.current);
   accountFormShown.current=showAccountForm;
   if(showAccountForm)loginPresented.current=true;
   if(pendingManagement)return <main className="startup-account account-access">
@@ -124,8 +128,8 @@ export function StartupAccount({children}:{children:React.ReactNode}){
   return <><div ref={pageRef} className={keepingPage?'startup-resume-page':undefined} hidden={!showPage} aria-hidden={!showPage} aria-busy={keepingPage} onClickCapture={event=>{if(keepingPage){event.preventDefault();event.stopPropagation();}}} onKeyDownCapture={event=>{if(keepingPage){event.preventDefault();event.stopPropagation();}}}>
     {allowed&&!registrationWelcome&&introStorageNotice&&<p role="status" className="account-preference-warning">{introStorageNotice}</p>}
     {renderedOwner.current&&!registrationWelcome?<React.Fragment key={renderedOwner.current}>{children}</React.Fragment>:null}
-  </div>{keepingPage&&<p className="startup-resume-status" role="status" aria-live="polite">正在连接…</p>}{(!allowed||registrationWelcome)&&!keepingPage&&<main className={showIntro?'startup-intro':showLoginScreen?'startup-account startup-login':'startup-account'} aria-busy={verifying}>
-    {showIntro?<IntroScreens onDone={finishIntro} onSkip={finishIntro} onExistingAccount={finishIntro} context="registered" notice={introStorageNotice}/>:registrationWelcome?<>
+  </div>{keepingPage&&<p className="startup-resume-status" role="status" aria-live="polite">正在连接…</p>}{(!allowed||registrationWelcome)&&!keepingPage&&<main className={showLoginScreen?'startup-account startup-login':'startup-account'} aria-busy={verifying}>
+    {registrationWelcome?<>
     <header className="page-title"><img className="auth-brand-logo" src={brandLogo} alt="" width="72" height="72"/><h1>注册已完成</h1><p>现在可以开始记录训练</p></header>
     {introStorageNotice&&<p role="status" className="account-preference-warning">{introStorageNotice}</p>}<Panel className="account-access account-card" title="设置登录密码（可选）"><p>以后可用手机号或已绑定邮箱和密码登录，也可继续使用短信验证码。</p>
      {passwordError&&<p role="alert" className="account-error">{passwordError}。已验证账号保留，可稍后设置。</p>}

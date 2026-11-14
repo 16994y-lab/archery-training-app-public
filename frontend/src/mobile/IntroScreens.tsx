@@ -11,11 +11,10 @@ export type IntroScreensProps = {
  onExistingAccount: () => void;
  /** Revisit is presentation only; caller owns routes, session and preference. */
  revisit?: boolean;
- context?: 'registered'|'public';
  notice?:string;
 };
 
-export function IntroScreens({onDone,onSkip,onExistingAccount,revisit=false,context='public',notice=''}:IntroScreensProps) {
+export function IntroScreens({onDone,onSkip,onExistingAccount,revisit=false,notice=''}:IntroScreensProps) {
  const [index,setIndex]=useState(0),[failedImages,setFailedImages]=useState<ReadonlySet<string>>(new Set());
  const swiper=useRef<SwiperRef>(null),region=useId();
  const go=(next:number)=>swiper.current?.swipeTo(Math.max(0,Math.min(introPages.length-1,next)));
@@ -50,8 +49,8 @@ export function IntroScreens({onDone,onSkip,onExistingAccount,revisit=false,cont
   </div>
   <footer className="intro-footer">
    <p className="intro-progress" role="status" aria-live="polite" aria-atomic="true">第 {index+1} / {introPages.length} 页 · {introPages[index].title}</p>
-   <div className="intro-actions"><button type="button" className="intro-previous" disabled={index===0} onClick={()=>go(index-1)} aria-controls={region}>上一页</button><button type="button" className="intro-next" onClick={()=>index===introPages.length-1?onDone():go(index+1)} aria-controls={region}>{index===introPages.length-1?(revisit?'返回':context==='registered'?'开始训练':'开始使用／登录注册'):'下一步'}</button></div>
-   {!revisit&&context!=='registered'&&<button type="button" className="intro-account" onClick={onExistingAccount}>已有账号，直接登录</button>}
+   <div className="intro-actions"><button type="button" className="intro-previous" disabled={index===0} onClick={()=>go(index-1)} aria-controls={region}>上一页</button><button type="button" className="intro-next" onClick={()=>index===introPages.length-1?onDone():go(index+1)} aria-controls={region}>{index===introPages.length-1?(revisit?'返回':'开始使用／登录注册'):'下一步'}</button></div>
+   {!revisit&&<button type="button" className="intro-account" onClick={onExistingAccount}>已有账号，直接登录</button>}
   </footer>
  </section>;
 }

@@ -3,7 +3,7 @@ import {useGesture} from '@use-gesture/react';
 import type {Arrow,Target} from './domain';
 import {boundedView,initialTargetView,insideSurface,surfacePoint,TargetTapGate,zoomAt,type TargetView} from './target-interaction';
 
-type TargetFaceProps={target:Target;arrows?:Arrow[];selected?:string|null;face?:number;onTap?:(x:number,y:number)=>void;size?:string;overlay?:React.ReactNode;annotation?:React.ReactNode;zoomable?:boolean;resetKey?:string;review?:boolean};
+type TargetFaceProps={target:Target;arrows?:Arrow[];selected?:string|null;face?:number;onTap?:(x:number,y:number)=>void;size?:string;overlay?:React.ReactNode;annotation?:React.ReactNode;zoomable?:boolean;resetKey?:string;review?:boolean;guideTarget?:string};
 const pointSource = (arrow: Arrow) => arrow.source !== 'photo'
   ? 'target' : arrow.coordinateEvidence === 'manual-target-confirmed' ? 'photo-manual' : 'photo-mapped';
 
@@ -32,7 +32,7 @@ export function TargetFace(props:TargetFaceProps) {
   // A different scoring scene must also dispose the gesture library's active contacts.
   return <TargetSurface key={`${props.target.id}:${props.face??1}:${props.resetKey??''}`} {...props}/>;
 }
-function TargetSurface({target,arrows=[],selected,face=1,onTap,size='normal',overlay,annotation,zoomable=false,resetKey='',review=false}:TargetFaceProps) {
+function TargetSurface({target,arrows=[],selected,face=1,onTap,size='normal',overlay,annotation,zoomable=false,resetKey='',review=false,guideTarget}:TargetFaceProps) {
   const surface=useRef<SVGSVGElement>(null),gate=useRef(new TargetTapGate()),current=useRef(initialTargetView());
   const [view,setView]=useState(initialTargetView),[touch,setTouch]=useState(false);
   const panEnabled=zoomable&&(!review||view.scale>1);
@@ -91,7 +91,7 @@ function TargetSurface({target,arrows=[],selected,face=1,onTap,size='normal',ove
   return <div className={zoomable?(review?'target-workspace target-review-workspace':'target-workspace'):'target-static'}>
     {zoomable&&!review&&<div className="target-zoom-tools"><span>双指或按钮缩放 · 放大后拖动</span><button type="button" onClick={()=>zoom(1/1.5)} disabled={view.scale<=1} aria-label="缩小靶纸">−</button><button type="button" onClick={()=>zoom(1.5)} disabled={view.scale>=6} aria-label="放大靶纸">＋</button><button type="button" onClick={reset} disabled={view.scale===1}>还原靶纸</button><output aria-label="靶纸缩放比例">{Math.round(view.scale*100)}%</output></div>}
     <svg ref={surface} className={`target ${size} ${panEnabled?'zoomable':''} ${touch?'touching':''}`} viewBox={`${view.x-span/2} ${-view.y-span/2} ${span} ${span}`} aria-label={onTap?'点击靶面录入，边框内白区为M':'实际落点图'} role="img"
-      tabIndex={zoomable?0:undefined} onKeyDown={zoomable?keyboard:undefined} aria-keyshortcuts={zoomable?'+ - 0 Home ArrowLeft ArrowRight ArrowUp ArrowDown':undefined}
+      data-guide-target={guideTarget} tabIndex={zoomable?0:undefined} onKeyDown={zoomable?keyboard:undefined} aria-keyshortcuts={zoomable?'+ - 0 Home ArrowLeft ArrowRight ArrowUp ArrowDown':undefined}
       aria-description={zoomable?(review?'双指缩放。键盘可用加减键缩放、方向键移动，按 0 或 Home 还原。':'聚焦靶面后，按加减键缩放、方向键移动，按0或Home还原；这些按键不会录入箭。'):undefined}
       onPointerDownCapture={e=>{if(e.button!==0)return;gate.current.down(contact(e));setTouch(gate.current.count===1&&!!onTap);}}
       onPointerMoveCapture={e=>{if(!insideSurface(e.clientX,e.clientY,e.currentTarget.getBoundingClientRect()))gate.current.block();gate.current.move(contact(e));}}

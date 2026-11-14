@@ -49,3 +49,40 @@
 .account-access .account-code-hint{margin:6px 0;color:var(--ui-muted,#52667e);font-size:12px}
 .account-access .account-change-phone.button.adm-button{display:block;margin:0 0 0 auto}
 @media(max-width:350px){.account-access .account-sms-send.button.adm-button{min-width:96px;padding-inline:8px}.account-access .account-code-entry input{padding-inline:9px}}
+
+.account-invitation {
+  display:flex;
+  min-width:0;
+  margin:8px 0 0;
+  border:1px solid var(--surface-stroke);
+  border-radius:999px;
+  color:var(--ui-ink);
+}
+.account-invitation:focus-within {outline:2px solid var(--ui-accent);outline-offset:2px}
+.account-invitation>input,.account-invitation>button {
+  min-height:44px;
+  border:0;
+  background:transparent;
+  color:inherit;
+}
+.account-invitation>input {
+  flex:1;
+  min-width:0;
+  padding:0 14px;
+  border-radius:999px 0 0 999px;
+  font:inherit;
+  font-size:16px;
+}
+.account-invitation>input::placeholder {color:var(--ui-muted)}
+.account-invitation>button {padding:0 14px;font:inherit;font-size:14px}
+.account-invitation>button:disabled {opacity:.6}
+.account-invitation .account-invitation-open {flex:1;border-radius:999px}
+.account-invitation .account-invitation-confirm {
+  flex:none;
+  min-width:64px;
+  border-inline-start:1px solid var(--surface-stroke);
+  border-radius:0 999px 999px 0;
+  color:var(--ui-accent);
+}
+.account-access .account-invitation>input:focus-visible {outline:0}
+.account-invitation>button:focus-visible {outline:2px solid var(--ui-accent);outline-offset:-3px}

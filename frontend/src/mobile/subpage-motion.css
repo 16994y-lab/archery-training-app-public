@@ -1,0 +1,141 @@
+/* Keep the shell, target and touch geometry in place while pages enter. */
+@media (prefers-reduced-motion: no-preference) {
+  .gx-page[data-subpage-motion] {
+    animation: gx-subpage-in 240ms cubic-bezier(.22, .75, .24, 1);
+  }
+
+  .gx-page[data-subpage-motion="forward"] :is(.subhead h1, .score-heading > h1),
+  .gx-page[data-subpage-motion="back"] :is(.subhead h1, .score-heading > h1) {
+    animation: gx-subpage-title 300ms cubic-bezier(.22, .75, .24, 1);
+  }
+
+  .gx-page[data-subpage-motion="forward"] {
+    --gx-subpage-travel: 16px;
+  }
+
+  .gx-page[data-subpage-motion="back"] {
+    --gx-subpage-travel: -16px;
+  }
+
+  @keyframes gx-subpage-in {
+    from { opacity: .68; }
+    to { opacity: 1; }
+  }
+
+  @keyframes gx-subpage-title {
+    from { transform: translateX(var(--gx-subpage-travel)); }
+    to { transform: translateX(0); }
+  }
+}
+
+.gx-page[data-route] .subhead {
+  background: linear-gradient(110deg, var(--surface), var(--surface-soft) 68%, var(--brand-tint));
+  border-color: var(--gx-line);
+}
+
+.gx-page[data-route] .subhead .app-back {
+  background: var(--surface-soft);
+  color: var(--ui-accent);
+}
+
+.gx-page .subhead .app-back:active {
+  background: var(--brand-tint);
+}
+
+/* Training plans and saved drafts use the same controls as the start form. */
+.gx-page :is(.plan-tools, .plan-management-actions) .button:not(.primary, .danger) {
+  min-height: 44px;
+  border-color: var(--gx-line);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  color: var(--ui-accent);
+}
+
+.gx-page :is(.training-disclosure, .training-draft, .start-configuration-fields > .panel) {
+  border-color: var(--gx-line);
+  border-radius: var(--gx-radius);
+}
+
+.gx-page :is(.training-disclosure, .training-draft) > :is(summary, h2) {
+  color: var(--ui-ink);
+}
+
+.gx-page .training-draft > p {
+  color: var(--ui-muted);
+}
+
+/* Preserve scoring colours on the target, ring keys and review charts. */
+.gx-page :is(.score-results, .score-saved-ends) {
+  background: var(--surface-soft);
+  border-radius: var(--gx-radius);
+}
+
+.gx-page .score-saved-ends,
+.gx-page .vx-session-nav {
+  border: 1px solid var(--gx-line);
+}
+
+.gx-page .score-saved-ends > button {
+  border: 1px solid var(--surface-stroke);
+  color: var(--ui-ink);
+}
+
+.gx-page .score-saved-ends > button:active {
+  background: var(--brand-tint);
+}
+
+.gx-page :is(.score-primary-actions, .start-configuration-actions) > .button {
+  scroll-margin-block-end: 84px;
+}
+
+.gx-page:is([data-route="history-all"], [data-route="trends"]) .history-row {
+  padding-inline: 10px;
+  border-color: var(--surface-stroke);
+}
+
+.gx-page:is([data-route="history-all"], [data-route="trends"]) .history-row:active,
+.gx-page .vx-session-nav button[aria-current="page"] {
+  background: var(--brand-tint);
+  color: var(--ui-accent);
+}
+
+/* Reading, event lists and the My account/equipment/settings use white cards
+   and soft borders, with the existing semantic states within each card. */
+.gx-page :is(.news-article, .event-front-more-list .event-front-card) {
+  border: 1px solid var(--surface-stroke);
+}
+
+.gx-page :is(.meet-detail-hero, .meet-detail-block, .event-front-more-list .event-front-card) {
+  border-radius: var(--gx-radius);
+}
+
+.gx-page .meet-page {
+  --meet-ink: var(--ui-ink);
+  --meet-secondary: var(--ui-muted);
+  --meet-line: var(--surface-stroke);
+}
+
+.gx-page .meet-page .meet-day {
+  min-height: 44px;
+}
+
+.gx-page :is(.profile-hub-list, .account-destinations, .reward-card) {
+  border-color: var(--gx-line);
+}
+
+.gx-page :is(.account-destinations, .reward-card) {
+  border-radius: var(--gx-radius);
+}
+
+.gx-page .rewards-page button.primary:not(:disabled),
+.app-popup .vx-filter-actions > .vx-primary:not(:disabled) {
+  background: var(--brand-gradient);
+  border-color: transparent;
+  color: var(--surface);
+}
+
+.app-popup :is(.score-menu-actions, .vx-filter-actions) > .button:not(.primary, .vx-primary, .danger) {
+  border-color: var(--gx-line);
+  background: var(--surface-soft);
+  color: var(--ui-accent);
+}

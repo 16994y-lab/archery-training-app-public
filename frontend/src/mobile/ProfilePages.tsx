@@ -1,11 +1,9 @@
-import {FirstBatchHeader} from './FirstBatchHeader';
 import {AppUpdatePanel} from './AppUpdatePanel';
 import {ContributionSettings} from './PhotoContribution';
-import {automaticRecordsSaveReady} from './release-mode';
 import {ChoiceSelect} from './ChoiceSelect';
 import React, { useEffect, useRef, useState, useSyncExternalStore } from 'react';
 import { Form, Input, List, Switch } from 'antd-mobile';
-import { Accessory, copy, uid } from './domain';
+import { Accessory, copy, localDate, uid } from './domain';
 import { decimal, goalProgress } from './statistics';
 import { ActionListItem, Back, Button, Field, Panel, Modal, useApp, useEditGuard } from './ui';
 import {cloudSync} from './cloud-sync';
@@ -14,8 +12,8 @@ import {RewardsAvatarEditor as AvatarEditor} from './RewardsEntry';
 import {nicknameFromVerifiedPhoneDisplay,profileDefaultNickname,validNickname} from './profile-local';
 import {localProfileOwner,profileChangeForOwner,saveDefaultProfileName} from './profile-write';
 import './profile-next.css';
-import {CommunityEntry} from './SupportPages';
-import {AppIcon} from './AppIcon';
+import './profile-hub.css';
+import {AppIcon, type AppIconName} from './AppIcon';
 export {SupportDeveloper} from './SupportPages';
 declare const __ANDROID_VERSION__:string;
 const APP_VERSION=typeof __ANDROID_VERSION__==='undefined'?'本地预览':__ANDROID_VERSION__;
@@ -23,11 +21,53 @@ export const ACCESSORY_LABELS:Record<string,string>={riser:'弓把 / 弓身',lim
 const AVATARS:Record<string,string>={initial:'',bow:'🏹',target:'◎',star:'★'};
 export function ProfileAvatar({name,avatar}:{name:string;avatar?:string}){const content=AVATARS[avatar??'initial']||Array.from(name.trim())[0]||'弓';return <span className={`profile-avatar profile-avatar-${avatar??'initial'}`} aria-label={`头像：${avatar==='initial'||!avatar?'姓名首字':'预设图案'}`}>{content}</span>;}
 
+function ProfileToolIcon({kind}:{kind:'help'|'settings'}) {
+ return <svg className="app-line-icon" width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.65" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+  {kind==='help'?<><path d="M4 13v-2a8 8 0 0 1 16 0v6c0 2-2 4-5 4h-2"/><rect x="3" y="12" width="4" height="6" rx="2"/><rect x="17" y="12" width="4" height="6" rx="2"/></>:<><path d="M4 6h7m4 0h5M4 12h3m4 0h9M4 18h9m4 0h3"/><circle cx="13" cy="6" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="15" cy="18" r="2"/></>}
+ </svg>;
+}
+
+function ProfileHubRow({icon,children,onClick,focusKey}:{icon:AppIconName;children:React.ReactNode;onClick:()=>void;focusKey?:string}) {
+ return <button className="profile-hub-row" type="button" onClick={onClick} data-return-focus={focusKey}>
+  <AppIcon name={icon}/><span>{children}</span><span className="profile-hub-chevron" aria-hidden="true"/>
+ </button>;
+}
+
+function ProfileHubGoal() {
+ const {data,open}=useApp();
+ const today=localDate();
+ const goal=data.goals.filter(item=>item.start<=today&&item.end>=today).sort((a,b)=>a.end.localeCompare(b.end))[0];
+ if(!goal)return <section className="profile-hub-goal" aria-labelledby="profile-goal-title">
+  <h2 id="profile-goal-title">训练目标</h2>
+  <button className="profile-hub-goal-empty" type="button" onClick={()=>open('goals')} data-return-focus="profile-goals">
+   <AppIcon name="target"/><span><strong>{data.goals.length?'查看训练目标':'设置训练目标'}</strong><small>按箭数、场次或均环设定目标</small></span><span className="profile-hub-chevron" aria-hidden="true"/>
+  </button>
+ </section>;
+ const {value}=goalProgress(data,goal);
+ const unit=goal.type==='arrows'?'箭':goal.type==='sessions'?'场':'均环';
+ const progress=Math.min(goal.value,Math.max(0,value??0));
+ return <section className="profile-hub-goal" aria-labelledby="profile-goal-title">
+  <h2 id="profile-goal-title">训练目标</h2>
+  <div className="profile-hub-goal-card">
+   <button className="profile-hub-goal-link" type="button" onClick={()=>open('goals')} data-return-focus="profile-goals">
+    <span>{goal.name}</span><span className="profile-hub-chevron" aria-hidden="true"/>
+   </button>
+   <div className="profile-hub-goal-values">
+    <span>{value===null?'尚无完成记录':<><strong>{goal.type==='average'?decimal(value):value}</strong> / {goal.value} {unit}</>}</span>
+    <b>{value===null?'—':`${Math.round(progress/goal.value*100)}%`}</b>
+   </div>
+   <progress className="profile-hub-goal-progress" max={goal.value} value={progress} aria-label={`${goal.name}进度`}/>
+  </div>
+ </section>;
+}
+
 export function ProfileHome(){
  const {data,update,open,tell}=useApp(),status=useSyncExternalStore(cloudSync.subscribe,cloudSync.getStatus,cloudSync.getStatus);
  const owner=localProfileOwner(status),avatar=useLocalAvatar(owner);
  const phoneName=owner&&status.phoneVerified?nicknameFromVerifiedPhoneDisplay(status.phoneDisplay):null;
  const [editingName,setEditingName]=useState(false),[editingAvatar,setEditingAvatar]=useState(false),[name,setName]=useState(''),[error,setError]=useState(''),[saving,setSaving]=useState(false),[defaultPending,setDefaultPending]=useState(false);
+ const [helpOpen,setHelpOpen]=useState(false);
+ const helpTrigger=useRef<HTMLButtonElement>(null);
  const defaultAttempt=useRef<string|null>(null),saveFlight=useRef<string|null>(null),alive=useRef(true),renderedOwner=useRef(owner),nameTrigger=useRef<HTMLButtonElement>(null);renderedOwner.current=owner;
  const closeName=()=>{setEditingName(false);requestAnimationFrame(()=>nameTrigger.current?.focus({preventScroll:true}));};
  useEffect(()=>{alive.current=true;return()=>{alive.current=false;};},[]);
@@ -38,29 +78,79 @@ export function ProfileHome(){
  const useAccountDefaultName=async()=>{if(!owner||saveFlight.current===owner)return;const originatingOwner=owner;saveFlight.current=originatingOwner;setSaving(true);setError('');try{const next=phoneName??await profileDefaultNickname(originatingOwner,status.profileDefaultName);if(localProfileOwner(cloudSync.getStatus())!==originatingOwner)throw new Error('账号已变化，请重新打开个人资料');if(alive.current&&renderedOwner.current===originatingOwner)setName(next);}catch(e){if(alive.current&&renderedOwner.current===originatingOwner)setError(e instanceof Error?e.message:'默认昵称暂时无法生成');}finally{if(saveFlight.current===originatingOwner)saveFlight.current=null;if(alive.current&&renderedOwner.current===originatingOwner)setSaving(false);}};
  const saveName=async()=>{
   if(!owner||saveFlight.current===owner)return;const originatingOwner=owner;saveFlight.current=originatingOwner;setSaving(true);setError('');try{const next=validNickname(name);const saved=await update(profileChangeForOwner(originatingOwner,cloudSync.getStatus,d=>{d.profile.name=next;}));if(saved&&alive.current&&renderedOwner.current===originatingOwner){closeName();setDefaultPending(false);}}catch(e){if(alive.current&&renderedOwner.current===originatingOwner)setError(e instanceof Error?e.message:'用户名未能保存');}finally{if(saveFlight.current===originatingOwner)saveFlight.current=null;if(alive.current&&renderedOwner.current===originatingOwner)setSaving(false);}};
- return <div className="gx-profile">
- <div className="profile-topbar"><span className="gx-section-label">个人训练</span><button type="button" className="profile-settings-button" aria-label="设置" onClick={()=>open('settings')}><AppIcon name="settings"/><span>设置</span></button></div>
- <FirstBatchHeader eyebrow="我的 / 个人资料" description={data.profile.bow||'个人资料'} leading={<button type="button" className="profile-avatar-button" aria-label="更换头像" disabled={!owner} onClick={()=>setEditingAvatar(true)}><DeviceAvatar value={avatar.value} fallback={<ProfileAvatar name={data.profile.name} avatar={data.profile.avatar}/>}/></button>} title={<button type="button" ref={nameTrigger} className="profile-name-button" aria-label="编辑用户名" disabled={!owner} onClick={beginName}><span className="profile-name-label">{data.profile.name||'设置你的用户名'}</span><span aria-hidden="true">›</span></button>}/>
+ const draftCount=data.sessions.filter(session=>session.status==='draft').length;
+ const profileSummary=[data.profile.bow,data.profile.hand].filter(Boolean).join(' · ');
+ const closeHelp=()=>{
+  setHelpOpen(false);
+  requestAnimationFrame(()=>helpTrigger.current?.focus({preventScroll:true}));
+ };
+ return <div className="gx-profile profile-hub">
+ <header className="profile-hub-header">
+  <h1>我的</h1>
+  <div className="profile-hub-tools">
+   <button type="button" ref={helpTrigger} aria-label="帮助与反馈" aria-haspopup="dialog" onClick={()=>setHelpOpen(true)}><ProfileToolIcon kind="help"/></button>
+   <button className="profile-hub-settings-button" type="button" aria-label="设置" onClick={()=>open('settings')} data-return-focus="profile-settings"><ProfileToolIcon kind="settings"/></button>
+  </div>
+ </header>
+ <div className="profile-hub-identity">
+  <button type="button" className="profile-avatar-button" aria-label="更换头像" disabled={!owner} onClick={()=>setEditingAvatar(true)}><DeviceAvatar value={avatar.value} fallback={<ProfileAvatar name={data.profile.name} avatar={data.profile.avatar}/>}/></button>
+  <div className="profile-hub-identity-copy">
+  <button type="button" ref={nameTrigger} className="profile-name-button" aria-label="编辑用户名" disabled={!owner} onClick={beginName}><span className="profile-name-label">{data.profile.name||'设置你的用户名'}</span>{owner&&<span aria-hidden="true"> ›</span>}</button>
+   <button type="button" className="profile-hub-personal-link" aria-label="个人资料" onClick={()=>open('personal')} data-return-focus="profile-personal">{profileSummary||'个人资料'}<span className="profile-hub-chevron" aria-hidden="true"/></button>
+  </div>
+ </div>
 
  {avatar.error&&<p role="status" className="profile-local-note">{avatar.error}</p>}
  {defaultPending&&!data.profile.name.trim()&&<Panel><p role="status">默认用户名尚未保存，可以重试或点用户名填写自己的称呼。</p><Button disabled={saving||!owner} onClick={()=>{if(owner)void saveDefaultName(owner);}}>重试保存用户名</Button></Panel>}
  {editingName&&<Modal title="编辑用户名" onClose={()=>{if(!saving)closeName();}}><form className="profile-name-editor" onSubmit={event=>{event.preventDefault();void saveName();}}><Field label="用户名" hint="昵称最多 8 个字，不能包含违禁词。"><input autoFocus value={name} disabled={saving} onChange={e=>{setName(e.target.value);setError('');}} autoComplete="nickname"/></Field>{error&&<p role="alert" className="avatar-error">{error}</p>}<p className="caption">新注册账号的默认昵称为“打弓人”加已验证手机号后四位。你也可以填写自己的称呼，点保存生效。</p><Button type="button" disabled={saving||!owner} onClick={()=>void useAccountDefaultName()}>{phoneName?'使用手机号后四位':'使用账号默认昵称'}</Button><div className="actions"><Button type="button" disabled={saving} onClick={closeName}>取消</Button><Button kind="primary" type="submit" disabled={saving||!name.trim()}>保存</Button></div></form></Modal>}
  {editingAvatar&&owner&&<AvatarEditor key={owner} owner={owner} currentAvatar={avatar.value} currentOwner={()=>localProfileOwner(cloudSync.getStatus())} onClose={()=>setEditingAvatar(false)} onSaved={()=>tell('头像已保存到本机')}/>}
- <List className="entry-list profile-menu profile-account-entry"><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="shield"/></span>} description={status.authVerified?'已登录 · 账号安全、云保存与账号管理':'账号安全、云保存与账号管理'} onClick={()=>open('account')}>账号中心</ActionListItem></List>
- <div className="gx-profile-columns">
-  <section><h2 className="profile-section-title">训练资料</h2><List className="entry-list profile-menu"><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="person"/></span>} description="头像、用户名、弓种与介绍" onClick={()=>open('personal')}>个人资料</ActionListItem><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="target"/></span>} description={`${data.goals.length}项目标 · 查看实际进度`} onClick={()=>open('goals')}>训练目标</ActionListItem><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="kit"/></span>} description={`${data.equipment.length}套器材 · 常用配件`} onClick={()=>open('equipment-list')}>器材与配件</ActionListItem><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="target"/></span>} description="自建同心圆与规则修订" onClick={()=>open('targets')}>自建靶面</ActionListItem></List>
-   <h2 className="profile-section-title">团队训练</h2><List className="entry-list profile-menu"><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="person"/></span>} description="教练安排、比赛分组与成绩共享" onClick={()=>open('team')}>我的团队</ActionListItem></List>
-  </section>
-  <section><h2 className="profile-section-title">账号与权益</h2>
-   <List className="entry-list profile-menu"><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="person"/></span>} description="我的邀请码、领取码与已获得的特别伙伴" onClick={()=>open('rewards')}>邀请与特别伙伴</ActionListItem><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="info"/></span>} description="当前已发布的信息" onClick={()=>open('announcements')}>公告与版本说明</ActionListItem></List>
-   <h2 className="profile-section-title">帮助与反馈</h2><List className="entry-list profile-menu profile-help-entry"><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="book"/></span>} description="训练、照片复核与恢复" onClick={()=>open('guide')}>使用指南</ActionListItem></List>
-   <CommunityEntry/>
-   <div className="support-secondary"><span>喜欢弓行记？</span><Button className="text-action" onClick={()=>open('support')}>赞赏支持 ›</Button></div>
-  </section>
- </div></div>;}
+ <nav className="profile-hub-shortcuts" aria-label="常用入口">
+  <button type="button" className="profile-hub-equipment" onClick={()=>open('equipment-list')} data-return-focus="profile-equipment"><AppIcon name="kit"/><strong>器材与配件</strong><small>{data.equipment.length} 套器材</small></button>
+  <button type="button" className="profile-hub-team" onClick={()=>open('team')} data-return-focus="profile-team"><AppIcon name="person"/><strong>我的团队</strong><small>训练与共享</small></button>
+  <button type="button" className="profile-hub-drafts" onClick={()=>open('drafts')} data-return-focus="profile-drafts"><AppIcon name="draft"/><strong>草稿箱</strong><small>{draftCount} 场草稿</small></button>
+ </nav>
+ <ProfileHubGoal/>
+ <nav className="profile-hub-list" aria-label="其他功能">
+  <ProfileHubRow icon="target" focusKey="profile-targets" onClick={()=>open('targets')}>自建靶面</ProfileHubRow>
+  <ProfileHubRow icon="person" focusKey="profile-rewards" onClick={()=>open('rewards')}>邀请与特别伙伴</ProfileHubRow>
+  <ProfileHubRow icon="info" focusKey="profile-announcements" onClick={()=>open('announcements')}>公告与版本说明</ProfileHubRow>
+  <ProfileHubRow icon="heart" focusKey="profile-support" onClick={()=>open('support')}>赞赏支持</ProfileHubRow>
+ </nav>
+ {helpOpen&&<Modal title="帮助与反馈" onClose={closeHelp}>
+  <div className="profile-hub-list">
+   <ProfileHubRow icon="book" onClick={()=>{setHelpOpen(false);open('guide');}}>使用指南</ProfileHubRow>
+   <ProfileHubRow icon="chat" onClick={()=>{setHelpOpen(false);open('feedback');}}>反馈与交流群</ProfileHubRow>
+  </div>
+ </Modal>}
+ </div>;
+}
 
-export function ProfileSettings({onBack}:{onBack:()=>void}){const {open}=useApp();return <><Back title="设置" onBack={onBack}/> <h2 className="profile-section-title">账号与数据</h2><List className="entry-list profile-menu"><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="shield"/></span>} description={automaticRecordsSaveReady?"完整记录云保存、换机恢复与账号管理":"查看账号、退出登录与手选成绩备份"} onClick={()=>open('account')}>账号中心</ActionListItem><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="data"/></span>} description="本机完整备份、恢复与保存位置" onClick={()=>open('data')}>数据管理</ActionListItem></List>
- <ContributionSettings/><h2 className="profile-section-title">帮助与关于</h2><List className="entry-list profile-menu"><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="book"/></span>} description="四页图文，快速熟悉主要功能" onClick={()=>open('intro')}>重看功能介绍</ActionListItem><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="book"/></span>} description="训练、照片复核、复盘与恢复" onClick={()=>open('guide')}>使用指南</ActionListItem><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="info"/></span>} description="训练计划、记分与复盘的使用介绍" onClick={()=>open('promotion')}>了解弓行记</ActionListItem><ActionListItem prefix={<span className="profile-menu-icon"><AppIcon name="info"/></span>} description={`版本 ${APP_VERSION}`} onClick={()=>open('about')}>关于与设备能力</ActionListItem></List></>;}
+export function ProfileSettings({onBack}:{onBack:()=>void}) {
+ const {data,open}=useApp();
+ const status=useSyncExternalStore(cloudSync.subscribe,cloudSync.getStatus,cloudSync.getStatus);
+ const avatar=useLocalAvatar(localProfileOwner(status));
+ return <div className="profile-hub profile-hub-settings">
+  <Back title="设置" onBack={onBack}/>
+  <button className="profile-hub-identity profile-hub-settings-identity" type="button" onClick={()=>open('personal')} data-return-focus="settings-personal">
+   <DeviceAvatar value={avatar.value} fallback={<ProfileAvatar name={data.profile.name} avatar={data.profile.avatar}/>}/>
+   <span><strong>{data.profile.name||'个人资料'}</strong><small>{[data.profile.bow,data.profile.hand].filter(Boolean).join(' · ')||'头像、用户名与弓种'}</small></span>
+   <span className="profile-hub-chevron" aria-hidden="true"/>
+  </button>
+  <div className="profile-hub-list" role="group" aria-label="账号与数据">
+   <ProfileHubRow icon="shield" focusKey="settings-account" onClick={()=>open('account')}>账号中心</ProfileHubRow>
+   <ProfileHubRow icon="data" focusKey="settings-data" onClick={()=>open('data')}>数据管理</ProfileHubRow>
+  </div>
+  <details className="profile-hub-contribution">
+   <summary><AppIcon name="chart"/><span>模型改进</span><span className="profile-hub-chevron" aria-hidden="true"/></summary>
+   <ContributionSettings/>
+  </details>
+  <div className="profile-hub-list" role="group" aria-label="功能与版本">
+   <ProfileHubRow icon="book" focusKey="settings-intro" onClick={()=>open('intro')}>重看功能介绍</ProfileHubRow>
+   <ProfileHubRow icon="info" focusKey="settings-about" onClick={()=>open('about')}>关于与设备能力</ProfileHubRow>
+   <ProfileHubRow icon="info" focusKey="settings-promotion" onClick={()=>open('promotion')}>了解弓行记</ProfileHubRow>
+  </div>
+ </div>;
+}
 
 export function PersonalProfile({onBack}:{onBack:()=>void}){const {data,update}=useApp();const status=useSyncExternalStore(cloudSync.subscribe,cloudSync.getStatus,cloudSync.getStatus),owner=localProfileOwner(status),localAvatar=useLocalAvatar(owner);const initialName=useRef(data.profile.name).current;const [formValues,setFormValues]=useState(copy({...data.profile,avatar:data.profile.avatar??'initial'}));const guard=useEditGuard(formValues);return <><Back title="个人资料" dirty={guard.dirty} onBack={()=>void guard.close(onBack)}/><Panel><div className="profile-avatar-preview"><DeviceAvatar value={localAvatar.value} fallback={<ProfileAvatar name={formValues.name} avatar={formValues.avatar}/>}/><span>点“我的”页头像可更换；图片只保存在本机。</span></div><Form className="app-form" initialValues={copy({...data.profile,avatar:data.profile.avatar??'initial'})} onValuesChange={(_,values)=>setFormValues(values)} onFinish={async values=>{if(await update(profileChangeForOwner(owner,cloudSync.getStatus,d=>{d.profile={...d.profile,...values,name:values.name===initialName?d.profile.name:validNickname(values.name??'')};}))){if(localProfileOwner(cloudSync.getStatus())===owner){guard.saved();onBack();}}}} footer={<Button type="submit" className="wide" kind="primary">保存资料</Button>}><Form.Item name="name" label="用户名" description="昵称最多 8 个字，不能包含违禁词。" rules={[{validator:async(_,value:string)=>{if(value!==initialName)validNickname(value??'');}}]}><Input/></Form.Item><Form.Item name="bow" label="主要弓种"><ChoiceSelect>{['反曲弓','复合弓','光弓','传统弓','其他'].map(b=><option key={b}>{b}</option>)}</ChoiceSelect></Form.Item><Form.Item name="hand" label="持弓手"><ChoiceSelect><option value="">未填写</option><option>左手持弓</option><option>右手持弓</option></ChoiceSelect></Form.Item><Form.Item name="experience" label="自我介绍 / 训练经历"><textarea className="personal-introduction-input" rows={4} maxLength={500} placeholder="写下你的训练经历或一句喜欢的话"/></Form.Item><Form.Item name="competition" label="比赛需求"><Input maxLength={500}/></Form.Item></Form><p className="caption">用户名是本机展示名称。内置打弓动物头像可直接点“我的”页头像选择；选择独立保存在本机，不进入训练备份。暂不开放用户自选头像。这里的预设样式仅用于没有本机图片时的显示。</p></Panel></>;}
 
@@ -83,9 +173,9 @@ export function TargetList({onBack}:{onBack:()=>void}){const {data,open}=useApp(
 export function About({onBack}:{onBack:()=>void}){return <><Back title="关于弓行记" onBack={onBack}/><AppUpdatePanel/><Panel><h2>弓行记 {APP_VERSION}</h2><p>个人射箭训练</p><p>个人训练保存在本机，可按需选择成绩备份。照片默认在本机处理；仅在你单独选择参与模型改进且同意生效后，按有效条款处理之后新加载的推理工作图与保存时确认的修正。可在设置退出，个人训练与备份不受影响。</p></Panel><Panel title="当前设备能力"><p>已接入本机离线保存、相机或相册选图、文件导出和分享入口。</p><p>照片可在本机生成可校正候选；默认只保存核对后的环值。逐点手动定位可保存可信位置；实验参考坐标须另行选择，不参加可信散布计算。自动映射不等于人工确认的真实落点。视频动作观察仍在独立开发，当前交付未开放。</p><p>锁屏／后台准时提醒尚未接入。休息计时只在页面展示，到时不会强制继续。</p></Panel><Panel title="版本说明"><p>本次更新增加贡献记录的只读核对和照片处理阶段提示；未确认的贡献不会自动重传。</p><p>照片识别结果需逐箭核对；识别失败时，仍可返回手动记分。</p></Panel></>;}
 
 
-export function UserGuide({onBack}:{onBack:()=>void}){
+export function UserGuide({onBack,onPractice}:{onBack:()=>void;onPractice?:()=>void}){
  const {open}=useApp();
- return <><Back title="使用指南" onBack={onBack}/><Panel><p>先选训练，再逐箭记分，最后完成并复盘。点击下面的步骤查看操作。</p><div className="user-guide">
+ return <><Back title="使用指南" onBack={onBack}/><Panel><p>先选训练，再逐箭记分，最后完成并复盘。点击下面的步骤查看操作。</p>{onPractice&&<Button kind="primary" className="wide" onClick={onPractice}>开始实操引导</Button>}<div className="user-guide">
   <details className="review-data-details" open><summary>1. 开始训练与安排日历</summary><p>在“训练”选择“新开训练”，或使用已保存的计划。开始前核对靶面、距离、每组箭数与器材。</p><p>日历可安排单次训练；长期安排按选中的训练日分配每周箭量。修改安排保留已执行记录，归档计划仍显示原关联。</p><Button onClick={()=>open('training')}>去训练</Button></details>
   <details className="review-data-details"><summary>2. 逐箭记分与修改</summary><p>可输入环值，也可点击靶面录入位置。X和普通10都计10分，X单独统计；M计0分并算一箭，未录空位不会自动变成M。</p><p>发现录错时进入对应组修改，再保存。首页可继续当前训练、保留草稿并新开，或确认放弃整场。草稿箱可直接继续或放弃；取消新建配置会保留原训练。“下一组”属于同一场，“新开训练”会建立另一场。</p><Button onClick={()=>open('score')}>去记分</Button></details>
   <details className="review-data-details"><summary>3. 核对照片候选与跨组保存</summary><p>在记分页打开照片，按提示选择完整靶面并核对校准。无法确定靶面时，按提示重拍，或返回数字／点靶记分。</p><p>逐箭核对位置和环值，删除错点；漏识别的命中箭先补点或手动录入。候选少于计划箭数时，可按已录箭数保存，或确认脱靶后补M；补M不会生成位置。</p><p>继续下一组时核对组号和箭数。照片参考位置与人工点靶分别标记，自动参考不能当作可信散布结论。</p></details>

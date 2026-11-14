@@ -29,3 +29,48 @@
  .training-batch-heading .batch-header-meta{margin-top:8px}
  .score-workbench .score-session-facts{font-size:12px;column-gap:9px}
 }
+.training-recent-record {
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 68px;
+  padding: 10px;
+  border: 0;
+  border-radius: 13px;
+  background: var(--surface-soft);
+  color: var(--ui-ink);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.training-recent-icon {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--brand-tint);
+  color: var(--brand);
+}
+
+.training-recent-record strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.training-recent-record small {
+  display: block;
+  margin-top: 3px;
+  color: var(--ui-muted);
+  font-size: 12px;
+}
+
+.training-recent-total {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.training-recent-total strong { font-size: 20px; }

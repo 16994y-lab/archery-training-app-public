@@ -4,22 +4,23 @@ import {ChoiceSelect} from './ChoiceSelect';
 import React, { useEffect, useRef, useState } from 'react';
 import { Collapse, List, Segmented, Form, Input } from 'antd-mobile';
 import { DistanceChoice, SizeChoice, TargetChoice } from './TargetChoice';
-import { builtTargets, Conditions, copy, localDate, newPlan, Plan, plannedArrows, scoreBlock, competitionPlan, uid, now, LIMITS, validatePlan, discardSession, Session } from './domain';
+import type { SetupGuideStep } from './TrainingGuide';
+import { allArrows, builtTargets, Conditions, copy, localDate, newPlan, Plan, plannedArrows, scoreBlock, competitionPlan, uid, now, LIMITS, validatePlan, discardSession, Session } from './domain';
 import { ActionListItem, NumberInput, Back, Button, Empty, Field, Panel, useApp, useInnerBack } from './ui';
 import { Calendar } from './Planning';
 import { useReviewState } from './review-state';
 import { videoCoachReady } from './release-mode';
 import {AppIcon} from './AppIcon';
 import {sessionTimeLabel} from './session-label';
-import {goalProgress,decimal} from './statistics';
+import {goalProgress,decimal,statistics} from './statistics';
 
-export function ConditionsForm({value,onChange}:{value:Conditions;onChange:(c:Conditions)=>void}) {
+export function ConditionsForm({value,onChange,guideStep,onGuideChoice}:{value:Conditions;onChange:(c:Conditions)=>void;guideStep?:SetupGuideStep;onGuideChoice?:(choice:'target'|'size'|'distance')=>void}) {
   const {data}=useApp();const targets=[...builtTargets,...data.targets];
   if(!targets.some(t=>t.id===value.target.id))targets.push(value.target);
   const set=<K extends keyof Conditions>(k:K,v:Conditions[K])=>onChange({...value,[k]:v});
   return <div className="conditions-form">
-    <TargetChoice value={value.target} targets={targets} onChange={t=>onChange({...value,target:copy(t),size:null})}/>
-    <div className="condition-sections"><SizeChoice key={value.target.id} value={value.size} custom={value.target.custom} onChange={v=>set('size',v)}/><DistanceChoice value={value.distance} onChange={v=>set('distance',v)}/></div>
+    <TargetChoice value={value.target} targets={targets} onChange={t=>{onChange({...value,target:copy(t),size:null});onGuideChoice?.('target');}}/>
+    <div className="condition-sections"><SizeChoice key={value.target.id} value={value.size} custom={value.target.custom} awaitingChoice={guideStep==='choose-size'} onChange={v=>set('size',v)} onConfirm={()=>onGuideChoice?.('size')}/><DistanceChoice value={value.distance} awaitingChoice={guideStep==='choose-distance'} onChange={v=>set('distance',v)} onConfirm={()=>onGuideChoice?.('distance')}/></div>
     {value.size!==null&&Number.isFinite(value.size)&&<p className="caption">本靶实际计分直径 {Number((value.size*value.target.sizeRatio).toFixed(2))} cm；训练距离独立记录。</p>}
     <Collapse className="optional-settings"><Collapse.Panel key="equipment" title={`弓种与器材 · ${value.bow||'可后补'}${value.equipment?' / '+value.equipment.name:''}`}>
       <Field label="弓种"><ChoiceSelect appearance="aurora" value={value.bow} onChange={e=>set('bow',e.target.value)}>{['反曲弓','复合弓','光弓','传统弓','其他',''].map(v=><option key={v} value={v}>{v||'暂不填写'}</option>)}</ChoiceSelect></Field>
@@ -65,18 +66,34 @@ function CurrentGoal(){
  return <section className="training-goal"><div className="section-heading"><h2>当前目标</h2><Button className="text-action" onClick={()=>open('goals')}>全部目标 ›</Button></div><button type="button" className="training-goal-card" onClick={()=>open('goal',goal.id)}><strong>{goal.name}</strong><span className="training-goal-dates">{goal.start} — {goal.end}</span><div className="goal-track" role="progressbar" aria-label={goal.name} aria-valuemin={0} aria-valuemax={goal.value} aria-valuenow={value===null?undefined:Math.min(value,goal.value)} aria-valuetext={value===null?'尚无完成记录':`${value} / ${goal.value}${unit}`}><i style={{width:ratio+'%'}}/></div><div className="training-goal-values"><span>{value===null?'尚无完成记录':`${goal.type==='average'?decimal(value):value} / ${goal.value}${unit}`}</span><b>{value===null?'—':Math.round(ratio)+'%'}</b></div></button><p className="caption">按目标条件内的已完成训练计算{progress.mixed?' · 含不同训练条件':''}</p></section>;
 }
 
+function RecentTraining() {
+ const {data,open}=useApp();
+ const session=data.sessions.filter(item=>item.status==='completed')
+  .sort((a,b)=>(b.ended||b.started||b.date).localeCompare(a.ended||a.started||a.date))[0];
+ if(!session)return null;
+ const {n,total}=statistics(allArrows(session));
+ return <Panel className="training-recent" title="最近训练">
+  <button className="training-recent-record" type="button" onClick={()=>open('detail',session.id)} data-return-focus="training-recent">
+   <span className="training-recent-icon"><AppIcon name="chart"/></span>
+   <span><strong>{session.name}</strong><small>{sessionTimeLabel(session)} · {n} 箭{session.conditions.bow?` · ${session.conditions.bow}`:''}</small></span>
+   <span className="training-recent-total"><strong>{total}</strong><small>总环数</small></span>
+  </button>
+ </Panel>;
+}
+
 export function TrainingHome({onStart}:{onStart:(p:Plan|null,scheduleId?:string,keepCurrent?:boolean)=>void;onEdit:(id?:string,initial?:Plan)=>void}) {
  const {data,open}=useApp();const active=data.sessions.find(s=>s.id===data.activeId),todayKey=localDate(),[selectedDay,setSelectedDay]=useReviewState<string>('training-week-day',todayKey);
  const start=new Date();start.setHours(12,0,0,0);start.setDate(start.getDate()-((start.getDay()+6)%7));
  const week=Array.from({length:7},(_,index)=>{const day=new Date(start);day.setDate(start.getDate()+index);return {key:localDate(day),date:day};});
  const chosen=week.some(day=>day.key===selectedDay)?selectedDay:todayKey,daily=data.schedules.filter(s=>s.date===chosen);
  const weekday=['一','二','三','四','五','六','日'];
- const trainingCard=active?<Panel className="current-training"><div className="training-card-label"><span className="badge">当前训练</span><AppIcon name="target"/></div><h2>{active.name}</h2><p className="training-summary">{sessionTimeLabel(active)} · {active.ends.reduce((n,e)=>n+e.arrows.length,0)}箭 · {active.conditions.distance}米</p><div className="training-primary-actions"><Button kind="primary" onClick={()=>open('score')}>继续训练</Button><Button className="training-new-action" onClick={()=>onStart(null,undefined,true)}>保留草稿并新开训练 <span aria-hidden="true">＋</span></Button></div><div className="training-card-footer"><span>新开后，原草稿仍可恢复</span><DiscardTrainingButton session={active}/></div></Panel>:<Panel className="current-training"><div className="training-card-label"><span className="badge">准备开弓</span><AppIcon name="target"/></div><h2>开始今天的训练</h2><p className="training-summary">选好靶面和距离，专注每一箭。</p><Button className="wide" kind="primary" onClick={()=>onStart(null)}>新开训练</Button></Panel>;
+ const trainingCard=active?<Panel className="current-training"><div className="training-card-label"><span className="badge">当前训练</span><AppIcon name="target"/></div><h2>{active.name}</h2><p className="training-summary">{sessionTimeLabel(active)} · {active.ends.reduce((n,e)=>n+e.arrows.length,0)}箭 · {active.conditions.distance}米</p><div className="training-primary-actions"><Button kind="primary" data-guide-target="resume-training" onClick={()=>open('score')}>继续训练</Button><Button className="training-new-action" data-guide-target="new-training" onClick={()=>onStart(null,undefined,true)}>保留草稿并新开训练 <span aria-hidden="true">＋</span></Button></div><div className="training-card-footer"><span>新开后，原草稿仍可恢复</span><DiscardTrainingButton session={active}/></div></Panel>:<Panel className="current-training"><div className="training-card-label"><span className="badge">准备开弓</span><AppIcon name="target"/></div><h2>开始今天的训练</h2><p className="training-summary">选好靶面和距离，专注每一箭。</p><Button className="wide" kind="primary" data-guide-target="new-training" onClick={()=>onStart(null)}>新开训练</Button></Panel>;
  return <div className="training-home"><div className="training-batch-heading"><FirstBatchHeader title="训练" eyebrow="训练手记 / 今天" description={active?'继续本场训练，逐箭记录本组成绩。':'从今天的安排开始，或新开一场自由训练。'} meta={`${todayKey} · 周${weekday[(new Date().getDay()+6)%7]}`}/></div>
  {active&&trainingCard}
  <Panel className="training-week"><div className="section-heading"><h2>本周日历</h2><Button className="text-action" onClick={()=>open('calendar')}>完整日历 ›</Button></div><p className="caption">{week[0].key} — {week[6].key}</p><div className="week-grid" aria-label="本周训练日历">{week.map(({key,date},index)=>{const count=data.schedules.filter(s=>s.date===key).length;return <button key={key} type="button" className="week-day calendar-date" data-has-items={count?true:undefined} aria-current={key===todayKey?'date':undefined} aria-pressed={chosen===key} aria-label={`周${weekday[index]}，${key}${count?`，${count}项安排`:''}`} onClick={()=>setSelectedDay(key)}><span>周{weekday[index]}</span><b>{date.getDate()}</b>{count>0&&<i className="calendar-date-dot" aria-hidden="true"/>}</button>;})}</div><div className={`week-agenda${daily.length?'':' is-empty'}`}><h3>{chosen===todayKey?'今天':chosen}的安排</h3>{daily.length?<List>{daily.map(s=><ActionListItem key={s.id} description={`${s.arrows}箭 · ${s.sessionId?'已完成':'待执行'}`} onClick={()=>s.sessionId?open('detail',s.sessionId):onStart(data.plans.find(p=>p.id===s.planId)??null,s.id)}>{s.name}</ActionListItem>)}</List>:<p>暂无安排</p>}</div></Panel>
  {!active&&trainingCard}
  <nav className="training-shortcuts" aria-label="训练管理"><button type="button" onClick={()=>open('drafts')}><AppIcon name="draft"/><span>草稿箱</span><small>{data.sessions.filter(s=>s.status==='draft').length}场待继续</small><span aria-hidden="true">›</span></button><button type="button" onClick={()=>open('plans')}><AppIcon name="calendar"/><span>我的计划</span><small>{data.plans.filter(p=>!p.archived).length}份计划</small><span aria-hidden="true">›</span></button><button className="training-timer-link" type="button" onClick={()=>open('competition-timer')}><AppIcon name="clock"/><span>比赛计时</span><small>发射倒计时 · 大屏</small><span aria-hidden="true">›</span></button></nav>
+ <RecentTraining/>
  {videoCoachReady&&<Panel title="视频教练 · 本机动作观察"><p className="caption">导入本机视频查看骨架与轨迹，先核对画面和动作阶段；当前为测试版，不自动判断动作好坏。</p><Button className="wide" onClick={()=>open('motion')}>打开视频教练 ›</Button></Panel>}
  <CurrentGoal/>
  </div>;
